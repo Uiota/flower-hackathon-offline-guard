@@ -1,0 +1,23 @@
+# Android
+*.iml
+.gradle
+/local.properties
+/.idea/
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+
+# Hardware
+*.o
+*.elf
+*.hex
+
+# Logs
+*.log
+
+# Secrets
+*.key
+*.pem
+config.secret.*
