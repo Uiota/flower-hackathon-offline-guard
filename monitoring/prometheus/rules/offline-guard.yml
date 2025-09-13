@@ -1,0 +1,206 @@
+# Prometheus alerting rules for Offline Guard
+
+groups:
+  - name: offline-guard.rules
+    rules:
+      # Service availability alerts
+      - alert: ServiceDown
+        expr: up == 0
+        for: 2m
+        labels:
+          severity: critical
+          team: guardian
+        annotations:
+          summary: "{{ $labels.instance }} of {{ $labels.job }} is down"
+          description: "{{ $labels.instance }} of {{ $labels.job }} has been down for more than 2 minutes."
+          hackathon_impact: "High - Core service unavailable"
+
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{status=~"5.."}[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          team: guardian
+        annotations:
+          summary: "High error rate detected"
+          description: "Error rate is {{ $value }} errors per second for {{ $labels.job }}"
+          hackathon_impact: "Medium - User experience degraded"
+
+      # Resource utilization alerts  
+      - alert: HighMemoryUsage
+        expr: (container_memory_usage_bytes / container_spec_memory_limit_bytes) > 0.9
+        for: 10m
+        labels:
+          severity: warning
+          team: guardian
+        annotations:
+          summary: "High memory usage on {{ $labels.name }}"
+          description: "Container {{ $labels.name }} is using {{ $value | humanizePercentage }} of available memory"
+          hackathon_impact: "Medium - Performance degradation possible"
+
+      - alert: HighCPUUsage
+        expr: rate(container_cpu_usage_seconds_total[5m]) > 0.8
+        for: 15m
+        labels:
+          severity: warning
+          team: guardian
+        annotations:
+          summary: "High CPU usage on {{ $labels.name }}"
+          description: "Container {{ $labels.name }} is using {{ $value | humanizePercentage }} of available CPU"
+          hackathon_impact: "Medium - System may become sluggish"
+
+      - alert: LowDiskSpace
+        expr: (node_filesystem_avail_bytes / node_filesystem_size_bytes) < 0.1
+        for: 5m
+        labels:
+          severity: critical
+          team: guardian
+        annotations:
+          summary: "Low disk space on {{ $labels.instance }}"
+          description: "Disk space is below 10% on {{ $labels.instance }}"
+          hackathon_impact: "High - System may crash or become unusable"
+
+      # Container-specific alerts
+      - alert: ContainerRestartLoop
+        expr: rate(container_start_time_seconds[15m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          team: guardian
+        annotations:
+          summary: "Container {{ $labels.name }} is restarting frequently"
+          description: "Container {{ $labels.name }} has restarted {{ $value }} times in the last 15 minutes"
+          hackathon_impact: "High - Service instability"
+
+      - alert: PodCrashLooping
+        expr: rate(kube_pod_container_status_restarts_total[15m]) > 0
+        for: 5m
+        labels:
+          severity: critical
+          team: guardian
+        annotations:
+          summary: "Pod {{ $labels.pod }} is crash looping"
+          description: "Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} is restarting frequently"
+          hackathon_impact: "High - Core functionality broken"
+
+      # ML Toolkit specific alerts
+      - alert: JupyterKernelDead
+        expr: absent(up{job="ml-toolkit"})
+        for: 5m
+        labels:
+          severity: warning
+          team: ml-guardian
+        annotations:
+          summary: "Jupyter Lab kernel appears to be dead"
+          description: "ML Toolkit Jupyter Lab is not responding"
+          hackathon_impact: "High - ML development blocked"
+
+      # Guardian Service alerts
+      - alert: GuardianServiceUnhealthy
+        expr: absent(up{job="guardian-service"})
+        for: 3m
+        labels:
+          severity: warning
+          team: guardian
+        annotations:
+          summary: "Guardian Character Service is unhealthy"
+          description: "Guardian gamification service is not responding"
+          hackathon_impact: "Medium - Team building features unavailable"
+
+      # Redis alerts
+      - alert: RedisConnectionFailure
+        expr: redis_connected_clients == 0
+        for: 5m
+        labels:
+          severity: critical
+          team: guardian
+        annotations:
+          summary: "Redis has no connected clients"
+          description: "Redis appears to be isolated or failing"
+          hackathon_impact: "High - Session and cache data unavailable"
+
+      # Registry alerts
+      - alert: RegistryUnavailable
+        expr: absent(up{job="registry"})
+        for: 2m
+        labels:
+          severity: critical
+          team: container-guardian
+        annotations:
+          summary: "Container registry is unavailable"
+          description: "Local container registry is not accessible"
+          hackathon_impact: "Critical - Container deployment blocked"
+
+      # Network and connectivity alerts
+      - alert: HighNetworkLatency
+        expr: ping_rtt_ms > 1000
+        for: 5m
+        labels:
+          severity: warning
+          team: guardian
+        annotations:
+          summary: "High network latency detected"
+          description: "Network latency is {{ $value }}ms"
+          hackathon_impact: "Low - Slower response times"
+
+      # Hackathon-specific alerts
+      - alert: DemoModeActive
+        expr: label_replace(up{job=~".*"}, "mode", "demo", "instance", ".*demo.*")
+        for: 1m
+        labels:
+          severity: info
+          team: guardian
+        annotations:
+          summary: "Demo mode is active"
+          description: "System is running in demonstration mode"
+          hackathon_impact: "Info - Limited functionality for demo purposes"
+
+      - alert: OfflineModeDetected
+        expr: absent(up{job="external-connectivity"})
+        for: 10m
+        labels:
+          severity: info
+          team: guardian
+        annotations:
+          summary: "System appears to be in offline mode"
+          description: "No external connectivity detected - this is normal for offline-first operation"
+          hackathon_impact: "Info - Operating as designed for offline scenarios"
+
+  # Guardian team alerts
+  - name: guardian-team.rules
+    rules:
+      - alert: TeamMemberNeeded
+        expr: absent(up{job="discord-bot"})
+        for: 5m
+        labels:
+          severity: info
+          team: coordination-guardian
+        annotations:
+          summary: "Team coordination bot offline"
+          description: "Discord bot for team coordination is not running"
+          hackathon_impact: "Medium - Reduced team communication efficiency"
+          guardian_suggestion: "Team Coordination Guardian needed!"
+
+      - alert: ContainerExpertiseNeeded
+        expr: rate(container_start_time_seconds[30m]) > 0.2
+        for: 10m
+        labels:
+          severity: info
+          team: container-guardian
+        annotations:
+          summary: "Frequent container restarts detected"
+          description: "Containers are restarting frequently, may need expert attention"
+          hackathon_impact: "Medium - System instability"
+          guardian_suggestion: "Container Guardian or Orchestration Guardian needed!"
+
+      - alert: MLWorkloadStress
+        expr: rate(container_cpu_usage_seconds_total{name=~".*ml.*"}[10m]) > 0.9
+        for: 15m
+        labels:
+          severity: info
+          team: ml-guardian
+        annotations:
+          summary: "ML workload under stress"
+          description: "Machine learning containers are under high load"
+          hackathon_impact: "Medium - ML training may be slow"
+          guardian_suggestion: "Federated Learner Guardian needed for optimization!"

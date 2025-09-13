@@ -1,0 +1,426 @@
+# Production Services and Networking for Offline Guard
+# Implements secure service mesh and load balancing
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-demo-prod-service
+  namespace: offline-guard-prod
+  labels:
+    app: offline-guard
+    component: frontend
+    environment: production
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "arn:aws:acm:us-west-2:123456789012:certificate/12345678-1234-1234-1234-123456789012"
+    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
+spec:
+  type: LoadBalancer
+  selector:
+    app: offline-guard
+    component: frontend
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+    protocol: TCP
+  - name: https
+    port: 443
+    targetPort: 8080
+    protocol: TCP
+  sessionAffinity: ClientIP
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 10800
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: guardian-service-prod
+  namespace: offline-guard-prod
+  labels:
+    app: offline-guard
+    component: guardian
+    environment: production
+spec:
+  type: ClusterIP
+  selector:
+    app: offline-guard
+    component: guardian
+  ports:
+  - name: api
+    port: 3001
+    targetPort: 3001
+    protocol: TCP
+  sessionAffinity: ClientIP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ml-toolkit-prod-service
+  namespace: offline-guard-prod
+  labels:
+    app: offline-guard
+    component: ml
+    environment: production
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-internal: "true"
+spec:
+  type: LoadBalancer
+  selector:
+    app: offline-guard
+    component: ml
+  ports:
+  - name: jupyter
+    port: 8888
+    targetPort: 8888
+    protocol: TCP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-headless
+  namespace: offline-guard-prod
+  labels:
+    app: offline-guard
+    component: cache
+    environment: production
+spec:
+  type: ClusterIP
+  clusterIP: None
+  selector:
+    app: offline-guard
+    component: cache
+  ports:
+  - name: redis
+    port: 6379
+    targetPort: 6379
+    protocol: TCP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-prod-service
+  namespace: offline-guard-prod
+  labels:
+    app: offline-guard
+    component: cache
+    environment: production
+spec:
+  type: ClusterIP
+  selector:
+    app: offline-guard
+    component: cache
+  ports:
+  - name: redis
+    port: 6379
+    targetPort: 6379
+    protocol: TCP
+
+---
+# Production Ingress with security features
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: offline-guard-prod-ingress
+  namespace: offline-guard-prod
+  labels:
+    app: offline-guard
+    environment: production
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/secure-backends: "false"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    
+    # Security headers
+    nginx.ingress.kubernetes.io/server-snippet: |
+      add_header X-Frame-Options "SAMEORIGIN" always;
+      add_header X-Content-Type-Options "nosniff" always;
+      add_header X-XSS-Protection "1; mode=block" always;
+      add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+      add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';" always;
+      add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+    
+    # Rate limiting
+    nginx.ingress.kubernetes.io/rate-limit: "100"
+    nginx.ingress.kubernetes.io/rate-limit-window: "1m"
+    nginx.ingress.kubernetes.io/rate-limit-connections: "10"
+    
+    # CORS for hackathon development
+    nginx.ingress.kubernetes.io/cors-allow-origin: "https://offline-guard.dev, https://www.offline-guard.dev"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, OPTIONS"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization"
+    
+    # Web Application Firewall
+    nginx.ingress.kubernetes.io/modsecurity-transaction-id: "$request_id"
+    nginx.ingress.kubernetes.io/modsecurity-snippet: |
+      SecRuleEngine On
+      SecRequestBodyAccess On
+      SecRule REQUEST_HEADERS:Content-Type "(?:application(?:/soap\+|/)|text/)xml" \
+           "id:'200000',phase:1,t:none,t:lowercase,pass,nolog,ctl:requestBodyProcessor=XML"
+      SecRule REQUEST_HEADERS:Content-Type "application/json" \
+           "id:'200001',phase:1,t:none,t:lowercase,pass,nolog,ctl:requestBodyProcessor=JSON"
+      SecRule REQBODY_ERROR "!@eq 0" \
+          "id:'200002', phase:2,t:none,log,deny,status:400,msg:'Failed to parse request body.',logdata:'Error %{REQBODY_ERROR_MSG}',severity:2"
+           
+spec:
+  tls:
+  - hosts:
+    - offline-guard.dev
+    - www.offline-guard.dev
+    - api.offline-guard.dev
+    - ml.offline-guard.dev
+    secretName: offline-guard-prod-tls
+  rules:
+  - host: offline-guard.dev
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: web-demo-prod-service
+            port:
+              number: 80
+  - host: www.offline-guard.dev
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: web-demo-prod-service
+            port:
+              number: 80
+  - host: api.offline-guard.dev
+    http:
+      paths:
+      - path: /guardian
+        pathType: Prefix
+        backend:
+          service:
+            name: guardian-service-prod
+            port:
+              number: 3001
+  - host: ml.offline-guard.dev
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: ml-toolkit-prod-service
+            port:
+              number: 8888
+
+---
+# Service Monitor for Prometheus monitoring
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: offline-guard-metrics
+  namespace: offline-guard-prod
+  labels:
+    app: offline-guard
+    monitoring: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: offline-guard
+  endpoints:
+  - port: metrics
+    interval: 30s
+    path: /metrics
+    scheme: http
+
+---
+# Persistent Volume Claims for production data
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ml-data-pvc
+  namespace: offline-guard-prod
+  labels:
+    app: offline-guard
+    component: storage
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: fast-ssd
+  resources:
+    requests:
+      storage: 100Gi
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: guardian-data-pvc
+  namespace: offline-guard-prod
+  labels:
+    app: offline-guard
+    component: storage
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: fast-ssd
+  resources:
+    requests:
+      storage: 20Gi
+
+---
+# Secrets for production (use external secret management)
+apiVersion: v1
+kind: Secret
+metadata:
+  name: guardian-secrets
+  namespace: offline-guard-prod
+  labels:
+    app: offline-guard
+    component: guardian
+type: Opaque
+stringData:
+  redis-url: "redis://:$(REDIS_PASSWORD)@redis-prod-service:6379"
+  secret-key: "CHANGE_IN_PRODUCTION_USE_EXTERNAL_SECRETS_MANAGER"
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ml-secrets
+  namespace: offline-guard-prod
+  labels:
+    app: offline-guard
+    component: ml
+type: Opaque
+stringData:
+  jupyter-token: "CHANGE_IN_PRODUCTION_USE_EXTERNAL_SECRETS_MANAGER"
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: redis-secrets
+  namespace: offline-guard-prod
+  labels:
+    app: offline-guard
+    component: cache
+type: Opaque
+stringData:
+  password: "CHANGE_IN_PRODUCTION_USE_EXTERNAL_SECRETS_MANAGER"
+
+---
+# Certificate for TLS termination
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: offline-guard-prod-cert
+  namespace: offline-guard-prod
+spec:
+  secretName: offline-guard-prod-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+  - offline-guard.dev
+  - www.offline-guard.dev
+  - api.offline-guard.dev
+  - ml.offline-guard.dev
+
+---
+# Cluster Issuer for Let's Encrypt certificates
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: security@offline-guard.dev
+    privateKeySecretRef:
+      name: letsencrypt-prod-private-key
+    solvers:
+    - http01:
+        ingress:
+          class: nginx
+
+---
+# PrometheusRule for alerting
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: offline-guard-alerts
+  namespace: offline-guard-prod
+  labels:
+    app: offline-guard
+    prometheus: kube-prometheus
+spec:
+  groups:
+  - name: offline-guard.rules
+    rules:
+    - alert: OfflineGuardPodCrashLooping
+      expr: rate(kube_pod_container_status_restarts_total{namespace="offline-guard-prod"}[15m]) > 0
+      for: 0m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Offline Guard pod {{ $labels.pod }} is crash looping"
+        description: "Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} is restarting {{ $value }} times per second"
+        
+    - alert: OfflineGuardServiceDown
+      expr: up{job="offline-guard-metrics"} == 0
+      for: 5m
+      labels:
+        severity: critical
+      annotations:
+        summary: "Offline Guard service is down"
+        description: "Offline Guard service has been down for more than 5 minutes"
+        
+    - alert: OfflineGuardHighMemoryUsage
+      expr: container_memory_usage_bytes{namespace="offline-guard-prod"} / container_spec_memory_limit_bytes{namespace="offline-guard-prod"} > 0.9
+      for: 10m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Offline Guard container high memory usage"
+        description: "Container {{ $labels.container }} in pod {{ $labels.pod }} is using {{ $value | humanizePercentage }} of memory"
+        
+    - alert: OfflineGuardHighCPUUsage
+      expr: rate(container_cpu_usage_seconds_total{namespace="offline-guard-prod"}[5m]) > 0.8
+      for: 15m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Offline Guard container high CPU usage"
+        description: "Container {{ $labels.container }} in pod {{ $labels.pod }} is using {{ $value | humanizePercentage }} of CPU"
+
+---
+# VPA for automatic resource optimization
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: web-demo-vpa
+  namespace: offline-guard-prod
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: web-demo-prod
+  updatePolicy:
+    updateMode: "Auto"
+  resourcePolicy:
+    containerPolicies:
+    - containerName: web-demo
+      maxAllowed:
+        memory: 1Gi
+        cpu: 1
+      minAllowed:
+        memory: 128Mi
+        cpu: 250m

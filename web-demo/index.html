@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline Guard - Web Demo</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#667eea">
+    <link rel="icon" href="assets/favicon.ico">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .status-card {
+            background: rgba(255,255,255,0.15);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .status-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .status-indicator {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .online { background-color: #00ff00; }
+        .offline { background-color: #ff0000; }
+        .warning { background-color: #ffaa00; }
+        
+        .guardian-section {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 25px 0;
+        }
+        
+        .guardian-avatar {
+            font-size: 4rem;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+        }
+        
+        .btn {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .qr-display {
+            background: white;
+            color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-family: monospace;
+            font-size: 0.9rem;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+        
+        .demo-log {
+            background: #1a1a1a;
+            color: #00ff00;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            height: 200px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+        
+        .offline-mode-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 0, 0, 0.1);
+            backdrop-filter: blur(2px);
+            display: none;
+            z-index: 1000;
+            pointer-events: none;
+        }
+        
+        .judge-notes {
+            background: #ffd93d;
+            color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .judge-notes h3 {
+            margin-bottom: 10px;
+        }
+        
+        @media (max-width: 600px) {
+            .controls {
+                grid-template-columns: 1fr;
+            }
+            
+            .status-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛡️ Offline Guard</h1>
+            <p>Web Demo - Simulating Mobile App Experience</p>
+        </div>
+        
+        <div class="judge-notes">
+            <h3>🏆 For Judges: What You're Seeing</h3>
+            <p>This web demo simulates the mobile app experience. In production, this would be a native Android APK with full offline capabilities, camera integration, and hardware-level security.</p>
+        </div>
+        
+        <div class="status-grid">
+            <div class="status-card">
+                <div class="status-indicator online" id="network-indicator"></div>
+                <h3>Network Status</h3>
+                <p id="network-status">Online</p>
+            </div>
+            
+            <div class="status-card">
+                <div class="status-indicator" id="guardian-indicator"></div>
+                <h3>Guardian Status</h3>
+                <p id="guardian-status">Monitoring</p>
+            </div>
+            
+            <div class="status-card">
+                <div class="status-indicator" id="safe-mode-indicator"></div>
+                <h3>Safe Mode</h3>
+                <p id="safe-mode-status">Inactive</p>
+            </div>
+        </div>
+        
+        <div class="guardian-section">
+            <div class="guardian-avatar">🔐</div>
+            <h3 id="guardian-name">CryptoGuardian-001</h3>
+            <p>Guardian Class: <span id="guardian-class">Security Specialist</span></p>
+            <p>Level: <span id="guardian-level">3</span> | Offline Hours: <span id="offline-hours">47.2</span></p>
+            <p>Proofs Generated: <span id="proofs-generated">15</span></p>
+        </div>
+        
+        <div class="controls">
+            <button class="btn" onclick="simulateOffline()">📶 Simulate Offline</button>
+            <button class="btn" onclick="generateQRProof()" id="qr-btn" disabled>📱 Generate QR Proof</button>
+            <button class="btn" onclick="toggleSafeMode()">🔒 Toggle Safe Mode</button>
+            <button class="btn" onclick="scanQR()">📷 Scan QR (Sim)</button>
+            <button class="btn" onclick="showFlowerIntegration()">🌸 FL Demo</button>
+            <button class="btn" onclick="evolveGuardian()">⬆️ Evolve Guardian</button>
+        </div>
+        
+        <div class="qr-display" id="qr-display">
+            <h4>🔐 Generated QR Proof:</h4>
+            <div id="qr-content"></div>
+        </div>
+        
+        <div class="demo-log" id="demo-log">
+$ offline-guard-web-demo initialized
+🛡️ Guardian CryptoGuardian-001 online
+📡 Network monitoring active
+⚖️ Judge Demo Mode: ON
+        </div>
+    </div>
+    
+    <div class="offline-mode-overlay" id="offline-overlay"></div>
+    
+    <script>
+        let isOffline = false;
+        let safeModeActive = false;
+        let guardianLevel = 3;
+        let offlineStartTime = null;
+        let proofsGenerated = 15;
+        
+        function log(message) {
+            const logElement = document.getElementById('demo-log');
+            logElement.innerHTML += `\n${new Date().toLocaleTimeString()} - ${message}`;
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+        
+        function updateUI() {
+            const networkIndicator = document.getElementById('network-indicator');
+            const networkStatus = document.getElementById('network-status');
+            const guardianIndicator = document.getElementById('guardian-indicator');
+            const guardianStatus = document.getElementById('guardian-status');
+            const qrBtn = document.getElementById('qr-btn');
+            const overlay = document.getElementById('offline-overlay');
+            
+            if (isOffline) {
+                networkIndicator.className = 'status-indicator offline';
+                networkStatus.textContent = 'Offline';
+                guardianIndicator.className = 'status-indicator warning';
+                guardianStatus.textContent = 'Offline Guard Active';
+                qrBtn.disabled = false;
+                overlay.style.display = 'block';
+            } else {
+                networkIndicator.className = 'status-indicator online';
+                networkStatus.textContent = 'Online';
+                guardianIndicator.className = 'status-indicator online';
+                guardianStatus.textContent = 'Monitoring';
+                qrBtn.disabled = true;
+                overlay.style.display = 'none';
+            }
+        }
+        
+        function simulateOffline() {
+            isOffline = !isOffline;
+            
+            if (isOffline) {
+                offlineStartTime = Date.now();
+                log('🔴 Network disconnected - Offline Guard activated');
+                log('🛡️ Safe mode protocols engaged');
+                log('📱 QR proof generation enabled');
+            } else {
+                if (offlineStartTime) {
+                    const duration = Math.floor((Date.now() - offlineStartTime) / 1000);
+                    log(`🟢 Network reconnected - Offline duration: ${duration}s`);
+                    log('💰 Guardian rewarded for offline time');
+                    
+                    // Evolve guardian based on offline time
+                    if (duration > 30) {
+                        guardianLevel++;
+                        document.getElementById('guardian-level').textContent = guardianLevel;
+                        log(`⬆️ Guardian evolved to Level ${guardianLevel}`);
+                    }
+                }
+                offlineStartTime = null;
+            }
+            
+            updateUI();
+        }
+        
+        function generateQRProof() {
+            if (!isOffline) {
+                log('❌ Device must be offline to generate proof');
+                return;
+            }
+            
+            const duration = offlineStartTime ? Math.floor((Date.now() - offlineStartTime) / 1000) : 0;
+            const proof = {
+                guardian_id: "CryptoGuardian-001",
+                timestamp: Date.now(),
+                offline_duration: duration,
+                signature: "0x" + Math.random().toString(16).substr(2, 32),
+                proof_type: "offline_verification",
+                guardian_level: guardianLevel
+            };
+            
+            const qrData = JSON.stringify(proof, null, 2);
+            
+            document.getElementById('qr-content').textContent = qrData;
+            document.getElementById('qr-display').style.display = 'block';
+            
+            proofsGenerated++;
+            document.getElementById('proofs-generated').textContent = proofsGenerated;
+            
+            log('✅ QR proof generated successfully');
+            log('📱 Ready for Pi verifier scanning');
+            log(`🎯 Proof #${proofsGenerated} - Duration: ${duration}s`);
+        }
+        
+        function toggleSafeMode() {
+            safeModeActive = !safeModeActive;
+            const indicator = document.getElementById('safe-mode-indicator');
+            const status = document.getElementById('safe-mode-status');
+            
+            if (safeModeActive) {
+                indicator.className = 'status-indicator offline';
+                status.textContent = 'Active';
+                log('🔒 Safe mode activated - Device locked down');
+            } else {
+                indicator.className = 'status-indicator';
+                status.textContent = 'Inactive';
+                log('🔓 Safe mode deactivated');
+            }
+        }
+        
+        function scanQR() {
+            log('📷 QR scanner activated');
+            log('🔍 Simulating camera scan...');
+            
+            setTimeout(() => {
+                log('📋 QR code detected and decoded');
+                log('🔐 Verifying cryptographic signature...');
+                
+                setTimeout(() => {
+                    log('✅ PROOF VALID - Verified by ghost device');
+                    log('🔓 Unlock token: GRANT_ACCESS_' + Math.random().toString(16).substr(2, 8));
+                }, 1500);
+            }, 1000);
+        }
+        
+        function showFlowerIntegration() {
+            log('🌸 Starting Flower federated learning demo...');
+            log('🤖 Guardian model: accuracy=94.2%');
+            log('📡 Connecting to FL server...');
+            
+            setTimeout(() => {
+                log('✅ Connected to federated network');
+                log('🔄 Training round 47 beginning...');
+                log('📊 Local training complete - loss: 0.023');
+                log('🌐 Sharing model updates via QR (offline mode)');
+                log('🎯 New global accuracy: 95.1%');
+            }, 2000);
+        }
+        
+        function evolveGuardian() {
+            guardianLevel++;
+            document.getElementById('guardian-level').textContent = guardianLevel;
+            
+            const newHours = (parseFloat(document.getElementById('offline-hours').textContent) + Math.random() * 10).toFixed(1);
+            document.getElementById('offline-hours').textContent = newHours;
+            
+            log(`⬆️ Guardian evolved to Level ${guardianLevel}`);
+            log('✨ New abilities unlocked: Enhanced crypto protocols');
+            log('🎨 Guardian NFT updated with new traits');
+        }
+        
+        // Initialize
+        updateUI();
+        log('🚀 Offline Guard web demo ready');
+        log('⚖️ Judge controls: All buttons simulate mobile app features');
+        
+        // Simulate some activity for demo
+        setInterval(() => {
+            if (isOffline && offlineStartTime) {
+                const duration = Math.floor((Date.now() - offlineStartTime) / 1000);
+                log(`📊 Offline duration: ${duration}s - Guardian gaining XP`);
+            }
+        }, 10000);
+        
+        // Service Worker registration for PWA
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(() => log('📱 PWA service worker registered'))
+                .catch(() => log('❌ Service worker registration failed'));
+        }
+    </script>
+</body>
+</html>

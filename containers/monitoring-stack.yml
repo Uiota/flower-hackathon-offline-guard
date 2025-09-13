@@ -1,0 +1,273 @@
+# Container Monitoring and Observability Stack for Offline Guard
+# Lightweight monitoring perfect for hackathon development and production
+
+version: '3.8'
+
+# Shared monitoring configuration
+x-monitoring-defaults: &monitoring-defaults
+  restart: unless-stopped
+  networks:
+    - monitoring
+    - offline-guard
+  labels:
+    - "app=offline-guard"
+    - "component=monitoring"
+
+services:
+  # Prometheus - Metrics collection
+  prometheus:
+    <<: *monitoring-defaults
+    image: prom/prometheus:v2.47.0
+    container_name: offline-guard-prometheus
+    ports:
+      - "9090:9090"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=30d'
+      - '--storage.tsdb.retention.size=10GB'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+      - '--web.enable-admin-api'
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro,Z
+      - ./monitoring/prometheus/rules/:/etc/prometheus/rules/:ro,Z
+      - prometheus-data:/prometheus
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9090/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    labels:
+      - "app=offline-guard"
+      - "component=metrics"
+      - "guardian.role=platform-guardian"
+
+  # Grafana - Visualization and dashboards
+  grafana:
+    <<: *monitoring-defaults
+    image: grafana/grafana:10.1.0
+    container_name: offline-guard-grafana
+    ports:
+      - "3002:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=guardian
+      - GF_SECURITY_ADMIN_PASSWORD=hackathon2025
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_SECURITY_ALLOW_EMBEDDING=true
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
+      - GF_INSTALL_PLUGINS=grafana-piechart-panel,grafana-worldmap-panel
+      - GF_SERVER_DOMAIN=localhost
+      - GF_SERVER_ROOT_URL=http://localhost:3002
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro,Z
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro,Z
+      - grafana-data:/var/lib/grafana
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    depends_on:
+      - prometheus
+    labels:
+      - "app=offline-guard"
+      - "component=visualization"
+      - "guardian.role=ux-guardian"
+
+  # Jaeger - Distributed tracing
+  jaeger:
+    <<: *monitoring-defaults
+    image: jaegertracing/all-in-one:1.48
+    container_name: offline-guard-jaeger
+    ports:
+      - "16686:16686"  # Jaeger UI
+      - "14250:14250"  # gRPC
+      - "14268:14268"  # HTTP
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+      - COLLECTOR_ZIPKIN_HOST_PORT=9411
+    volumes:
+      - jaeger-data:/tmp
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:16686/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    labels:
+      - "app=offline-guard"
+      - "component=tracing"
+      - "guardian.role=platform-guardian"
+
+  # Node Exporter - Host metrics
+  node-exporter:
+    <<: *monitoring-defaults
+    image: prom/node-exporter:v1.6.1
+    container_name: offline-guard-node-exporter
+    ports:
+      - "9100:9100"
+    command:
+      - '--path.rootfs=/host'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    volumes:
+      - /:/host:ro,rslave
+    pid: host
+    labels:
+      - "app=offline-guard"
+      - "component=host-metrics"
+
+  # cAdvisor - Container metrics
+  cadvisor:
+    <<: *monitoring-defaults
+    image: gcr.io/cadvisor/cadvisor:v0.47.0
+    container_name: offline-guard-cadvisor
+    ports:
+      - "8081:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/containers/:/var/lib/containers:ro
+      - /dev/disk/:/dev/disk:ro
+    privileged: true
+    devices:
+      - /dev/kmsg:/dev/kmsg
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    labels:
+      - "app=offline-guard" 
+      - "component=container-metrics"
+
+  # Loki - Log aggregation (lightweight)
+  loki:
+    <<: *monitoring-defaults
+    image: grafana/loki:2.9.0
+    container_name: offline-guard-loki
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - ./monitoring/loki/loki-config.yaml:/etc/loki/local-config.yaml:ro,Z
+      - loki-data:/tmp/loki
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3100/ready"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    labels:
+      - "app=offline-guard"
+      - "component=logs"
+
+  # Promtail - Log collection
+  promtail:
+    <<: *monitoring-defaults
+    image: grafana/promtail:2.9.0
+    container_name: offline-guard-promtail
+    volumes:
+      - ./monitoring/promtail/promtail-config.yaml:/etc/promtail/config.yml:ro,Z
+      - /var/log/containers:/var/log/containers:ro
+      - /var/log/pods:/var/log/pods:ro
+      - /var/lib/containers/storage/overlay-containers/*/userdata/ctr.log:/var/log/podman/:ro
+    command: -config.file=/etc/promtail/config.yml
+    depends_on:
+      - loki
+    labels:
+      - "app=offline-guard"
+      - "component=log-collection"
+
+  # AlertManager - Alert handling
+  alertmanager:
+    <<: *monitoring-defaults
+    image: prom/alertmanager:v0.26.0
+    container_name: offline-guard-alertmanager
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./monitoring/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro,Z
+      - alertmanager-data:/alertmanager
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - '--storage.path=/alertmanager'
+      - '--web.external-url=http://localhost:9093'
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9093/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    depends_on:
+      - prometheus
+    labels:
+      - "app=offline-guard"
+      - "component=alerting"
+
+  # Uptime Kuma - Uptime monitoring with beautiful UI
+  uptime-kuma:
+    <<: *monitoring-defaults
+    image: louislam/uptime-kuma:1
+    container_name: offline-guard-uptime
+    ports:
+      - "3003:3001"
+    volumes:
+      - uptime-data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    labels:
+      - "app=offline-guard"
+      - "component=uptime"
+      - "guardian.role=team-coordinator"
+
+networks:
+  monitoring:
+    driver: bridge
+    name: offline-guard-monitoring
+    ipam:
+      config:
+        - subnet: 172.23.0.0/24
+  offline-guard:
+    external: true
+
+volumes:
+  prometheus-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/data/prometheus-data
+  grafana-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/data/grafana-data
+  jaeger-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/data/jaeger-data
+  loki-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind  
+      device: ${PWD}/data/loki-data
+  alertmanager-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/data/alertmanager-data
+  uptime-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/data/uptime-data

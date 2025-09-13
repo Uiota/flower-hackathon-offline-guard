@@ -1,0 +1,228 @@
+# Podman Rootless Security Configuration for Offline Guard
+# Optimized for sovereign computing and hackathon team collaboration
+
+# Container Security Standards
+security_defaults:
+  # Rootless execution (no privileged containers)
+  privileged: false
+  
+  # Security contexts
+  read_only_root: true
+  no_new_privileges: true
+  
+  # User namespaces for isolation
+  user_ns_mode: "keep-id:uid=1001,gid=1001"
+  
+  # Network security
+  dns_servers:
+    - "1.1.1.1"    # Cloudflare (privacy-focused)
+    - "8.8.8.8"    # Google (reliability)
+    - "127.0.0.1"  # Local fallback for offline mode
+  
+  # Resource limits for hackathon laptops
+  memory_limit: "2g"
+  cpu_limit: "2.0"
+  pids_limit: 1024
+  
+  # Capability dropping (principle of least privilege)
+  drop_capabilities:
+    - "ALL"
+  add_capabilities:
+    - "CHOWN"      # For file ownership in containers
+    - "DAC_OVERRIDE" # For writing to bind mounts
+    - "NET_BIND_SERVICE" # For binding to ports < 1024
+
+# Service-specific security profiles
+services:
+  web-demo:
+    # Static content server - minimal privileges
+    security_opt:
+      - "no-new-privileges=true"
+      - "seccomp=unconfined"  # Nginx needs some syscalls
+    tmpfs:
+      - "/tmp:rw,noexec,nosuid,size=100m"
+      - "/var/cache/nginx:rw,noexec,nosuid,size=50m"
+    volumes_security:
+      - "ro,Z"  # Read-only with SELinux labels
+    
+  discord-bot:
+    # Network client - controlled networking
+    security_opt:
+      - "no-new-privileges=true"
+      - "seccomp=default"
+    tmpfs:
+      - "/tmp:rw,noexec,nosuid,size=100m"
+    network_policy: "restricted"
+    dns_policy: "custom"
+    
+  ml-toolkit:
+    # ML workload - needs more resources but still constrained
+    security_opt:
+      - "no-new-privileges=true"
+      - "seccomp=default"
+    tmpfs:
+      - "/tmp:rw,noexec,nosuid,size=1g"
+    memory_limit: "4g"  # ML needs more RAM
+    volumes_security:
+      - "Z"  # SELinux labels for data volumes
+      
+  guardian-service:
+    # API service - network-restricted
+    security_opt:
+      - "no-new-privileges=true" 
+      - "seccomp=default"
+    tmpfs:
+      - "/tmp:rw,noexec,nosuid,size=100m"
+    network_policy: "backend-only"
+    
+  redis:
+    # Data store - filesystem protection
+    security_opt:
+      - "no-new-privileges=true"
+      - "seccomp=default"
+    tmpfs:
+      - "/tmp:rw,noexec,nosuid,size=50m"
+    volumes_security:
+      - "Z"  # SELinux for data persistence
+      
+  gitea:
+    # Git server - SSH and HTTP access
+    security_opt:
+      - "no-new-privileges=true"
+      - "seccomp=unconfined"  # SSH needs additional syscalls
+    tmpfs:
+      - "/tmp:rw,noexec,nosuid,size=200m"
+    volumes_security:
+      - "Z"
+    ports_security: "restricted"  # Only 3000 and 2222
+
+# Network Security Policies
+networks:
+  offline-guard:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: "og-bridge"
+    ipam:
+      config:
+        - subnet: "172.20.0.0/16"
+          gateway: "172.20.0.1"
+    # Internal communication only by default
+    internal: false  # Allow external for demo purposes
+    
+  backend-only:
+    driver: bridge
+    internal: true  # No external network access
+    ipam:
+      config:
+        - subnet: "172.21.0.0/16"
+
+# Volume Security Configuration  
+volumes:
+  ml-data:
+    driver: local
+    driver_opts:
+      type: tmpfs
+      device: tmpfs
+      o: "size=5g,uid=1001,gid=1001,mode=0755"
+      
+  guardian-data:
+    driver: local
+    driver_opts:
+      type: tmpfs 
+      device: tmpfs
+      o: "size=1g,uid=1001,gid=1001,mode=0755"
+      
+  redis-data:
+    driver: local
+    driver_opts:
+      o: "uid=999,gid=999,mode=0700"  # Redis user
+      
+  gitea-data:
+    driver: local
+    driver_opts:
+      o: "uid=1000,gid=1000,mode=0755"  # Gitea user
+
+# Offline-First Configuration
+offline_mode:
+  # Container registry caching
+  registry_mirrors:
+    - "http://localhost:5000"  # Local registry for offline
+    - "docker.io"
+    
+  # DNS fallback for offline scenarios
+  dns_fallback:
+    enabled: true
+    hosts:
+      - "offline-guard.local:127.0.0.1"
+      - "ml-toolkit.local:172.20.0.3"
+      - "gitea.local:172.20.0.6"
+      
+  # Container startup order for offline
+  dependency_policy: "relaxed"  # Allow startup without all deps
+
+# Development Team Convenience
+development:
+  # Fast iteration settings
+  pull_policy: "missing"  # Don't pull if image exists
+  restart_policy: "unless-stopped"
+  
+  # Port mapping for team access
+  expose_ports:
+    web-demo: "8080:80"
+    ml-toolkit: "8888:8888" 
+    guardian-service: "3001:3001"
+    gitea: "3000:3000,2222:22"
+    
+  # Volume mounts for live development
+  live_mounts:
+    enabled: true
+    watch_paths:
+      - "./web-demo:/usr/share/nginx/html:ro,Z"
+      - "./team-building:/app/team-building:ro,Z"
+
+# Container Monitoring & Health
+monitoring:
+  healthcheck_defaults:
+    interval: "30s"
+    timeout: "10s"
+    start_period: "30s"
+    retries: 3
+    
+  logging:
+    driver: "journald"
+    options:
+      tag: "offline-guard-{{.Name}}"
+      
+  # Resource monitoring
+  stats_collection: true
+  auto_update: "registry"  # Check for updates
+
+# Security Scanning Configuration  
+scanning:
+  # Image vulnerability scanning
+  trivy_enabled: true
+  scan_on_build: true
+  
+  # Policy as code
+  opa_policies:
+    - "deny_root_user"
+    - "require_non_privileged"
+    - "limit_resources"
+    - "require_labels"
+    
+  # Container compliance
+  compliance_checks:
+    - "cis_docker_benchmark"
+    - "nist_800_53"
+
+# Multi-Architecture Support Ready
+architectures:
+  supported:
+    - "linux/amd64"  # Intel/AMD laptops
+    - "linux/arm64"  # Apple Silicon, Pi
+    - "linux/arm/v7"  # Older Pi models
+  
+  build_targets:
+    - "hackathon-laptop"  # Primary development
+    - "raspberry-pi"      # Edge deployment
+    - "cloud-production"   # Scale-out deployment

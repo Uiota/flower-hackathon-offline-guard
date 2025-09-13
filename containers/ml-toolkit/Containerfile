@@ -1,0 +1,32 @@
+FROM docker.io/python:3.11-slim
+
+WORKDIR /app
+
+# Install ML dependencies (CPU-only, no NVIDIA/CUDA)
+RUN pip install torch==2.0.1+cpu torchvision==0.15.2+cpu -f https://download.pytorch.org/whl/torch_stable.html && \
+    pip install tensorflow-cpu flwr jupyter pandas numpy scikit-learn
+
+# Copy UIOTA federation tools
+COPY uiota-federation/ ./uiota-federation/
+COPY team-building/ ./team-building/
+
+# Create startup script
+RUN cat > start-ml-toolkit.sh << 'SCRIPT'
+#!/bin/bash
+echo ""
+echo "🌸  OFFLINE GUARD ML TOOLKIT READY!"
+echo "🧠  Flower AI integration + UIOTA federation"
+echo ""
+echo "📊  Available tools:"
+echo "   🔧 flower-clone-downloader.py - Download complete FL ecosystem"
+echo "   🤖 ai1_flower_client.py - Guardian FL client"
+echo "   🌐 mesh-coordination.py - P2P team coordination"
+echo "   📓 jupyter notebook - Interactive ML development"
+echo ""
+echo "🚀  Starting Jupyter notebook server..."
+jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser --allow-root
+SCRIPT
+
+chmod +x start-ml-toolkit.sh
+
+CMD ["./start-ml-toolkit.sh"]

@@ -1,0 +1,727 @@
+# Production-Ready Kubernetes Security Hardening for Offline Guard
+# Implements defense-in-depth security for sovereign communication systems
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: offline-guard-prod
+  labels:
+    app.kubernetes.io/name: offline-guard
+    app.kubernetes.io/part-of: digital-sovereignty
+    security.hardened: "true"
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/warn: restricted
+  annotations:
+    team.guardian/container: "security-focused"
+    team.guardian/orchestration: "production-ready"
+    
+---
+# Network Security Policies
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: offline-guard-network-policy
+  namespace: offline-guard-prod
+spec:
+  podSelector:
+    matchLabels:
+      app: offline-guard
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: offline-guard
+    - namespaceSelector:
+        matchLabels:
+          name: ingress-system
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app: offline-guard
+  - to: []  # Allow external egress for package updates
+    ports:
+    - protocol: TCP
+      port: 443
+    - protocol: TCP  
+      port: 80
+    - protocol: UDP
+      port: 53
+
+---
+# Pod Security Policy (if using older K8s versions)
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: offline-guard-psp
+  namespace: offline-guard-prod
+spec:
+  privileged: false
+  allowPrivilegeEscalation: false
+  requiredDropCapabilities:
+    - ALL
+  volumes:
+    - 'configMap'
+    - 'emptyDir'
+    - 'projected'
+    - 'secret'
+    - 'downwardAPI'
+    - 'persistentVolumeClaim'
+  runAsUser:
+    rule: 'MustRunAsNonRoot'
+  seLinux:
+    rule: 'RunAsAny'
+  fsGroup:
+    rule: 'RunAsAny'
+
+---
+# Service Account with minimal permissions
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: offline-guard-sa
+  namespace: offline-guard-prod
+  labels:
+    app: offline-guard
+    security: hardened
+automountServiceAccountToken: false
+
+---
+# RBAC - Role with minimal permissions
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: offline-guard-prod
+  name: offline-guard-role
+rules:
+- apiGroups: [""]
+  resources: ["pods", "services", "configmaps"]
+  verbs: ["get", "list"]
+- apiGroups: ["apps"]
+  resources: ["deployments"]
+  verbs: ["get", "list"]
+
+---
+# RBAC - RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: offline-guard-rolebinding
+  namespace: offline-guard-prod
+subjects:
+- kind: ServiceAccount
+  name: offline-guard-sa
+  namespace: offline-guard-prod
+roleRef:
+  kind: Role
+  name: offline-guard-role
+  apiGroup: rbac.authorization.k8s.io
+
+---
+# Security Context Constraints (OpenShift)
+apiVersion: security.openshift.io/v1
+kind: SecurityContextConstraints
+metadata:
+  name: offline-guard-scc
+allowHostDirVolumePlugin: false
+allowHostIPC: false
+allowHostNetwork: false
+allowHostPID: false
+allowHostPorts: false
+allowPrivilegedContainer: false
+allowedCapabilities: null
+defaultAddCapabilities: null
+requiredDropCapabilities:
+- ALL
+fsGroup:
+  type: RunAsAny
+runAsUser:
+  type: MustRunAsNonRoot
+seLinuxContext:
+  type: RunAsAny
+volumes:
+- configMap
+- downwardAPI
+- emptyDir
+- persistentVolumeClaim
+- projected
+- secret
+
+---
+# Production Web Demo Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-demo-prod
+  namespace: offline-guard-prod
+  labels:
+    app: offline-guard
+    component: frontend
+    environment: production
+spec:
+  replicas: 3  # High availability
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: offline-guard
+      component: frontend
+  template:
+    metadata:
+      labels:
+        app: offline-guard
+        component: frontend
+      annotations:
+        container.apparmor.security.beta.kubernetes.io/web-demo: runtime/default
+        seccomp.security.alpha.kubernetes.io/pod: runtime/default
+    spec:
+      serviceAccountName: offline-guard-sa
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        runAsGroup: 1001
+        fsGroup: 1001
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+      - name: web-demo
+        image: ghcr.io/offline-guard/web-demo:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 1001
+          runAsGroup: 1001
+          capabilities:
+            drop:
+            - ALL
+          seccompProfile:
+            type: RuntimeDefault
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "250m"
+            ephemeral-storage: "1Gi"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+            ephemeral-storage: "2Gi"
+        volumeMounts:
+        - name: tmp-volume
+          mountPath: /tmp
+        - name: nginx-cache
+          mountPath: /var/cache/nginx
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+      volumes:
+      - name: tmp-volume
+        emptyDir:
+          sizeLimit: "100Mi"
+      - name: nginx-cache
+        emptyDir:
+          sizeLimit: "50Mi"
+      nodeSelector:
+        kubernetes.io/os: linux
+      tolerations:
+      - key: "node.kubernetes.io/not-ready"
+        operator: "Exists"
+        effect: "NoExecute"
+        tolerationSeconds: 300
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - offline-guard
+                - key: component
+                  operator: In
+                  values:
+                  - frontend
+              topologyKey: kubernetes.io/hostname
+
+---
+# Production Guardian Service Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: guardian-service-prod
+  namespace: offline-guard-prod
+  labels:
+    app: offline-guard
+    component: guardian
+    environment: production
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: offline-guard
+      component: guardian
+  template:
+    metadata:
+      labels:
+        app: offline-guard
+        component: guardian
+      annotations:
+        container.apparmor.security.beta.kubernetes.io/guardian-service: runtime/default
+        seccomp.security.alpha.kubernetes.io/pod: runtime/default
+    spec:
+      serviceAccountName: offline-guard-sa
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        runAsGroup: 1001
+        fsGroup: 1001
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+      - name: guardian-service
+        image: ghcr.io/offline-guard/guardian-service:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3001
+          name: http
+          protocol: TCP
+        env:
+        - name: NODE_ENV
+          value: "production"
+        - name: REDIS_URL
+          valueFrom:
+            secretKeyRef:
+              name: guardian-secrets
+              key: redis-url
+        - name: GUARDIAN_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: guardian-secrets
+              key: secret-key
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 1001
+          runAsGroup: 1001
+          capabilities:
+            drop:
+            - ALL
+          seccompProfile:
+            type: RuntimeDefault
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+            ephemeral-storage: "1Gi"
+          limits:
+            memory: "512Mi"
+            cpu: "500m" 
+            ephemeral-storage: "2Gi"
+        volumeMounts:
+        - name: tmp-volume
+          mountPath: /tmp
+        - name: app-data
+          mountPath: /app/data
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3001
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3001
+          initialDelaySeconds: 15
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+      volumes:
+      - name: tmp-volume
+        emptyDir:
+          sizeLimit: "100Mi"
+      - name: app-data
+        persistentVolumeClaim:
+          claimName: guardian-data-pvc
+      nodeSelector:
+        kubernetes.io/os: linux
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: component
+                  operator: In
+                  values:
+                  - guardian
+              topologyKey: kubernetes.io/hostname
+
+---
+# ML Toolkit Production Deployment
+apiVersion: apps/v1
+kind: Deployment  
+metadata:
+  name: ml-toolkit-prod
+  namespace: offline-guard-prod
+  labels:
+    app: offline-guard
+    component: ml
+    environment: production
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 0  # ML workloads are resource-intensive
+  selector:
+    matchLabels:
+      app: offline-guard
+      component: ml
+  template:
+    metadata:
+      labels:
+        app: offline-guard
+        component: ml
+      annotations:
+        container.apparmor.security.beta.kubernetes.io/ml-toolkit: runtime/default
+        seccomp.security.alpha.kubernetes.io/pod: runtime/default
+    spec:
+      serviceAccountName: offline-guard-sa
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        runAsGroup: 1001
+        fsGroup: 1001
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+      - name: ml-toolkit
+        image: ghcr.io/offline-guard/ml-toolkit:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8888
+          name: jupyter
+          protocol: TCP
+        env:
+        - name: JUPYTER_ENABLE_LAB
+          value: "yes"
+        - name: JUPYTER_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: ml-secrets
+              key: jupyter-token
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 1001
+          runAsGroup: 1001
+          capabilities:
+            drop:
+            - ALL
+          seccompProfile:
+            type: RuntimeDefault
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "1000m"
+            ephemeral-storage: "2Gi"
+          limits:
+            memory: "4Gi" 
+            cpu: "2000m"
+            ephemeral-storage: "10Gi"
+        volumeMounts:
+        - name: tmp-volume
+          mountPath: /tmp
+        - name: ml-data
+          mountPath: /app/data
+        - name: jupyter-config
+          mountPath: /home/mluser/.jupyter
+        livenessProbe:
+          httpGet:
+            path: /api
+            port: 8888
+          initialDelaySeconds: 120
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /api
+            port: 8888
+          initialDelaySeconds: 60
+          periodSeconds: 15
+          timeoutSeconds: 5
+          failureThreshold: 3
+      volumes:
+      - name: tmp-volume
+        emptyDir:
+          sizeLimit: "1Gi"
+      - name: ml-data
+        persistentVolumeClaim:
+          claimName: ml-data-pvc
+      - name: jupyter-config
+        emptyDir:
+          sizeLimit: "100Mi"
+      nodeSelector:
+        kubernetes.io/os: linux
+        node-role.kubernetes.io/ml: "true"  # Deploy on ML-optimized nodes
+      tolerations:
+      - key: "ml-workload"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+
+---
+# Redis Production Deployment with Security
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis-prod
+  namespace: offline-guard-prod
+  labels:
+    app: offline-guard
+    component: cache
+    environment: production
+spec:
+  serviceName: redis-headless
+  replicas: 1
+  selector:
+    matchLabels:
+      app: offline-guard
+      component: cache
+  template:
+    metadata:
+      labels:
+        app: offline-guard
+        component: cache
+      annotations:
+        container.apparmor.security.beta.kubernetes.io/redis: runtime/default
+        seccomp.security.alpha.kubernetes.io/pod: runtime/default
+    spec:
+      serviceAccountName: offline-guard-sa
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999  # Redis user ID
+        runAsGroup: 999
+        fsGroup: 999
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+      - name: redis
+        image: redis:7-alpine
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 6379
+          name: redis
+          protocol: TCP
+        command:
+        - redis-server
+        args:
+        - /etc/redis/redis.conf
+        env:
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: redis-secrets
+              key: password
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 999
+          runAsGroup: 999
+          capabilities:
+            drop:
+            - ALL
+          seccompProfile:
+            type: RuntimeDefault
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+            ephemeral-storage: "1Gi"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+            ephemeral-storage: "2Gi"
+        volumeMounts:
+        - name: redis-config
+          mountPath: /etc/redis
+        - name: redis-data
+          mountPath: /data
+        - name: tmp-volume
+          mountPath: /tmp
+        livenessProbe:
+          exec:
+            command:
+            - redis-cli
+            - --no-auth-warning
+            - -a
+            - "$(REDIS_PASSWORD)"
+            - ping
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          exec:
+            command:
+            - redis-cli
+            - --no-auth-warning
+            - -a
+            - "$(REDIS_PASSWORD)"
+            - ping
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+      volumes:
+      - name: redis-config
+        configMap:
+          name: redis-config
+      - name: tmp-volume
+        emptyDir:
+          sizeLimit: "100Mi"
+  volumeClaimTemplates:
+  - metadata:
+      name: redis-data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      storageClassName: "fast-ssd"
+      resources:
+        requests:
+          storage: 10Gi
+
+---
+# ConfigMap for Redis production configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redis-config
+  namespace: offline-guard-prod
+  labels:
+    app: offline-guard
+    component: cache
+data:
+  redis.conf: |
+    # Redis Production Configuration
+    requirepass ${REDIS_PASSWORD}
+    
+    # Persistence
+    appendonly yes
+    appendfsync everysec
+    save 900 1
+    save 300 10
+    save 60 10000
+    
+    # Memory management
+    maxmemory 256mb
+    maxmemory-policy allkeys-lru
+    
+    # Security
+    protected-mode yes
+    port 6379
+    bind 0.0.0.0
+    
+    # Performance
+    tcp-backlog 511
+    timeout 0
+    tcp-keepalive 300
+    
+    # Logging
+    loglevel notice
+    logfile ""
+
+---
+# Horizontal Pod Autoscaler for dynamic scaling
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: web-demo-hpa
+  namespace: offline-guard-prod
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: web-demo-prod
+  minReplicas: 3
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+
+---
+# Pod Disruption Budget for high availability
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: offline-guard-pdb
+  namespace: offline-guard-prod
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: offline-guard
+
+---
+# Priority Class for critical workloads
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: offline-guard-critical
+value: 1000000
+globalDefault: false
+description: "Priority class for Offline Guard critical components"

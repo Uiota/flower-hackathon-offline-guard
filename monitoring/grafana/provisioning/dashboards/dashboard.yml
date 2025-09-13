@@ -1,0 +1,36 @@
+# Grafana dashboard provisioning for Offline Guard
+
+apiVersion: 1
+
+providers:
+  - name: 'default'
+    orgId: 1
+    folder: 'Offline Guard'
+    folderUid: offline-guard
+    type: file
+    disableDeletion: false
+    allowUiUpdates: true
+    updateIntervalSeconds: 30
+    options:
+      path: /var/lib/grafana/dashboards
+
+  - name: 'hackathon'
+    orgId: 1
+    folder: 'Hackathon Dashboards'
+    folderUid: hackathon
+    type: file
+    disableDeletion: false
+    allowUiUpdates: true
+    updateIntervalSeconds: 60
+    options:
+      path: /var/lib/grafana/dashboards/hackathon
+
+  - name: 'guardian'
+    orgId: 1
+    folder: 'Guardian Metrics'
+    folderUid: guardian
+    type: file
+    disableDeletion: false
+    allowUiUpdates: true
+    options:
+      path: /var/lib/grafana/dashboards/guardian

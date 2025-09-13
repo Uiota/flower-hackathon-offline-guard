@@ -1,0 +1,48 @@
+FROM docker.io/python:3.11-alpine
+
+WORKDIR /app
+
+# Install dependencies
+RUN apk add --no-cache gcc musl-dev
+
+COPY team-building/discord/requirements.txt .
+RUN pip install -r requirements.txt
+
+# Copy bot code
+COPY team-building/ ./team-building/
+COPY uiota-federation/ ./uiota-federation/
+
+# Create startup script
+RUN cat > start-bot.sh << 'EOF'
+#!/bin/sh
+echo ""
+echo "🤖  OFFLINE GUARD DISCORD BOT STARTING!"
+echo "🎮  Perfect for team coordination!"
+echo ""
+echo "📋  Available Commands:"
+echo "   !og join python,android location:NYC guardian:CyberGuard"
+echo "   !og find federated_learning,pytorch"
+echo "   !og flower - Get Flower AI hackathon info"
+echo "   !og travel FlowerAI-SF need_ride,hotel_share"
+echo "   !og status - Show team status"
+echo ""
+echo "🌸  Ready for Flower AI Day 2025 (Sept 25, SF)!"
+echo "✈️   Supports travel coordination and offline teamwork"
+echo ""
+
+# Check if bot token is provided
+if [ -z "$DISCORD_BOT_TOKEN" ]; then
+    echo "⚠️   Set DISCORD_BOT_TOKEN environment variable"
+    echo "📝  Example: podman run -e DISCORD_BOT_TOKEN=your_token offline-guard-bot"
+    echo ""
+    echo "🎯  Running in demo mode..."
+    python team-building/discord/demo-mode.py
+else
+    echo "🚀  Starting with real Discord integration..."
+    python team-building/discord/bot.py
+fi
+EOF
+
+chmod +x start-bot.sh
+
+CMD ["./start-bot.sh"]

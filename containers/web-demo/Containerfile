@@ -1,0 +1,58 @@
+FROM docker.io/nginx:alpine
+
+# Copy web demo files
+COPY web-demo/ /usr/share/nginx/html/
+COPY landing-website/ /usr/share/nginx/html/landing/
+COPY judge-showcase/ /usr/share/nginx/html/judges/
+
+# Create nginx config for multiple demos
+RUN cat > /etc/nginx/conf.d/offline-guard.conf << 'EOF'
+server {
+    listen 80;
+    server_name localhost;
+    
+    # Main web demo
+    location / {
+        root /usr/share/nginx/html;
+        index index.html;
+        try_files $uri $uri/ /index.html;
+    }
+    
+    # Landing website  
+    location /landing/ {
+        alias /usr/share/nginx/html/landing/;
+        index index.html;
+    }
+    
+    # Judge showcase
+    location /judges/ {
+        alias /usr/share/nginx/html/judges/;
+        index index.html;
+    }
+    
+    # API proxy for offline mode
+    location /api/ {
+        return 200 '{"status": "offline", "message": "Running in offline demo mode"}';
+        add_header Content-Type application/json;
+    }
+}
+EOF
+
+EXPOSE 80
+
+# Add demo startup message
+RUN cat > /docker-entrypoint.d/99-offline-guard.sh << 'EOF'
+#!/bin/sh
+echo ""
+echo "🛡️  OFFLINE GUARD DEMO CONTAINER READY!"
+echo "🌐  Web Demo: http://localhost:8080"
+echo "🏠  Landing: http://localhost:8080/landing"
+echo "⚖️   Judges: http://localhost:8080/judges"
+echo ""
+echo "🎯  Perfect for classmates and travel teams!"
+echo "📱  Works on any device with a browser"
+echo "✈️   No internet required after initial load"
+echo ""
+EOF
+
+chmod +x /docker-entrypoint.d/99-offline-guard.sh

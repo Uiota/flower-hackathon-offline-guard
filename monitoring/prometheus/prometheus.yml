@@ -1,0 +1,108 @@
+# Prometheus configuration for Offline Guard monitoring
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'offline-guard'
+    environment: 'hackathon'
+
+rule_files:
+  - "/etc/prometheus/rules/*.yml"
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          - alertmanager:9093
+
+scrape_configs:
+  # Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+    scrape_interval: 30s
+    metrics_path: '/metrics'
+
+  # Node Exporter (host metrics)
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+    scrape_interval: 30s
+    scrape_timeout: 10s
+
+  # cAdvisor (container metrics)
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
+    scrape_interval: 30s
+    scrape_timeout: 10s
+
+  # Offline Guard Web Demo
+  - job_name: 'web-demo'
+    static_configs:
+      - targets: ['web-demo:8080']
+    scrape_interval: 30s
+    metrics_path: '/metrics'
+    scrape_timeout: 10s
+
+  # Guardian Service
+  - job_name: 'guardian-service'
+    static_configs:
+      - targets: ['guardian-service:3001']
+    scrape_interval: 30s
+    metrics_path: '/metrics'
+    scrape_timeout: 10s
+
+  # ML Toolkit (Jupyter)
+  - job_name: 'ml-toolkit'
+    static_configs:
+      - targets: ['ml-toolkit:8888']
+    scrape_interval: 60s
+    metrics_path: '/metrics'
+    scrape_timeout: 15s
+
+  # Redis
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis:6379']
+    scrape_interval: 30s
+
+  # Gitea
+  - job_name: 'gitea'
+    static_configs:
+      - targets: ['gitea:3000']
+    scrape_interval: 30s
+    metrics_path: '/metrics'
+
+  # Container Registry
+  - job_name: 'registry'
+    static_configs:
+      - targets: ['localhost:5000']
+    scrape_interval: 30s
+    metrics_path: '/metrics'
+
+  # Jaeger
+  - job_name: 'jaeger'
+    static_configs:
+      - targets: ['jaeger:14269']
+    scrape_interval: 30s
+
+  # Loki
+  - job_name: 'loki'
+    static_configs:
+      - targets: ['loki:3100']
+    scrape_interval: 30s
+
+  # Grafana
+  - job_name: 'grafana'
+    static_configs:
+      - targets: ['grafana:3000']
+    scrape_interval: 30s
+    metrics_path: '/metrics'
+
+  # Uptime Kuma
+  - job_name: 'uptime-kuma'
+    static_configs:
+      - targets: ['uptime-kuma:3001']
+    scrape_interval: 30s

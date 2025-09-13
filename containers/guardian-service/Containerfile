@@ -1,0 +1,301 @@
+# Guardian Character Service - Gamification Backend
+# Node.js microservice for Guardian character management
+
+FROM docker.io/node:18-alpine as builder
+
+WORKDIR /app
+
+# Copy package files
+COPY team-onboarding/package*.json ./
+COPY team-onboarding/guardian-service/ ./src/
+
+# Install dependencies
+RUN npm ci --only=production
+
+# Production stage
+FROM docker.io/node:18-alpine
+
+# Security: Create non-root user
+RUN addgroup -g 1001 -S guardian && \
+    adduser -S -D -H -u 1001 -s /sbin/nologin guardian
+
+WORKDIR /app
+
+# Install runtime dependencies
+RUN apk add --no-cache \
+    tini \
+    curl \
+    dumb-init
+
+# Copy application from builder
+COPY --from=builder --chown=guardian:guardian /app .
+
+# Create Guardian service configuration
+RUN cat > config/production.json << 'EOF'
+{
+  "port": 3001,
+  "env": "production",
+  "security": {
+    "cors": {
+      "origin": ["http://localhost:8080", "http://localhost:3000"],
+      "credentials": true
+    },
+    "rateLimit": {
+      "windowMs": 900000,
+      "max": 100
+    }
+  },
+  "guardian": {
+    "roles": [
+      "Container Guardian",
+      "Orchestration Guardian", 
+      "Mobile Master",
+      "Creative Guardian",
+      "Platform Guardian",
+      "UX Guardian",
+      "Team Coordinator Guardian",
+      "Federated Learner Guardian"
+    ],
+    "specialties": [
+      "Podman/Docker",
+      "Kubernetes",
+      "Android/iOS",
+      "React/Vue",
+      "DevOps/CI",
+      "Design/NFT",
+      "Discord/Slack",
+      "ML/AI"
+    ],
+    "badges": [
+      "Offline First",
+      "Security Hardened", 
+      "Multi-Platform",
+      "Travel Ready",
+      "Team Builder",
+      "Innovation Driver"
+    ]
+  },
+  "features": {
+    "characterGeneration": true,
+    "teamMatching": true,
+    "badgeSystem": true,
+    "offlineSync": true
+  }
+}
+EOF
+
+# Create comprehensive Guardian service
+RUN cat > src/server.js << 'EOF'
+const express = require('express');
+const cors = require('cors');
+const redis = require('redis');
+const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
+const config = require('../config/production.json');
+
+const app = express();
+
+// Security middleware
+app.use(helmet());
+app.use(cors(config.security.cors));
+
+// Rate limiting
+const limiter = rateLimit(config.security.rateLimit);
+app.use('/api/', limiter);
+
+app.use(express.json());
+
+// Redis client for Guardian state
+let redisClient;
+if (process.env.REDIS_URL) {
+  redisClient = redis.createClient({
+    url: process.env.REDIS_URL
+  });
+  redisClient.connect();
+}
+
+// Guardian Character API
+app.get('/health', (req, res) => {
+  res.json({ 
+    status: 'healthy',
+    service: 'guardian-character-service',
+    timestamp: new Date().toISOString(),
+    guardianRoles: config.guardian.roles.length
+  });
+});
+
+app.post('/api/guardian/create', async (req, res) => {
+  const { name, skills, location, preferences } = req.body;
+  
+  const guardianId = `guardian_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  
+  // Match skills to Guardian roles
+  const matchedRoles = config.guardian.roles.filter(role => 
+    skills.some(skill => role.toLowerCase().includes(skill.toLowerCase()))
+  );
+  
+  const guardian = {
+    id: guardianId,
+    name,
+    skills,
+    location,
+    preferences,
+    roles: matchedRoles.length > 0 ? matchedRoles : ['Team Coordinator Guardian'],
+    badges: ['Offline First', 'Team Builder'],
+    level: 1,
+    xp: 0,
+    created: new Date().toISOString(),
+    avatar: `https://api.dicebear.com/7.x/personas/svg?seed=${guardianId}`,
+    status: 'active'
+  };
+  
+  // Store in Redis if available
+  if (redisClient) {
+    await redisClient.setex(`guardian:${guardianId}`, 3600, JSON.stringify(guardian));
+  }
+  
+  res.json({ success: true, guardian });
+});
+
+app.get('/api/guardian/:id', async (req, res) => {
+  const { id } = req.params;
+  
+  if (redisClient) {
+    const guardianData = await redisClient.get(`guardian:${id}`);
+    if (guardianData) {
+      return res.json(JSON.parse(guardianData));
+    }
+  }
+  
+  res.status(404).json({ error: 'Guardian not found' });
+});
+
+app.get('/api/guardians/roles', (req, res) => {
+  res.json({
+    roles: config.guardian.roles,
+    specialties: config.guardian.specialties,
+    badges: config.guardian.badges
+  });
+});
+
+app.post('/api/team/match', async (req, res) => {
+  const { skills, location, preferences } = req.body;
+  
+  // Simple team matching logic
+  const teamSuggestions = [
+    {
+      name: 'Container Squad',
+      roles: ['Container Guardian', 'Orchestration Guardian'],
+      description: 'Perfect for Podman/K8s specialists',
+      skills: ['Docker', 'Kubernetes', 'DevOps']
+    },
+    {
+      name: 'Mobile Masters',
+      roles: ['Mobile Master', 'UX Guardian'],
+      description: 'Cross-platform app development',
+      skills: ['Android', 'iOS', 'React Native']
+    },
+    {
+      name: 'ML Federation',
+      roles: ['Federated Learner Guardian', 'Platform Guardian'],
+      description: 'Privacy-preserving ML with Flower AI',
+      skills: ['TensorFlow', 'PyTorch', 'Flower']
+    }
+  ];
+  
+  const matchedTeams = teamSuggestions.filter(team =>
+    team.skills.some(skill => 
+      skills.some(userSkill => userSkill.toLowerCase().includes(skill.toLowerCase()))
+    )
+  );
+  
+  res.json({ 
+    matches: matchedTeams.length > 0 ? matchedTeams : teamSuggestions,
+    totalTeams: teamSuggestions.length
+  });
+});
+
+// Flower AI hackathon integration
+app.get('/api/flower/hackathon', (req, res) => {
+  res.json({
+    event: 'Flower AI Day 2025',
+    date: '2025-09-25',
+    location: 'San Francisco, CA',
+    theme: 'Federated Learning for Everyone',
+    guardianChallenge: 'Build sovereign ML networks',
+    prizes: ['Best Offline-First FL', 'Most Creative Guardian Team'],
+    website: 'https://flower.dev/events/flower-ai-day-2025'
+  });
+});
+
+const port = process.env.PORT || config.port;
+app.listen(port, '0.0.0.0', () => {
+  console.log('🛡️  Guardian Character Service Started!');
+  console.log(`📡 Server: http://localhost:${port}`);
+  console.log(`🎮 API: http://localhost:${port}/api/guardians/roles`);
+  console.log('🌸 Flower AI Integration: Ready');
+  console.log('👥 Team Matching: Enabled');
+  console.log('🏆 Gamification: Active');
+});
+
+// Graceful shutdown
+process.on('SIGTERM', async () => {
+  console.log('🛑 Guardian Service shutting down gracefully...');
+  if (redisClient) {
+    await redisClient.quit();
+  }
+  process.exit(0);
+});
+EOF
+
+# Create package.json for Guardian service
+RUN cat > package.json << 'EOF'
+{
+  "name": "guardian-character-service",
+  "version": "1.0.0",
+  "description": "Guardian Character Gamification Service for Offline Guard",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "test": "echo \"Add tests for Guardian service\" && exit 0"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "helmet": "^7.0.0",
+    "express-rate-limit": "^6.10.0",
+    "redis": "^4.6.7"
+  },
+  "keywords": ["guardian", "gamification", "hackathon", "flower-ai", "offline"],
+  "author": "Guardians of Decentralized AI",
+  "license": "MIT"
+}
+EOF
+
+# Install production dependencies
+RUN npm ci --only=production && npm cache clean --force
+
+# Set proper ownership
+RUN chown -R guardian:guardian /app
+
+# Switch to non-root user
+USER guardian
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+  CMD curl -f http://localhost:3001/health || exit 1
+
+EXPOSE 3001
+
+# Use tini for signal handling
+ENTRYPOINT ["/sbin/tini", "--"]
+CMD ["node", "src/server.js"]
+
+# Labels for container management
+LABEL org.opencontainers.image.title="Guardian Character Service"
+LABEL org.opencontainers.image.description="Gamification service for Offline Guard team building"
+LABEL org.opencontainers.image.vendor="Guardians of Decentralized AI"
+LABEL app.component="guardian-service"
+LABEL security.rootless="true"
+LABEL gamification.enabled="true"

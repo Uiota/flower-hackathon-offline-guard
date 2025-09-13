@@ -1,0 +1,160 @@
+# Podman Compose - Offline Guard Demo Suite
+# Kubernetes-ready container orchestration
+
+version: '3.8'
+
+services:
+  # Web Demo Container (Nginx-based)
+  web-demo:
+    build:
+      context: .
+      dockerfile: containers/web-demo/Containerfile
+    ports:
+      - "8080:80"
+    volumes:
+      - ./web-demo:/usr/share/nginx/html:ro,Z
+      - ./landing-website:/usr/share/nginx/html/landing:ro,Z
+      - ./judge-showcase:/usr/share/nginx/html/judges:ro,Z
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    labels:
+      - "io.containers.autoupdate=image"
+      - "app=offline-guard"
+      - "component=frontend"
+    networks:
+      - offline-guard
+
+  # Discord Bot Container
+  discord-bot:
+    build:
+      context: .
+      dockerfile: containers/discord-bot/Containerfile
+    environment:
+      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN:-demo_mode}
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./team-building:/app/team-building:ro,Z
+      - ./uiota-federation:/app/uiota-federation:ro,Z
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/health')"]
+      interval: 60s
+      timeout: 15s
+      retries: 3
+    labels:
+      - "io.containers.autoupdate=image" 
+      - "app=offline-guard"
+      - "component=bot"
+    networks:
+      - offline-guard
+    depends_on:
+      - web-demo
+
+  # ML Toolkit Container (Jupyter + Flower AI)
+  ml-toolkit:
+    build:
+      context: .
+      dockerfile: containers/ml-toolkit/Containerfile
+    ports:
+      - "8888:8888"
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+      - JUPYTER_TOKEN=${JUPYTER_TOKEN:-offline-guard-ml}
+    volumes:
+      - ./uiota-federation:/app/uiota-federation:Z
+      - ./team-building:/app/team-building:Z
+      - ml-data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8888/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    labels:
+      - "io.containers.autoupdate=image"
+      - "app=offline-guard" 
+      - "component=ml"
+    networks:
+      - offline-guard
+
+  # Guardian Character Service
+  guardian-service:
+    build:
+      context: .
+      dockerfile: containers/guardian-service/Containerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - REDIS_URL=redis://redis:6379
+    volumes:
+      - ./team-onboarding:/app/team-onboarding:ro,Z
+      - guardian-data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s  
+      retries: 3
+    labels:
+      - "io.containers.autoupdate=image"
+      - "app=offline-guard"
+      - "component=guardian"
+    networks:
+      - offline-guard
+    depends_on:
+      - redis
+
+  # Redis for Guardian state management
+  redis:
+    image: docker.io/redis:7-alpine
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    labels:
+      - "app=offline-guard"
+      - "component=cache"
+    networks:
+      - offline-guard
+
+  # Git Server (Gitea) for team collaboration
+  gitea:
+    image: docker.io/gitea/gitea:1.21
+    ports:
+      - "3000:3000"
+      - "2222:22"
+    environment:
+      - USER_UID=1000
+      - USER_GID=1000
+      - GITEA__database__DB_TYPE=sqlite3
+      - GITEA__database__PATH=/data/gitea/gitea.db
+      - GITEA__server__DOMAIN=localhost
+      - GITEA__server__SSH_PORT=2222
+      - GITEA__server__ROOT_URL=http://localhost:3000/
+    volumes:
+      - gitea-data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    labels:
+      - "io.containers.autoupdate=image"
+      - "app=offline-guard"
+      - "component=git"
+    networks:
+      - offline-guard
+
+networks:
+  offline-guard:
+    driver: bridge
+
+volumes:
+  ml-data:
+  guardian-data:
+  redis-data:
+  gitea-data:
