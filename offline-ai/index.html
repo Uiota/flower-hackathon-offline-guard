@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🤖 Offline.AI - Guardian AI System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: rgba(0,0,0,0.3);
+            padding: 1rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .status-bar {
+            background: rgba(0,0,0,0.2);
+            padding: 0.5rem;
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+        }
+
+        .status-item {
+            flex: 1;
+        }
+
+        .status-dot {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .online { background: #4CAF50; }
+        .offline { background: #f44336; }
+        .cpu-only { background: #2196F3; }
+
+        .main-content {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .panel {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .panel h2 {
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .chat-container {
+            grid-column: 1 / -1;
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-messages {
+            flex: 1;
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            overflow-y: auto;
+            margin-bottom: 1rem;
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            border-radius: 8px;
+        }
+
+        .user-message {
+            background: rgba(100,149,237,0.3);
+            margin-left: 2rem;
+        }
+
+        .ai-message {
+            background: rgba(34,139,34,0.3);
+            margin-right: 2rem;
+        }
+
+        .chat-input {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 25px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            font-size: 1rem;
+        }
+
+        .chat-input input::placeholder {
+            color: rgba(255,255,255,0.7);
+        }
+
+        .chat-input button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            background: #4CAF50;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .model-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .model-card {
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .model-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .model-card.active {
+            background: rgba(76,175,80,0.3);
+            border: 2px solid #4CAF50;
+        }
+
+        .guardian-info {
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer {
+            background: rgba(0,0,0,0.3);
+            padding: 1rem;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                padding: 1rem;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🤖 Offline.AI</h1>
+        <p>Guardian AI System - Sovereign Intelligence</p>
+    </div>
+
+    <div class="status-bar">
+        <div class="status-item">
+            <span class="status-dot online"></span>
+            AI Engine: Online
+        </div>
+        <div class="status-item">
+            <span class="status-dot cpu-only"></span>
+            Mode: CPU Only (No NVIDIA)
+        </div>
+        <div class="status-item">
+            <span class="status-dot online"></span>
+            Offline Ready
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="panel">
+            <h2>🧠 Available Models</h2>
+            <div class="model-grid">
+                <div class="model-card active" onclick="selectModel('guardian-llm')">
+                    <h3>Guardian LLM</h3>
+                    <p>7B params</p>
+                    <small>General AI</small>
+                </div>
+                <div class="model-card" onclick="selectModel('security-ai')">
+                    <h3>Security AI</h3>
+                    <p>3B params</p>
+                    <small>Cybersecurity</small>
+                </div>
+                <div class="model-card" onclick="selectModel('code-ai')">
+                    <h3>Code AI</h3>
+                    <p>13B params</p>
+                    <small>Programming</small>
+                </div>
+                <div class="model-card" onclick="selectModel('privacy-ai')">
+                    <h3>Privacy AI</h3>
+                    <p>1.5B params</p>
+                    <small>Data Protection</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2>🛡️ Guardian Status</h2>
+            <div class="guardian-info">
+                <h3>Guardian Class: AI Guardian</h3>
+                <div class="metric">
+                    <span>Level:</span>
+                    <span>5</span>
+                </div>
+                <div class="metric">
+                    <span>XP:</span>
+                    <span>2,847 / 3,000</span>
+                </div>
+                <div class="metric">
+                    <span>Specialization:</span>
+                    <span>Machine Learning</span>
+                </div>
+                <div class="metric">
+                    <span>Team Role:</span>
+                    <span>AI Specialist</span>
+                </div>
+            </div>
+            
+            <h3>🔧 System Resources</h3>
+            <div class="guardian-info">
+                <div class="metric">
+                    <span>CPU Usage:</span>
+                    <span>34%</span>
+                </div>
+                <div class="metric">
+                    <span>Memory:</span>
+                    <span>6.2GB / 16GB</span>
+                </div>
+                <div class="metric">
+                    <span>Models Loaded:</span>
+                    <span>3</span>
+                </div>
+                <div class="metric">
+                    <span>Inference Speed:</span>
+                    <span>~1.2s</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel chat-container">
+            <h2>💬 AI Chat Interface</h2>
+            <div class="chat-messages" id="chatMessages">
+                <div class="message ai-message">
+                    <strong>Guardian AI:</strong> Welcome to Offline.AI! I'm your local AI assistant running entirely on your device. No data leaves your machine. How can I help you today?
+                </div>
+                <div class="message user-message">
+                    <strong>You:</strong> Tell me about the Guardian system
+                </div>
+                <div class="message ai-message">
+                    <strong>Guardian AI:</strong> The Guardian system is a decentralized AI network where each participant gets a unique Guardian character representing their technical specializations. We operate with strict principles: NO NVIDIA/CUDA (CPU-only), NO Docker (Podman only), and offline-first design for digital sovereignty.
+                </div>
+            </div>
+            <div class="chat-input">
+                <input type="text" id="messageInput" placeholder="Ask your Guardian AI anything..." onkeypress="if(event.key==='Enter') sendMessage()">
+                <button onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        🛡️ Offline.AI - Part of the UIOTA Guardian Ecosystem | CPU-Only AI | No Data Collection | Fully Offline
+    </div>
+
+    <script>
+        let selectedModel = 'guardian-llm';
+        let messageHistory = [];
+
+        function selectModel(modelName) {
+            selectedModel = modelName;
+            document.querySelectorAll('.model-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            event.target.closest('.model-card').classList.add('active');
+            
+            addMessage('ai', `Switched to ${modelName.replace('-', ' ').toUpperCase()}. Ready for your questions!`);
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            addMessage('user', message);
+            input.value = '';
+            
+            // Simulate AI response with offline processing
+            setTimeout(() => {
+                const responses = [
+                    "I'm processing your request locally on your CPU. No data is sent to external servers.",
+                    "As an offline AI, I ensure your privacy while providing helpful assistance.",
+                    "Running on CPU-only infrastructure as per Guardian principles - no NVIDIA dependencies.",
+                    "Your Guardian AI is working entirely offline to maintain digital sovereignty.",
+                    "Processing complete. All computation happened locally on your device."
+                ];
+                
+                const response = responses[Math.floor(Math.random() * responses.length)];
+                addMessage('ai', response);
+            }, 1000 + Math.random() * 2000);
+        }
+
+        function addMessage(sender, message) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}-message`;
+            
+            const senderName = sender === 'user' ? 'You' : 'Guardian AI';
+            messageDiv.innerHTML = `<strong>${senderName}:</strong> ${message}`;
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Simulate real-time updates
+        setInterval(() => {
+            // Update CPU usage
+            const cpuElement = document.querySelector('.metric:nth-child(1) span:last-child');
+            if (cpuElement) {
+                const newCpu = Math.floor(Math.random() * 60) + 20;
+                cpuElement.textContent = `${newCpu}%`;
+            }
+        }, 3000);
+
+        // Startup message
+        setTimeout(() => {
+            addMessage('ai', 'All Guardian AI models loaded successfully. Operating in fully offline mode with CPU-only processing.');
+        }, 1000);
+    </script>
+</body>
+</html>
