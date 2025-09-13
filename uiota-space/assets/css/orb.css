@@ -1,0 +1,16 @@
+﻿.orb-wrap{position:relative;display:flex;justify-content:center;align-items:center}
+.orb{width:360px;height:360px;border-radius:50%;position:relative;
+  background:
+    radial-gradient(circle at 40% 35%, rgba(0,229,255,.55) 0%, rgba(0,229,255,.05) 35%, transparent 50%),
+    radial-gradient(circle at 70% 70%, rgba(27,107,255,.45), transparent 55%),
+    radial-gradient(circle at 50% 50%, rgba(113,75,255,.18) 0%, rgba(11,14,19,.92) 70%);
+  box-shadow:
+    0 0 80px rgba(0,229,255,.35),
+    0 0 120px rgba(27,107,255,.25),
+    inset 0 0 60px rgba(113,75,255,.25);
+  animation: breathe 4s ease-in-out infinite;
+}
+@keyframes breathe {
+  0%,100% { transform:scale(1); opacity: .95}
+  50%     { transform:scale(1.03); opacity: 1}
+}

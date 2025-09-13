@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Offline Mode</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .offline { text-align:center; padding:60px 16px; max-width:700px; margin:0 auto; }
+    .offline h1 { text-shadow:0 0 8px #00ff99; margin-bottom:10px; }
+    .terminal { background:#0f1113; border:1px solid rgba(255,255,255,.12); border-radius:8px; padding:16px; text-align:left; font-family:monospace; color:#a7ffce; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">Offline.ai<span>TM</span></div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="verify.html">Back to Verify</a>
+    </nav>
+  </header>
+  <section class="offline container">
+    <h1>Offline Shell</h1>
+    <p>This local interface avoids network calls. Basic tools only.</p>
+    <div class="terminal" id="term"></div>
+  </section>
+  <script>
+    const t = document.getElementById('term');
+    const lines = [
+      'uiota$ init --mode offline',
+      'ok   • cache: hydrated',
+      'ok   • vault: mounted',
+      'ok   • ui:    available',
+      'hint • reconnect to exit offline mode'
+    ];
+    let i=0; (function feed(){ if(i>=lines.length) return; t.textContent += lines[i++] + '\n'; setTimeout(feed, 500); })();
+  </script>
+  <script src="site.js" defer></script>
+</body>
+</html>
+

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Offline.ai – Command Layer</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .container { text-align:center; padding:40px 16px; max-width:520px; margin:0 auto; }
+    .logo { font-size:1.25rem; text-shadow:0 0 6px #00ff99; margin-bottom:12px; }
+    h1 { font-size:1.5rem; text-shadow:0 0 6px #00ff99; margin-bottom:8px; }
+    p { font-size:0.9rem; opacity:0.8; margin-bottom:16px; }
+    .buttons { display:flex; flex-direction:column; gap:12px; margin-bottom:16px; }
+    .buttons button, .buttons a, .buttons input, .buttons textarea { padding:10px; border:1px solid rgba(255,255,255,0.25); border-radius:6px; background:transparent; color:#e0e0e0; }
+    .buttons button:hover, .buttons a:hover { background:rgba(0,255,153,0.08); border-color:#00ff99; }
+    .buttons label { display:block; text-align:left; opacity:0.9; }
+    .buttons label span { display:block; font-size:0.8rem; opacity:0.7; margin:4px 0; }
+    .orb { top:10px; right:-30px; width:80px; height:80px; }
+  </style>
+  <script defer src="mcp.js"></script>
+  <script defer>
+    window.addEventListener('DOMContentLoaded', () => {
+      const $ = (sel) => document.querySelector(sel);
+      const out = $('#out');
+
+      function getCtx() {
+        const nodeId = $('#nodeId').value.trim();
+        const secret = $('#secret').value.trim();
+        const baseUrl = $('#baseUrl').value.trim();
+        return new window.MCPModelContext(nodeId, secret, baseUrl);
+      }
+
+      function print(obj) {
+        out.textContent = typeof obj === 'string' ? obj : JSON.stringify(obj, null, 2);
+        document.querySelector('.orb').classList.add('active');
+      }
+
+      function safeParse(text, label) {
+        if (!text.trim()) return {};
+        try { return JSON.parse(text); }
+        catch (e) { throw new Error(`${label} JSON parse error: ${e.message}`); }
+      }
+
+      document.getElementById('btnEnv').addEventListener('click', async () => {
+        try {
+          const ctx = getCtx();
+          print('Fetching environment...');
+          const data = await ctx.getEnv();
+          print(data);
+        } catch (e) {
+          print(String(e));
+        }
+      });
+
+      document.getElementById('btnReport').addEventListener('click', async () => {
+        try {
+          const ctx = getCtx();
+          const metrics = safeParse(document.getElementById('metrics').value, 'Metrics');
+          const epistemicState = safeParse(document.getElementById('epistemic').value, 'Epistemic State');
+          print('Reporting status...');
+          const resp = await ctx.reportStatus({ metrics, epistemicState });
+          print(resp);
+        } catch (e) {
+          print(String(e));
+        }
+      });
+    });
+  </script>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">Offline.ai<span>TM</span></div>
+    <h1>Command Layer</h1>
+    <p>Demo: call a local MCP endpoint to fetch env and report status.</p>
+
+    <div class="buttons">
+      <label>
+        <span>Base URL</span>
+        <input id="baseUrl" type="text" value="http://127.0.0.1:9090/api/v1" />
+      </label>
+      <label>
+        <span>Node ID</span>
+        <input id="nodeId" type="text" placeholder="e.g., mirabilis" />
+      </label>
+      <label>
+        <span>Shared Secret</span>
+        <input id="secret" type="password" placeholder="Bearer token" />
+      </label>
+
+      <div style="display:flex; gap:12px; flex-wrap:wrap">
+        <button id="btnEnv">Get Env</button>
+        <button id="btnReport">Report Status</button>
+        <a href="install_claude.html" class="btn">Install Claude (Agent)</a>
+      </div>
+
+      <label>
+        <span>Metrics JSON</span>
+        <textarea id="metrics" rows="4">{
+  "token_usage_pct": 42,
+  "memory_saturation": 0.1
+}</textarea>
+      </label>
+      <label>
+        <span>Epistemic State JSON</span>
+        <textarea id="epistemic" rows="4">{
+  "hallucination_risk": "low",
+  "aligned": true
+}</textarea>
+      </label>
+
+      <label>
+        <span>Output</span>
+        <pre id="out" style="min-height:140px; padding:12px; background:#0f1113; border-radius:6px; overflow:auto"></pre>
+      </label>
+    </div>
+
+    <div class="orb"></div>
+  </div>
+</body>
+</html>
+
+

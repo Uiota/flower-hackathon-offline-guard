@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Whitepaper Preview</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .seed-wrap { position:relative; min-height:70vh; display:grid; place-items:center; padding:40px 16px; }
+    .seed-aura { position:absolute; inset:-20%; background:radial-gradient(60% 60% at 50% 40%, rgba(0,255,153,.12), rgba(0,255,153,0) 70%); filter:blur(40px); }
+    .seed { position:relative; width:min(60vmin,420px); aspect-ratio:1; border-radius:50%;
+      background: radial-gradient(40% 40% at 35% 35%, rgba(255,255,255,.25), rgba(255,255,255,0) 50%),
+                  radial-gradient(75% 75% at 60% 60%, #004d40, #0f1113 70%);
+      box-shadow: inset 0 0 80px rgba(0,0,0,.6), 0 0 60px rgba(0,255,153,.2);
+      animation: seedFloat 6s ease-in-out infinite;
+    }
+    .seed::after { content:""; position:absolute; inset:18%; border-radius:50%; background:radial-gradient(circle at 40% 40%, #a8ffdf, #00ff99 40%, #003329 70%); filter:blur(1px); animation:pulse 1.4s ease-in-out infinite; }
+    @keyframes seedFloat { 0%,100% { transform:translateY(-6px) } 50% { transform:translateY(6px) } }
+    @keyframes pulse { 0%,100% { transform:scale(.98) } 50% { transform:scale(1.04) } }
+    .actions { text-align:center; margin-top:18px; }
+    .actions a { display:inline-block; padding:12px 18px; border-radius:8px; border:1px solid rgba(255,255,255,.2); margin:0 6px; }
+    .actions a:hover { border-color:#00ff99; background:rgba(0,255,153,.08); }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">Offline.ai<span>TM</span></div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="mission.html">Mission</a>
+      <a href="case_discovery.html">Case Directory</a>
+      <a href="download.html">Download</a>
+      <a href="verify.html">Verify</a>
+    </nav>
+  </header>
+
+  <section class="seed-wrap container">
+    <div class="seed-aura"></div>
+    <div class="seed" aria-label="Growing seed"></div>
+    <div class="actions">
+      <a href="#">Verify to Download</a>
+      <a href="download.html">Back</a>
+    </div>
+  </section>
+  <script src="site.js" defer></script>
+</body>
+</html>
+
