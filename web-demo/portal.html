@@ -1,0 +1,1614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UIOTA Tactical AI Operations Platform - Enterprise Security</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .main-container {
+            display: grid;
+            grid-template-columns: 280px 1fr 300px;
+            grid-template-rows: 80px 1fr;
+            height: 100vh;
+            gap: 0;
+        }
+
+        .top-bar {
+            grid-column: 1 / -1;
+            background: rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            backdrop-filter: blur(20px);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #3498db;
+            font-family: 'SF Mono', Monaco, monospace;
+            letter-spacing: 1px;
+        }
+
+        .device-status {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .online { background: #27ae60; }
+        .offline { background: #e74c3c; }
+        .warning { background: #f39c12; }
+        .tactical { background: #3498db; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .sidebar {
+            background: rgba(255, 255, 255, 0.03);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px 20px;
+        }
+
+        .sidebar h3 {
+            margin-bottom: 20px;
+            color: #00ff88;
+            font-size: 1.1rem;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            margin-bottom: 8px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            gap: 12px;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, #2980b9, #3498db);
+            color: #fff;
+            font-weight: 600;
+            border-left: 4px solid #3498db;
+        }
+
+        .main-content {
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .widget {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .widget:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 255, 136, 0.1);
+        }
+
+        .widget-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .widget-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #3498db;
+            font-family: 'SF Mono', Monaco, monospace;
+        }
+
+        .widget-icon {
+            font-size: 1.5rem;
+        }
+
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .metric-item {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+        }
+
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #3498db;
+            margin-bottom: 5px;
+            font-family: 'SF Mono', Monaco, monospace;
+        }
+
+        .metric-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .right-panel {
+            background: rgba(255, 255, 255, 0.03);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px 20px;
+            overflow-y: auto;
+        }
+
+        .guardian-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .guardian-avatar {
+            font-size: 4rem;
+            margin-bottom: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+        }
+
+        .guardian-level {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff88, #00d4aa);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .activity-feed {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .activity-text {
+            flex: 1;
+            font-size: 0.9rem;
+        }
+
+        .activity-time {
+            font-size: 0.8rem;
+            opacity: 0.6;
+        }
+
+        .control-panel {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .control-btn {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .control-btn:hover {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.2), rgba(0, 212, 170, 0.1));
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 255, 136, 0.2);
+        }
+
+        .control-btn.active {
+            background: linear-gradient(135deg, #00ff88, #00d4aa);
+            color: #000;
+        }
+
+        .ml-terminal {
+            background: #1a1a1a;
+            border-radius: 15px;
+            padding: 20px;
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+        }
+
+        .terminal-line {
+            margin-bottom: 5px;
+        }
+
+        .terminal-prompt {
+            color: #00ff88;
+        }
+
+        .terminal-output {
+            color: #ffffff;
+        }
+
+        .terminal-error {
+            color: #ff4757;
+        }
+
+        .terminal-success {
+            color: #00ff88;
+        }
+
+        .chart-container {
+            height: 200px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-line {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            height: 2px;
+            background: linear-gradient(90deg, #00ff88, #00d4aa);
+            animation: chartGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes chartGlow {
+            from { box-shadow: 0 0 5px rgba(0, 255, 136, 0.5); }
+            to { box-shadow: 0 0 20px rgba(0, 255, 136, 0.8); }
+        }
+
+        .device-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .device-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .device-card:hover {
+            border-color: #00ff88;
+            box-shadow: 0 10px 20px rgba(0, 255, 136, 0.1);
+        }
+
+        .device-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .qr-generator {
+            background: rgba(255, 255, 255, 0.95);
+            color: #000;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            font-family: monospace;
+            display: none;
+        }
+
+        .floating-notification {
+            position: fixed;
+            top: 100px;
+            right: 30px;
+            background: linear-gradient(135deg, #00ff88, #00d4aa);
+            color: #000;
+            padding: 15px 25px;
+            border-radius: 15px;
+            font-weight: 600;
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .floating-notification.show {
+            transform: translateX(0);
+        }
+
+        @media (max-width: 1200px) {
+            .main-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: 80px 1fr;
+            }
+
+            .sidebar, .right-panel {
+                display: none;
+            }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="logo">⚡ UIOTA TACTICAL OPS</div>
+            <div class="device-status">
+                <div class="status-indicator">
+                    <div class="status-dot tactical" id="network-dot"></div>
+                    <span id="network-text">SECURE</span>
+                </div>
+                <div class="status-indicator">
+                    <div class="status-dot online" id="guardian-dot"></div>
+                    <span>TACTICAL AI: OPERATIONAL</span>
+                </div>
+                <div class="status-indicator">
+                    <div class="status-dot warning" id="security-dot"></div>
+                    <span>CLEARANCE: RESTRICTED</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar Navigation -->
+        <div class="sidebar">
+            <h3>⚡ TACTICAL OPERATIONS</h3>
+            <div class="nav-item active" onclick="showSection('dashboard')">
+                <span>📊</span> Command Center
+            </div>
+            <div class="nav-item" onclick="showSection('ml-toolkit')">
+                <span>🧠</span> AI Operations
+            </div>
+            <div class="nav-item" onclick="showSection('security')">
+                <span>🔒</span> Security Control
+            </div>
+            <div class="nav-item" onclick="showSection('federation')">
+                <span>🌐</span> Network Ops
+            </div>
+            <div class="nav-item" onclick="showSection('blockchain')">
+                <span>⛓️</span> Crypto Systems
+            </div>
+            <div class="nav-item" onclick="showSection('devices')">
+                <span>📱</span> Asset Network
+            </div>
+            <div class="nav-item" onclick="showSection('analytics')">
+                <span>📈</span> Intelligence
+            </div>
+            <div class="nav-item" onclick="showSection('settings')">
+                <span>⚙️</span> Configuration
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="main-content" id="main-content">
+            <!-- Dashboard Section -->
+            <div id="dashboard-section">
+                <h2 style="margin-bottom: 30px; color: #3498db; font-family: 'SF Mono', Monaco, monospace; font-weight: 700; letter-spacing: 1px;">TACTICAL COMMAND CENTER</h2>
+
+                <div class="dashboard-grid">
+                    <!-- System Performance -->
+                    <div class="widget">
+                        <div class="widget-header">
+                            <div class="widget-title">SYSTEM STATUS</div>
+                            <div class="widget-icon">⚡</div>
+                        </div>
+                        <div class="metric-grid">
+                            <div class="metric-item">
+                                <div class="metric-value" id="cpu-usage">23%</div>
+                                <div class="metric-label">CPU Usage</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value" id="memory-usage">41%</div>
+                                <div class="metric-label">Memory</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value" id="storage-usage">67%</div>
+                                <div class="metric-label">Storage</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value" id="battery-level">89%</div>
+                                <div class="metric-label">Battery</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ML Processing -->
+                    <div class="widget">
+                        <div class="widget-header">
+                            <div class="widget-title">AI OPERATIONS</div>
+                            <div class="widget-icon">🧠</div>
+                        </div>
+                        <div class="metric-grid">
+                            <div class="metric-item">
+                                <div class="metric-value" id="models-trained">247</div>
+                                <div class="metric-label">Models Deployed</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value" id="accuracy-rate">94.2%</div>
+                                <div class="metric-label">Tactical Accuracy</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value" id="federation-rounds">152</div>
+                                <div class="metric-label">Fed Operations</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value" id="data-processed">1.2TB</div>
+                                <div class="metric-label">Intel Processed</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Security Status -->
+                    <div class="widget">
+                        <div class="widget-header">
+                            <div class="widget-title">THREAT ASSESSMENT</div>
+                            <div class="widget-icon">🛡️</div>
+                        </div>
+                        <div class="metric-grid">
+                            <div class="metric-item">
+                                <div class="metric-value" id="threats-blocked">0</div>
+                                <div class="metric-label">Threats Neutralized</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value" id="offline-hours">47.2h</div>
+                                <div class="metric-label">Secure Isolation</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value" id="proofs-generated">89</div>
+                                <div class="metric-label">Crypto Proofs</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value" id="encryption-level">AES-256</div>
+                                <div class="metric-label">Crypto Standard</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Network Status -->
+                    <div class="widget">
+                        <div class="widget-header">
+                            <div class="widget-title">NETWORK INTELLIGENCE</div>
+                            <div class="widget-icon">🌐</div>
+                        </div>
+                        <div class="chart-container">
+                            <div class="chart-line"></div>
+                            <div style="position: absolute; top: 20px; left: 20px; font-size: 0.9rem;">
+                                Tactical Network Monitoring
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Device Control Panel -->
+                <div class="control-panel">
+                    <div class="control-btn" onclick="toggleOfflineMode()">
+                        <div style="font-size: 1.5rem; margin-bottom: 8px;">📶</div>
+                        <div id="offline-btn-text">AIR-GAP MODE</div>
+                    </div>
+                    <div class="control-btn" onclick="generateProof()">
+                        <div style="font-size: 1.5rem; margin-bottom: 8px;">📱</div>
+                        <div>CRYPTO VERIFICATION</div>
+                    </div>
+                    <div class="control-btn" onclick="startMLTraining()">
+                        <div style="font-size: 1.5rem; margin-bottom: 8px;">🧠</div>
+                        <div>DEPLOY AI MODELS</div>
+                    </div>
+                    <div class="control-btn" onclick="syncBlockchain()">
+                        <div style="font-size: 1.5rem; margin-bottom: 8px;">⛓️</div>
+                        <div>SYNC LEDGER</div>
+                    </div>
+                    <div class="control-btn" onclick="scanDevices()">
+                        <div style="font-size: 1.5rem; margin-bottom: 8px;">📡</div>
+                        <div>ASSET DISCOVERY</div>
+                    </div>
+                    <div class="control-btn" onclick="backupData()">
+                        <div style="font-size: 1.5rem; margin-bottom: 8px;">💾</div>
+                        <div>SECURE BACKUP</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security Section -->
+            <div id="security-section" style="display: none;">
+                <h2 style="margin-bottom: 30px; color: #3498db; font-family: 'SF Mono', Monaco, monospace; font-weight: 700; letter-spacing: 1px;">🔒 SECURITY OPERATIONS CENTER</h2>
+
+                <div class="dashboard-grid">
+                    <div class="widget">
+                        <div class="widget-header">
+                            <div class="widget-title">TACTICAL DEFENSE</div>
+                            <div class="widget-icon">🛡️</div>
+                        </div>
+                        <div class="metric-grid">
+                            <div class="metric-item">
+                                <div class="metric-value" id="threats-detected">0</div>
+                                <div class="metric-label">Threats Detected</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value">AES-256</div>
+                                <div class="metric-label">Encryption</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value" id="qr-proofs-count">89</div>
+                                <div class="metric-label">QR Proofs</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value" id="system-integrity">100%</div>
+                                <div class="metric-label">Integrity</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="widget">
+                        <div class="widget-header">
+                            <div class="widget-title">ELECTRONIC WARFARE</div>
+                            <div class="widget-icon">📡</div>
+                        </div>
+                        <div style="padding: 20px;">
+                            <div style="margin-bottom: 15px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                    <span>Network Health:</span>
+                                    <span id="network-health">100%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="network-health-bar" style="width: 100%"></div>
+                                </div>
+                            </div>
+                            <div style="margin-bottom: 15px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                    <span>QR Relay Success:</span>
+                                    <span id="qr-relay-success">100%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="qr-relay-bar" style="width: 100%"></div>
+                                </div>
+                            </div>
+                            <div class="control-panel" style="grid-template-columns: 1fr 1fr; margin: 0;">
+                                <div class="control-btn" onclick="simulateJamming()" id="jamming-btn">
+                                    <div>🚫 Simulate Jamming</div>
+                                </div>
+                                <div class="control-btn" onclick="testQRRelay()">
+                                    <div>📱 Test QR Relay</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="widget">
+                        <div class="widget-header">
+                            <div class="widget-title">AIR-GAP PROTOCOL</div>
+                            <div class="widget-icon">📱</div>
+                        </div>
+                        <div style="text-align: center; padding: 20px;">
+                            <div style="font-size: 2rem; margin-bottom: 15px;">🔐</div>
+                            <div style="margin-bottom: 15px;">Zero-trust tactical verification protocol active</div>
+                            <div class="control-btn" onclick="generateProof()" style="margin: 0;">Generate QR Proof</div>
+                        </div>
+                    </div>
+
+                    <div class="widget">
+                        <div class="widget-header">
+                            <div class="widget-title">MESH NETWORK OPS</div>
+                            <div class="widget-icon">🌐</div>
+                        </div>
+                        <div style="padding: 20px;">
+                            <div id="mesh-devices-list">
+                                <!-- Populated by JavaScript -->
+                            </div>
+                            <div id="qr-relay-display" style="margin-top: 15px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 8px; text-align: center; min-height: 40px; display: flex; align-items: center; justify-content: center;">
+                                Ready for QR relay
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="widget" style="margin-top: 25px;">
+                    <div class="widget-header">
+                        <div class="widget-title">Jamming Activity Log</div>
+                        <div class="widget-icon">📋</div>
+                    </div>
+                    <div style="padding: 20px;">
+                        <div id="jamming-log" style="background: #1a1a1a; color: #00ff88; padding: 15px; border-radius: 10px; font-family: monospace; font-size: 0.9rem; height: 200px; overflow-y: auto;">
+                            <div class="log-entry">
+                                <span class="log-time">System initialized</span>
+                                <span class="log-message">Guardian protection active</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Devices Section -->
+            <div id="devices-section" style="display: none;">
+                <h2 style="margin-bottom: 30px; color: #3498db; font-family: 'SF Mono', Monaco, monospace; font-weight: 700; letter-spacing: 1px;">📱 ASSET NETWORK</h2>
+
+                <div class="device-grid" id="device-grid">
+                    <!-- Devices will be populated by JavaScript -->
+                </div>
+
+                <div class="control-panel">
+                    <div class="control-btn" onclick="scanDevices()">
+                        <div style="font-size: 1.5rem; margin-bottom: 8px;">📡</div>
+                        <div>Scan Devices</div>
+                    </div>
+                    <div class="control-btn" onclick="connectToDevice()">
+                        <div style="font-size: 1.5rem; margin-bottom: 8px;">🔗</div>
+                        <div>Connect Device</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Federation Section -->
+            <div id="federation-section" style="display: none;">
+                <h2 style="margin-bottom: 30px; color: #3498db; font-family: 'SF Mono', Monaco, monospace; font-weight: 700; letter-spacing: 1px;">🌐 FEDERATION OPERATIONS</h2>
+
+                <div class="dashboard-grid">
+                    <div class="widget">
+                        <div class="widget-header">
+                            <div class="widget-title">FEDERATION METRICS</div>
+                            <div class="widget-icon">🌸</div>
+                        </div>
+                        <div class="metric-grid">
+                            <div class="metric-item">
+                                <div class="metric-value" id="federation-rounds-display">152</div>
+                                <div class="metric-label">FL Rounds</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value" id="connected-devices-display">23</div>
+                                <div class="metric-label">Connected Devices</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value">96.4%</div>
+                                <div class="metric-label">Global Accuracy</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value">1.2TB</div>
+                                <div class="metric-label">Data Processed</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="widget">
+                        <div class="widget-header">
+                            <div class="widget-title">NETWORK CONTROL</div>
+                            <div class="widget-icon">🎛️</div>
+                        </div>
+                        <div class="control-panel">
+                            <div class="control-btn" onclick="runMLCommand('join_federation')">
+                                <div>🌐 Join Round</div>
+                            </div>
+                            <div class="control-btn" onclick="runMLCommand('train_model')">
+                                <div>🧠 Train Local</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Blockchain Section -->
+            <div id="blockchain-section" style="display: none;">
+                <h2 style="margin-bottom: 30px; color: #00ff88;">⛓️ Blockchain</h2>
+
+                <div class="dashboard-grid">
+                    <div class="widget">
+                        <div class="widget-header">
+                            <div class="widget-title">Blockchain Stats</div>
+                            <div class="widget-icon">📊</div>
+                        </div>
+                        <div class="metric-grid">
+                            <div class="metric-item">
+                                <div class="metric-value" id="blocks-display">15,847</div>
+                                <div class="metric-label">Blocks</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value" id="transactions-display">234,567</div>
+                                <div class="metric-label">Transactions</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value" id="peers-display">847</div>
+                                <div class="metric-label">Peers</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value">2.3 TH/s</div>
+                                <div class="metric-label">Hash Rate</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="widget">
+                        <div class="widget-header">
+                            <div class="widget-title">Blockchain Control</div>
+                            <div class="widget-icon">🎛️</div>
+                        </div>
+                        <div class="control-panel">
+                            <div class="control-btn" onclick="syncBlockchain()">
+                                <div>🔄 Sync Blockchain</div>
+                            </div>
+                            <div class="control-btn" onclick="validateBlocks()">
+                                <div>✅ Validate Blocks</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Section -->
+            <div id="analytics-section" style="display: none;">
+                <h2 style="margin-bottom: 30px; color: #00ff88;">📈 Analytics Dashboard</h2>
+
+                <div class="dashboard-grid">
+                    <div class="widget">
+                        <div class="widget-header">
+                            <div class="widget-title">Performance Trends</div>
+                            <div class="widget-icon">📊</div>
+                        </div>
+                        <div class="chart-container">
+                            <div class="chart-line"></div>
+                            <div style="position: absolute; top: 20px; left: 20px; font-size: 0.9rem;">
+                                System Performance Over Time
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="widget">
+                        <div class="widget-header">
+                            <div class="widget-title">ML Model Performance</div>
+                            <div class="widget-icon">🧠</div>
+                        </div>
+                        <div class="chart-container">
+                            <div class="chart-line" style="background: linear-gradient(90deg, #667eea, #764ba2);"></div>
+                            <div style="position: absolute; top: 20px; left: 20px; font-size: 0.9rem;">
+                                Model Accuracy Trends
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Section -->
+            <div id="settings-section" style="display: none;">
+                <h2 style="margin-bottom: 30px; color: #00ff88;">⚙️ System Settings</h2>
+
+                <div class="dashboard-grid">
+                    <div class="widget">
+                        <div class="widget-header">
+                            <div class="widget-title">Guardian Configuration</div>
+                            <div class="widget-icon">🔧</div>
+                        </div>
+                        <div style="padding: 20px;">
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: block; margin-bottom: 5px;">Guardian Name:</label>
+                                <input type="text" value="CryptoGuardian-Alpha" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: white;">
+                            </div>
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: block; margin-bottom: 5px;">Auto-save Interval:</label>
+                                <select style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: white;">
+                                    <option>15 seconds</option>
+                                    <option>30 seconds</option>
+                                    <option>1 minute</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="widget">
+                        <div class="widget-header">
+                            <div class="widget-title">Security Settings</div>
+                            <div class="widget-icon">🔒</div>
+                        </div>
+                        <div style="padding: 20px;">
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: flex; align-items: center; gap: 10px;">
+                                    <input type="checkbox" checked>
+                                    <span>Enable offline verification</span>
+                                </label>
+                            </div>
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: flex; align-items: center; gap: 10px;">
+                                    <input type="checkbox" checked>
+                                    <span>Auto-generate QR proofs</span>
+                                </label>
+                            </div>
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: flex; align-items: center; gap: 10px;">
+                                    <input type="checkbox" checked>
+                                    <span>Enhanced encryption</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ML Toolkit Section -->
+            <div id="ml-toolkit-section" style="display: none;">
+                <h2 style="margin-bottom: 30px; color: #00ff88;">🧠 ML Toolkit</h2>
+
+                <div class="widget">
+                    <div class="widget-header">
+                        <div class="widget-title">Federated Learning Terminal</div>
+                        <div class="widget-icon">🌸</div>
+                    </div>
+                    <div class="ml-terminal" id="ml-terminal">
+                        <div class="terminal-line"><span class="terminal-prompt">uiota@guardian:~$</span> <span class="terminal-output">flower-fl init</span></div>
+                        <div class="terminal-line"><span class="terminal-success">✓ Flower AI client initialized</span></div>
+                        <div class="terminal-line"><span class="terminal-prompt">uiota@guardian:~$</span> <span class="terminal-output">python client.py</span></div>
+                        <div class="terminal-line"><span class="terminal-success">✓ Connected to federation server</span></div>
+                        <div class="terminal-line"><span class="terminal-output">Training round 152 starting...</span></div>
+                        <div class="terminal-line"><span class="terminal-success">✓ Local training complete - accuracy: 94.2%</span></div>
+                        <div class="terminal-line"><span class="terminal-output">Uploading model updates...</span></div>
+                        <div class="terminal-line"><span class="terminal-success">✓ Federation round complete</span></div>
+                        <div class="terminal-line"><span class="terminal-prompt">uiota@guardian:~$</span> <span class="blink">_</span></div>
+                    </div>
+                </div>
+
+                <div class="control-panel">
+                    <div class="control-btn" onclick="runMLCommand('train_model')">
+                        <div style="font-size: 1.5rem; margin-bottom: 8px;">🏋️</div>
+                        <div>Train New Model</div>
+                    </div>
+                    <div class="control-btn" onclick="runMLCommand('join_federation')">
+                        <div style="font-size: 1.5rem; margin-bottom: 8px;">🌐</div>
+                        <div>Join Federation</div>
+                    </div>
+                    <div class="control-btn" onclick="runMLCommand('export_model')">
+                        <div style="font-size: 1.5rem; margin-bottom: 8px;">📤</div>
+                        <div>Export Model</div>
+                    </div>
+                    <div class="control-btn" onclick="runMLCommand('benchmark')">
+                        <div style="font-size: 1.5rem; margin-bottom: 8px;">📊</div>
+                        <div>Run Benchmark</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="right-panel">
+            <!-- Guardian Card -->
+            <div class="guardian-card">
+                <div class="guardian-avatar">🔐</div>
+                <h3 id="guardian-name">CryptoGuardian-Alpha</h3>
+                <div class="guardian-level">Level <span id="guardian-level">7</span></div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 73%" id="guardian-progress"></div>
+                </div>
+                <div style="font-size: 0.9rem; margin-top: 10px;">
+                    XP: <span id="guardian-xp">7,340</span> / 10,000
+                </div>
+            </div>
+
+            <!-- Activity Feed -->
+            <div class="activity-feed">
+                <h4 style="margin-bottom: 15px; color: #00ff88;">Recent Activity</h4>
+                <div class="activity-item">
+                    <div class="activity-icon" style="background: rgba(0, 255, 136, 0.2);">🧠</div>
+                    <div class="activity-text">
+                        <div>ML model trained</div>
+                        <div style="opacity: 0.7; font-size: 0.8rem;">Accuracy improved to 94.2%</div>
+                    </div>
+                    <div class="activity-time">2m ago</div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon" style="background: rgba(255, 165, 0, 0.2);">⚡</div>
+                    <div class="activity-text">
+                        <div>Guardian evolved</div>
+                        <div style="opacity: 0.7; font-size: 0.8rem;">Reached Level 7</div>
+                    </div>
+                    <div class="activity-time">15m ago</div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon" style="background: rgba(76, 175, 80, 0.2);">🔒</div>
+                    <div class="activity-text">
+                        <div>Security scan completed</div>
+                        <div style="opacity: 0.7; font-size: 0.8rem;">No threats detected</div>
+                    </div>
+                    <div class="activity-time">1h ago</div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon" style="background: rgba(33, 150, 243, 0.2);">🌐</div>
+                    <div class="activity-text">
+                        <div>Federation round completed</div>
+                        <div style="opacity: 0.7; font-size: 0.8rem;">152 devices participated</div>
+                    </div>
+                    <div class="activity-time">2h ago</div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div style="display: grid; gap: 15px;">
+                <div class="control-btn" onclick="evolveGuardian()">
+                    <div>⬆️ Evolve Guardian</div>
+                </div>
+                <div class="control-btn" onclick="showModal('qr-modal')">
+                    <div>📱 Generate QR</div>
+                </div>
+                <div class="control-btn" onclick="showModal('settings-modal')">
+                    <div>⚙️ Settings</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Notification -->
+    <div class="floating-notification" id="notification">
+        Operation completed successfully!
+    </div>
+
+    <!-- QR Modal -->
+    <div class="modal" id="qr-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📱 QR Proof Generator</h3>
+                <button class="close-btn" onclick="closeModal('qr-modal')">&times;</button>
+            </div>
+            <div class="qr-generator" id="qr-display" style="display: block;">
+                <h4>🔐 Cryptographic Proof Generated</h4>
+                <div id="qr-content" style="margin: 20px 0; font-size: 12px; line-height: 1.2;">
+{
+  "guardian_id": "CryptoGuardian-Alpha",
+  "timestamp": 1703875200000,
+  "proof_type": "offline_verification",
+  "duration": 3847,
+  "signature": "0x4a7b2c8f9e1d6a3b5c9e7f8a2d4b6c8e",
+  "level": 7,
+  "xp": 7340,
+  "verified": true
+}
+                </div>
+                <div style="margin: 20px 0;">
+                    <div style="color: #333; font-weight: bold;">🔐 Scan this QR with any device to verify proof</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="ml-demo.js"></script>
+    <script src="jamming_simulator.js"></script>
+    <script>
+        let isOffline = false;
+        let guardianLevel = 7;
+        let guardianXP = 7340;
+        let currentSection = 'dashboard';
+
+        // Initialize the interface
+        function init() {
+            updateMetrics();
+            simulateActivity();
+            setInterval(updateMetrics, 3000);
+            setInterval(addActivity, 30000);
+        }
+
+        // Show different sections
+        function showSection(section) {
+            // Hide all sections
+            document.querySelectorAll('[id$="-section"]').forEach(el => {
+                el.style.display = 'none';
+            });
+
+            // Show selected section
+            const sectionEl = document.getElementById(section + '-section');
+            if (sectionEl) {
+                sectionEl.style.display = 'block';
+            }
+
+            // Update navigation
+            document.querySelectorAll('.nav-item').forEach(el => {
+                el.classList.remove('active');
+            });
+            event.target.closest('.nav-item').classList.add('active');
+
+            currentSection = section;
+        }
+
+        // Update metrics with realistic animations
+        function updateMetrics() {
+            const metrics = {
+                'cpu-usage': Math.floor(Math.random() * 30) + 15,
+                'memory-usage': Math.floor(Math.random() * 20) + 35,
+                'storage-usage': 67,
+                'battery-level': Math.floor(Math.random() * 10) + 85,
+                'models-trained': 247 + Math.floor(Math.random() * 5),
+                'accuracy-rate': (94.2 + Math.random() * 1.5).toFixed(1),
+                'federation-rounds': 152 + Math.floor(Math.random() * 3),
+                'proofs-generated': 89 + Math.floor(Math.random() * 3)
+            };
+
+            Object.entries(metrics).forEach(([id, value]) => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.textContent = typeof value === 'number' && id !== 'models-trained' && id !== 'federation-rounds' && id !== 'proofs-generated' ?
+                        value + (id.includes('usage') || id.includes('level') || id.includes('rate') ? '%' : '') :
+                        value;
+                }
+            });
+        }
+
+        // Toggle offline mode
+        function toggleOfflineMode() {
+            isOffline = !isOffline;
+            const networkDot = document.getElementById('network-dot');
+            const networkText = document.getElementById('network-text');
+            const btnText = document.getElementById('offline-btn-text');
+
+            if (isOffline) {
+                networkDot.className = 'status-dot offline';
+                networkText.textContent = 'Offline';
+                btnText.textContent = 'Go Online';
+                showNotification('🔴 Device is now offline - Guardian mode activated');
+            } else {
+                networkDot.className = 'status-dot online';
+                networkText.textContent = 'Online';
+                btnText.textContent = 'Go Offline';
+                showNotification('🟢 Device is back online - Syncing data...');
+            }
+        }
+
+        // Generate QR proof
+        function generateProof() {
+            if (!isOffline) {
+                showNotification('⚠️ Device must be offline to generate proof');
+                return;
+            }
+            showModal('qr-modal');
+            showNotification('📱 QR proof generated successfully');
+        }
+
+        // Start ML training
+        function startMLTraining() {
+            showNotification('🧠 Starting ML training session...');
+            setTimeout(() => {
+                showNotification('✅ ML training completed - Accuracy: 94.7%');
+                addActivity('🧠', 'ML training completed', 'Model accuracy improved');
+            }, 3000);
+        }
+
+        // Sync blockchain using blockchain simulator
+        async function syncBlockchain() {
+            showNotification('⛓️ Syncing with blockchain network...');
+            await blockchainSim.syncBlockchain();
+            showNotification('✅ Blockchain sync completed');
+            addActivity('⛓️', 'Blockchain synced', 'Latest blocks downloaded');
+        }
+
+        // Scan devices using device network simulator
+        async function scanDevices() {
+            showNotification('📡 Scanning for nearby devices...');
+            const foundDevices = await deviceNetwork.scanDevices();
+            showNotification(`✅ Found ${foundDevices.length} UIOTA devices nearby`);
+            addActivity('📡', 'Device scan completed', `${foundDevices.length} devices discovered`);
+        }
+
+        // Backup data
+        function backupData() {
+            showNotification('💾 Creating encrypted backup...');
+            setTimeout(() => {
+                showNotification('✅ Data backup completed successfully');
+                addActivity('💾', 'Data backup created', 'Full system backup');
+            }, 3000);
+        }
+
+        // Evolve Guardian
+        function evolveGuardian() {
+            if (guardianXP >= 10000) {
+                guardianLevel++;
+                guardianXP = 0;
+                document.getElementById('guardian-level').textContent = guardianLevel;
+                document.getElementById('guardian-xp').textContent = guardianXP;
+                document.getElementById('guardian-progress').style.width = '0%';
+                showNotification(`⬆️ Guardian evolved to Level ${guardianLevel}!`);
+                addActivity('⬆️', 'Guardian evolved', `Reached Level ${guardianLevel}`);
+            } else {
+                guardianXP += Math.floor(Math.random() * 500) + 200;
+                if (guardianXP > 10000) guardianXP = 10000;
+                const progress = (guardianXP / 10000) * 100;
+                document.getElementById('guardian-xp').textContent = guardianXP;
+                document.getElementById('guardian-progress').style.width = progress + '%';
+                showNotification(`✨ Guardian gained ${Math.floor(Math.random() * 300) + 100} XP`);
+            }
+        }
+
+        // Run ML commands using the simulator
+        async function runMLCommand(command) {
+            switch(command) {
+                case 'train_model':
+                    await mlSimulator.trainModel('CustomModel-v1.0');
+                    break;
+                case 'join_federation':
+                    await mlSimulator.joinFederationRound();
+                    break;
+                case 'export_model':
+                    await mlSimulator.exportModel('onnx');
+                    break;
+                case 'benchmark':
+                    await mlSimulator.runBenchmark();
+                    break;
+                default:
+                    showNotification(`🧠 ML Command: ${command.replace('_', ' ')}`);
+            }
+        }
+
+        // Show notification
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Add activity to feed
+        function addActivity(icon, title, description) {
+            const feed = document.querySelector('.activity-feed');
+            const item = document.createElement('div');
+            item.className = 'activity-item';
+            item.innerHTML = `
+                <div class="activity-icon" style="background: rgba(0, 255, 136, 0.2);">${icon}</div>
+                <div class="activity-text">
+                    <div>${title}</div>
+                    <div style="opacity: 0.7; font-size: 0.8rem;">${description}</div>
+                </div>
+                <div class="activity-time">now</div>
+            `;
+
+            const items = feed.querySelectorAll('.activity-item');
+            if (items.length > 0) {
+                feed.insertBefore(item, items[1]); // Insert after header
+            }
+
+            // Remove old items
+            const allItems = feed.querySelectorAll('.activity-item');
+            if (allItems.length > 5) {
+                allItems[allItems.length - 1].remove();
+            }
+        }
+
+        // Simulate background activity
+        function simulateActivity() {
+            const activities = [
+                ['🔄', 'Auto-save completed', 'All data backed up'],
+                ['🌐', 'Network sync', 'Connected to 23 peers'],
+                ['🛡️', 'Security scan', 'System clean'],
+                ['📊', 'Analytics updated', 'Performance metrics'],
+                ['⚡', 'System optimization', 'Speed improved']
+            ];
+
+            setInterval(() => {
+                const activity = activities[Math.floor(Math.random() * activities.length)];
+                addActivity(activity[0], activity[1], activity[2]);
+            }, 45000);
+        }
+
+        // Modal functions
+        function showModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Initialize device list
+        function initDeviceList() {
+            const deviceGrid = document.getElementById('device-grid');
+            if (deviceGrid) {
+                const devices = deviceNetwork.getDevices();
+                deviceGrid.innerHTML = devices.map(device => `
+                    <div class="device-card">
+                        <div class="device-icon">${device.type === 'Mobile' ? '📱' : device.type === 'Desktop' ? '🖥️' : device.type === 'IoT' ? '🔧' : '🖥️'}</div>
+                        <h4>${device.name}</h4>
+                        <div style="margin: 10px 0;">
+                            <div style="font-size: 0.9rem; opacity: 0.8;">${device.type}</div>
+                            <div style="font-size: 0.9rem; margin: 5px 0;">
+                                <span style="color: ${device.status === 'online' ? '#00ff88' : '#ff4757'}">
+                                    ● ${device.status}
+                                </span>
+                            </div>
+                            <div style="font-size: 0.9rem;">
+                                🔋 ${device.battery}% | 🧠 ${device.models} models
+                            </div>
+                        </div>
+                        <div class="control-btn" onclick="connectToDevice('${device.id}')" style="margin-top: 15px; padding: 10px;">
+                            ${device.status === 'online' ? 'Connect' : 'Offline'}
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Connect to device
+        function connectToDevice(deviceId) {
+            if (deviceId) {
+                showNotification(`🔗 Connecting to device: ${deviceId}`);
+                setTimeout(() => {
+                    showNotification('✅ Device connected successfully');
+                    addActivity('🔗', 'Device connected', 'Secure connection established');
+                }, 1500);
+            } else {
+                showNotification('🔗 Connecting to selected device...');
+                setTimeout(() => {
+                    showNotification('✅ Device connected successfully');
+                    addActivity('🔗', 'Device connected', 'Secure connection established');
+                }, 1500);
+            }
+        }
+
+        // Validate blocks
+        function validateBlocks() {
+            showNotification('✅ Validating blockchain blocks...');
+            setTimeout(() => {
+                showNotification('✅ All blocks validated successfully');
+                addActivity('✅', 'Block validation', 'Cryptographic integrity verified');
+            }, 2000);
+        }
+
+        // Update blockchain display
+        function updateBlockchainDisplay() {
+            const stats = blockchainSim.getStats();
+            const blocksEl = document.getElementById('blocks-display');
+            const transactionsEl = document.getElementById('transactions-display');
+            const peersEl = document.getElementById('peers-display');
+
+            if (blocksEl) blocksEl.textContent = stats.blocks.toLocaleString();
+            if (transactionsEl) transactionsEl.textContent = stats.transactions.toLocaleString();
+            if (peersEl) peersEl.textContent = stats.peers.toLocaleString();
+        }
+
+        // Update federation display
+        function updateFederationDisplay() {
+            const stats = mlSimulator.getFederationStats();
+            const roundsEl = document.getElementById('federation-rounds-display');
+            const devicesEl = document.getElementById('connected-devices-display');
+
+            if (roundsEl) roundsEl.textContent = stats.rounds;
+            if (devicesEl) devicesEl.textContent = stats.devices;
+        }
+
+        // Jamming and airplane mode functions
+        let jammingActive = false;
+
+        // Check for airplane mode on startup
+        function checkAirplaneMode() {
+            // Simulate airplane mode detection
+            const isAirplaneMode = !navigator.onLine ||
+                                 (navigator.connection && navigator.connection.effectiveType === 'none');
+
+            if (!isAirplaneMode && !sessionStorage.getItem('safeMode')) {
+                // Redirect to airplane mode guardian
+                setTimeout(() => {
+                    window.location.href = 'airplane_mode_guardian.html';
+                }, 2000);
+
+                showNotification('⚠️ Device not in safe mode - Redirecting to airplane mode guardian...');
+                return false;
+            }
+
+            return true;
+        }
+
+        // Simulate jamming attack
+        function simulateJamming() {
+            if (!jammingActive) {
+                jammingActive = true;
+
+                // Start jamming simulation
+                const result = jammingSimulator.startJamming('all', 85);
+
+                // Update UI
+                updateJammingUI();
+
+                // Update button
+                const btn = document.getElementById('jamming-btn');
+                if (btn) {
+                    btn.innerHTML = '<div>✅ Stop Jamming</div>';
+                }
+
+                showNotification('🚫 Jamming attack simulated - Testing QR relay resilience');
+
+                // Auto-test QR relay under jamming
+                setTimeout(() => {
+                    testQRRelay();
+                }, 2000);
+
+            } else {
+                jammingActive = false;
+
+                // Stop jamming
+                jammingSimulator.stopJamming();
+
+                // Update UI
+                updateJammingUI();
+
+                // Update button
+                const btn = document.getElementById('jamming-btn');
+                if (btn) {
+                    btn.innerHTML = '<div>🚫 Simulate Jamming</div>';
+                }
+
+                showNotification('✅ Jamming stopped - Network recovered');
+            }
+        }
+
+        // Test QR relay functionality
+        async function testQRRelay() {
+            showNotification('📱 Testing QR relay through mesh network...');
+
+            // Generate test QR data
+            const qrData = JSON.stringify({
+                guardian_id: "CryptoGuardian-Alpha",
+                timestamp: Date.now(),
+                proof_type: "mesh_relay_test",
+                jamming_level: jammingActive ? jammingSimulator.jammingLevel : 0,
+                signature: "0x" + Math.random().toString(16).substr(2, 32)
+            });
+
+            // Start QR relay
+            const result = await jammingSimulator.startQRRelay(qrData, 'target-device');
+
+            if (result.success) {
+                showNotification(`✅ QR relay successful! Latency: ${result.latency}ms via ${result.path.length} devices`);
+
+                // Update success counter
+                const proofsEl = document.getElementById('qr-proofs-count');
+                if (proofsEl) {
+                    const current = parseInt(proofsEl.textContent) || 89;
+                    proofsEl.textContent = current + 1;
+                }
+            } else {
+                showNotification(`❌ QR relay failed: ${result.error}`);
+            }
+
+            // Update UI
+            updateJammingUI();
+        }
+
+        // Update jamming-related UI elements
+        function updateJammingUI() {
+            const stats = jammingSimulator.getJammingStats();
+            const meshStatus = jammingSimulator.getMeshNetworkStatus();
+
+            // Update network health
+            const healthEl = document.getElementById('network-health');
+            const healthBarEl = document.getElementById('network-health-bar');
+            if (healthEl && healthBarEl) {
+                const health = meshStatus.networkHealth.toFixed(0);
+                healthEl.textContent = health + '%';
+                healthBarEl.style.width = health + '%';
+
+                // Change color based on health
+                if (health < 50) {
+                    healthBarEl.style.background = 'linear-gradient(90deg, #ff4757, #ff3838)';
+                } else if (health < 80) {
+                    healthBarEl.style.background = 'linear-gradient(90deg, #ffa502, #ff6348)';
+                } else {
+                    healthBarEl.style.background = 'linear-gradient(90deg, #00ff88, #00d4aa)';
+                }
+            }
+
+            // Update QR relay success rate
+            const relayEl = document.getElementById('qr-relay-success');
+            const relayBarEl = document.getElementById('qr-relay-bar');
+            if (relayEl && relayBarEl) {
+                const successRate = stats.successRate;
+                relayEl.textContent = successRate + '%';
+                relayBarEl.style.width = successRate + '%';
+            }
+
+            // Update mesh devices list
+            updateMeshDevicesList(meshStatus.devices);
+
+            // Update threats detected (increase if jamming)
+            const threatsEl = document.getElementById('threats-detected');
+            if (threatsEl && jammingActive) {
+                threatsEl.textContent = '1';
+            } else if (threatsEl && !jammingActive) {
+                threatsEl.textContent = '0';
+            }
+        }
+
+        // Update mesh devices display
+        function updateMeshDevicesList(devices) {
+            const listEl = document.getElementById('mesh-devices-list');
+            if (!listEl) return;
+
+            listEl.innerHTML = devices.map(device => {
+                const statusColor = device.status === 'online' ? '#2ed573' :
+                                  device.status === 'intermittent' ? '#ffa502' : '#ff4757';
+                const statusIcon = device.status === 'online' ? '🟢' :
+                                 device.status === 'intermittent' ? '🟡' : '🔴';
+
+                return `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; margin: 5px 0; background: rgba(255,255,255,0.05); border-radius: 8px; ${device.affected ? 'border: 1px solid #ff4757;' : ''}">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span>${statusIcon}</span>
+                            <span style="font-size: 0.9rem;">${device.name}</span>
+                        </div>
+                        <div style="font-size: 0.8rem; color: ${statusColor};">
+                            ${device.signal}% | ${device.distance}m
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Demonstrate jamming resistance
+        async function demonstrateJammingResistance() {
+            showNotification('🎭 Demonstrating QR relay under jamming conditions...');
+
+            const result = await jammingSimulator.demonstrateJammingResistance();
+
+            showNotification('✅ Jamming resistance demonstration complete!');
+            console.log('Jamming resistance demo results:', result);
+
+            return result;
+        }
+
+        // Initialize everything
+        init();
+        initDeviceList();
+
+        // Check airplane mode on startup
+        checkAirplaneMode();
+
+        // Update displays periodically
+        setInterval(() => {
+            updateBlockchainDisplay();
+            updateFederationDisplay();
+            updateJammingUI();
+        }, 5000);
+
+        // Auto-demonstrate jamming resistance every 30 seconds if in security section
+        setInterval(() => {
+            if (currentSection === 'security' && Math.random() < 0.3) {
+                if (!jammingActive) {
+                    // Randomly simulate jamming for demonstration
+                    simulateJamming();
+                    setTimeout(() => {
+                        if (jammingActive) simulateJamming(); // Stop it
+                    }, 10000);
+                }
+            }
+        }, 30000);
+    </script>
+</body>
+</html>
