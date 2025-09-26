@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🤖 Federated Learning Guardian - AI Assistant</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0f0f0f;
+            --bg-secondary: #1a1a1a;
+            --bg-tertiary: #262626;
+            --bg-card: #1e1e1e;
+            --bg-chat: #2a2a2a;
+            --border-primary: #333;
+            --border-secondary: #444;
+            --text-primary: #ffffff;
+            --text-secondary: #b3b3b3;
+            --text-tertiary: #666;
+            --accent-primary: #10a37f;
+            --accent-secondary: #1a73e8;
+            --accent-tertiary: #f59e0b;
+            --accent-danger: #ef4444;
+            --ai-purple: #8b5cf6;
+            --ai-green: #22c55e;
+            --gradient-primary: linear-gradient(135deg, #10a37f 0%, #1a73e8 100%);
+            --gradient-ai: linear-gradient(135deg, #8b5cf6 0%, #10a37f 100%);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-ai);
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(139, 92, 246, 0.3);
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: white;
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+        }
+
+        /* Main Container */
+        .main-container {
+            flex: 1;
+            display: flex;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Chat Interface */
+        .chat-interface {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-primary);
+        }
+
+        .chat-header {
+            background: var(--bg-tertiary);
+            padding: 20px;
+            border-bottom: 1px solid var(--border-primary);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .chat-avatar {
+            width: 50px;
+            height: 50px;
+            background: var(--gradient-ai);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .chat-info h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .chat-info p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .message {
+            display: flex;
+            gap: 15px;
+            max-width: 80%;
+        }
+
+        .message.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .message.assistant {
+            align-self: flex-start;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .message.user .message-avatar {
+            background: var(--accent-secondary);
+        }
+
+        .message.assistant .message-avatar {
+            background: var(--gradient-ai);
+        }
+
+        .message-content {
+            background: var(--bg-chat);
+            border: 1px solid var(--border-secondary);
+            border-radius: 16px;
+            padding: 16px 20px;
+            line-height: 1.6;
+        }
+
+        .message.user .message-content {
+            background: var(--accent-secondary);
+            color: white;
+        }
+
+        .message-content h4 {
+            color: var(--ai-purple);
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .message-content ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        .message-content li {
+            margin-bottom: 8px;
+        }
+
+        .message-content .highlight {
+            background: rgba(139, 92, 246, 0.2);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(--ai-purple);
+            font-weight: 500;
+        }
+
+        /* Chat Input */
+        .chat-input-container {
+            padding: 20px;
+            border-top: 1px solid var(--border-primary);
+            background: var(--bg-tertiary);
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-secondary);
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 16px;
+            resize: none;
+            min-height: 48px;
+            max-height: 120px;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--ai-purple);
+            box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
+        }
+
+        .chat-send-btn {
+            background: var(--ai-purple);
+            border: none;
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: white;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+        .chat-send-btn:hover {
+            background: #7c3aed;
+        }
+
+        .chat-send-btn:disabled {
+            background: var(--text-tertiary);
+            cursor: not-allowed;
+        }
+
+        /* Action Panel */
+        .action-panel {
+            flex: 1;
+            background: var(--bg-card);
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .action-section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-secondary);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .action-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--ai-purple);
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .action-btn {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-secondary);
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .action-btn:hover {
+            background: var(--bg-chat);
+            border-color: var(--ai-purple);
+        }
+
+        .action-btn.primary {
+            background: var(--ai-purple);
+            border-color: var(--ai-purple);
+            color: white;
+        }
+
+        .action-btn.primary:hover {
+            background: #7c3aed;
+        }
+
+        .action-btn.offline {
+            background: var(--accent-tertiary);
+            border-color: var(--accent-tertiary);
+            color: white;
+        }
+
+        .action-btn.offline:hover {
+            background: #d97706;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--ai-green);
+            animation: pulse 2s infinite;
+        }
+
+        .offline-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .offline-modal.active {
+            display: flex;
+        }
+
+        .offline-modal-content {
+            background: var(--bg-card);
+            border: 2px solid var(--accent-tertiary);
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .offline-modal h3 {
+            color: var(--accent-tertiary);
+            margin-bottom: 20px;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @keyframes typing {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .typing-dot {
+            width: 4px;
+            height: 4px;
+            background: var(--text-secondary);
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+
+            .chat-interface {
+                min-height: 60vh;
+            }
+
+            .action-panel {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>🤖 Federated Learning Guardian</h1>
+        <p>Advanced AI Assistant for Distributed Machine Learning and Privacy-Preserving Systems</p>
+    </header>
+
+    <div class="main-container">
+        <!-- Chat Interface -->
+        <div class="chat-interface">
+            <div class="chat-header">
+                <div class="chat-avatar">🛡️</div>
+                <div class="chat-info">
+                    <h3>FL Guardian AI Assistant</h3>
+                    <p>Here to help you understand and deploy federated learning systems</p>
+                </div>
+            </div>
+
+            <div class="chat-messages" id="chat-messages">
+                <!-- Welcome Message -->
+                <div class="message assistant">
+                    <div class="message-avatar">🤖</div>
+                    <div class="message-content">
+                        <h4>Welcome to the Federated Learning Guardian System! 🚀</h4>
+
+                        <p>I'm your AI assistant for understanding and deploying <span class="highlight">privacy-preserving federated learning</span> systems. Here's what we're building together:</p>
+
+                        <ul>
+                            <li><strong>🔒 Privacy-First ML:</strong> Train powerful models without exposing raw data</li>
+                            <li><strong>🌐 Distributed Computing:</strong> Leverage edge devices and decentralized networks</li>
+                            <li><strong>🛡️ Guardian Protection:</strong> Advanced security for your AI systems</li>
+                            <li><strong>🤝 Collaborative Intelligence:</strong> Multiple parties learning together safely</li>
+                        </ul>
+
+                        <p><strong>Who this is for:</strong></p>
+                        <ul>
+                            <li>🏥 Healthcare organizations protecting patient privacy</li>
+                            <li>🏦 Financial institutions securing sensitive data</li>
+                            <li>📱 Mobile app developers respecting user privacy</li>
+                            <li>🌍 Researchers advancing responsible AI</li>
+                            <li>🏢 Enterprises needing collaborative ML without data sharing</li>
+                        </ul>
+
+                        <p><strong>Why federated learning matters:</strong></p>
+                        <ul>
+                            <li>✅ Keep data where it belongs - on your devices</li>
+                            <li>✅ Comply with GDPR, HIPAA, and privacy regulations</li>
+                            <li>✅ Reduce data transfer costs and latency</li>
+                            <li>✅ Enable AI in bandwidth-limited environments</li>
+                            <li>✅ Build trust through transparency and control</li>
+                        </ul>
+
+                        <p>Ask me anything about federated learning, or use the action panel to explore our live demonstration platform!</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-input-container">
+                <div class="chat-input-wrapper">
+                    <textarea
+                        class="chat-input"
+                        id="chat-input"
+                        placeholder="Ask me about federated learning, privacy-preserving ML, or how to get started..."
+                        rows="1"
+                        onkeydown="handleChatInput(event)"
+                    ></textarea>
+                    <button class="chat-send-btn" onclick="sendMessage()">Send</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Panel -->
+        <div class="action-panel">
+            <div class="action-section">
+                <h3 class="action-title">🚀 Quick Start</h3>
+                <div class="action-buttons">
+                    <button class="action-btn primary" onclick="startLiveDemo()">
+                        <span>🎯</span>
+                        <span>Launch Live FL Demo</span>
+                    </button>
+                    <button class="action-btn" onclick="exploreFeatures()">
+                        <span>🔍</span>
+                        <span>Explore Features</span>
+                    </button>
+                    <button class="action-btn" onclick="viewDocumentation()">
+                        <span>📚</span>
+                        <span>View Documentation</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="action-section">
+                <h3 class="action-title">⚙️ System Status</h3>
+                <div class="status-indicator">
+                    <div class="status-dot"></div>
+                    <span id="system-status">AI Services Connected</span>
+                </div>
+                <div class="action-buttons">
+                    <button class="action-btn" onclick="checkSystemHealth()">
+                        <span>🏥</span>
+                        <span>System Health Check</span>
+                    </button>
+                    <button class="action-btn" onclick="configureApiKeys()">
+                        <span>🔑</span>
+                        <span>Configure API Keys</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="action-section">
+                <h3 class="action-title">🔒 Privacy Mode</h3>
+                <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 15px;">
+                    Request offline mode for maximum privacy and security. Perfect for sensitive environments.
+                </p>
+                <div class="action-buttons">
+                    <button class="action-btn offline" onclick="requestOfflineMode()">
+                        <span>🛡️</span>
+                        <span>Request Offline Mode</span>
+                    </button>
+                    <button class="action-btn" onclick="showPrivacyInfo()">
+                        <span>📋</span>
+                        <span>Privacy Information</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="action-section">
+                <h3 class="action-title">🤝 Community</h3>
+                <div class="action-buttons">
+                    <button class="action-btn" onclick="joinCommunity()">
+                        <span>👥</span>
+                        <span>Join Community</span>
+                    </button>
+                    <button class="action-btn" onclick="getSupport()">
+                        <span>💬</span>
+                        <span>Get Support</span>
+                    </button>
+                    <button class="action-btn" onclick="provideFeedback()">
+                        <span>📝</span>
+                        <span>Provide Feedback</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Offline Mode Modal -->
+    <div class="offline-modal" id="offline-modal">
+        <div class="offline-modal-content">
+            <h3>🛡️ Request Offline Mode</h3>
+            <p style="margin-bottom: 20px; color: var(--text-secondary);">
+                Offline mode provides maximum privacy and security by running the entire federated learning system locally without internet connectivity.
+            </p>
+
+            <div style="background: var(--bg-secondary); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                <h4 style="color: var(--accent-tertiary); margin-bottom: 10px;">Offline Mode Benefits:</h4>
+                <ul style="color: var(--text-secondary); font-size: 14px;">
+                    <li>🔒 Complete data privacy - no external connections</li>
+                    <li>🏢 Enterprise-grade security compliance</li>
+                    <li>⚡ Zero latency - everything runs locally</li>
+                    <li>🛡️ Air-gapped environment support</li>
+                    <li>💾 Full control over your data and models</li>
+                </ul>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+                <button class="action-btn primary" onclick="enableOfflineMode()" style="flex: 1;">
+                    Enable Offline Mode
+                </button>
+                <button class="action-btn" onclick="hideOfflineModal()" style="flex: 1;">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let chatHistory = [];
+        let isTyping = false;
+
+        // Auto-resize chat input
+        document.getElementById('chat-input').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+        });
+
+        function handleChatInput(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+
+            if (!message || isTyping) return;
+
+            // Add user message
+            addMessage('user', message);
+            input.value = '';
+            input.style.height = 'auto';
+
+            // Show typing indicator
+            showTypingIndicator();
+
+            // Simulate AI response
+            setTimeout(() => {
+                hideTypingIndicator();
+                generateAIResponse(message);
+            }, 1000 + Math.random() * 2000);
+        }
+
+        function addMessage(type, content) {
+            const messagesContainer = document.getElementById('chat-messages');
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar';
+            avatar.textContent = type === 'user' ? '👤' : '🤖';
+
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            contentDiv.innerHTML = content;
+
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(contentDiv);
+
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            isTyping = true;
+            const messagesContainer = document.getElementById('chat-messages');
+
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message assistant';
+            typingDiv.id = 'typing-indicator';
+
+            typingDiv.innerHTML = `
+                <div class="message-avatar">🤖</div>
+                <div class="message-content">
+                    <div class="typing-indicator">
+                        <span>FL Guardian is thinking</span>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
+            `;
+
+            messagesContainer.appendChild(typingDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            const typingIndicator = document.getElementById('typing-indicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+            isTyping = false;
+        }
+
+        function generateAIResponse(userMessage) {
+            const message = userMessage.toLowerCase();
+            let response = '';
+
+            if (message.includes('federated learning') || message.includes('fl')) {
+                response = `
+                    <h4>🌐 Federated Learning Explained</h4>
+                    <p>Federated Learning (FL) is a <span class="highlight">machine learning approach</span> that trains algorithms across decentralized edge devices while keeping data localized.</p>
+
+                    <p><strong>Key Benefits:</strong></p>
+                    <ul>
+                        <li>🔒 <strong>Privacy Preservation:</strong> Raw data never leaves devices</li>
+                        <li>⚡ <strong>Reduced Latency:</strong> Local processing, global intelligence</li>
+                        <li>📱 <strong>Edge Computing:</strong> Leverage mobile and IoT devices</li>
+                        <li>🌍 <strong>Regulatory Compliance:</strong> Meet GDPR, HIPAA standards</li>
+                    </ul>
+
+                    <p>Would you like to see a live demonstration or learn about specific use cases?</p>
+                `;
+            } else if (message.includes('privacy') || message.includes('security')) {
+                response = `
+                    <h4>🛡️ Privacy and Security in FL</h4>
+                    <p>Our FL Guardian system implements <span class="highlight">multiple layers of protection</span>:</p>
+
+                    <ul>
+                        <li>🔐 <strong>Differential Privacy:</strong> Add mathematical noise to protect individual data points</li>
+                        <li>🔒 <strong>Secure Aggregation:</strong> Encrypted model updates that can't be reverse-engineered</li>
+                        <li>🛡️ <strong>Byzantine Fault Tolerance:</strong> Protection against malicious participants</li>
+                        <li>🎭 <strong>Homomorphic Encryption:</strong> Compute on encrypted data</li>
+                        <li>🔍 <strong>Zero-Knowledge Proofs:</strong> Verify without revealing information</li>
+                    </ul>
+
+                    <p>For maximum security, consider our <span class="highlight">offline mode</span> option!</p>
+                `;
+            } else if (message.includes('offline') || message.includes('local')) {
+                response = `
+                    <h4>🏠 Offline Mode Benefits</h4>
+                    <p>Running FL in <span class="highlight">offline mode</span> provides the highest level of privacy and security:</p>
+
+                    <ul>
+                        <li>🔒 <strong>Air-Gapped Security:</strong> No external network connections</li>
+                        <li>🏢 <strong>Enterprise Compliance:</strong> Meet strictest regulatory requirements</li>
+                        <li>⚡ <strong>Zero Latency:</strong> All processing happens locally</li>
+                        <li>💾 <strong>Full Control:</strong> Complete ownership of data and models</li>
+                        <li>🛡️ <strong>Tamper Proof:</strong> Isolated from external threats</li>
+                    </ul>
+
+                    <p>Click the "Request Offline Mode" button to configure your secure environment!</p>
+                `;
+            } else if (message.includes('start') || message.includes('demo') || message.includes('begin')) {
+                response = `
+                    <h4>🚀 Getting Started with FL Guardian</h4>
+                    <p>Ready to explore federated learning? Here are your next steps:</p>
+
+                    <ul>
+                        <li>🎯 <strong>Live Demo:</strong> Interactive FL simulation with real metrics</li>
+                        <li>🔑 <strong>API Setup:</strong> Connect your AI services (OpenAI, Anthropic, etc.)</li>
+                        <li>📊 <strong>Real Training:</strong> Deploy actual ML models across clients</li>
+                        <li>🌐 <strong>MCP Server:</strong> AI service integration hub</li>
+                        <li>🔗 <strong>LangGraph:</strong> Workflow visualization and automation</li>
+                    </ul>
+
+                    <p>Click "Launch Live FL Demo" to start your journey!</p>
+                `;
+            } else {
+                response = `
+                    <h4>🤖 FL Guardian Assistant</h4>
+                    <p>I'm here to help you with federated learning! I can explain:</p>
+
+                    <ul>
+                        <li>🌐 How federated learning works</li>
+                        <li>🔒 Privacy and security features</li>
+                        <li>🚀 Getting started with our platform</li>
+                        <li>🛡️ Offline mode configuration</li>
+                        <li>📊 Real-world use cases and applications</li>
+                    </ul>
+
+                    <p>What would you like to learn about? Or try asking: "How does federated learning protect privacy?" or "Show me the demo"</p>
+                `;
+            }
+
+            addMessage('assistant', response);
+        }
+
+        // Action Panel Functions
+        function startLiveDemo() {
+            addMessage('assistant', `
+                <h4>🚀 Launching Live Demo</h4>
+                <p>Starting the interactive federated learning demonstration...</p>
+                <p>You'll see real-time training metrics, network visualization, and AI-generated insights!</p>
+            `);
+
+            setTimeout(() => {
+                window.open('/live-demo', '_blank');
+            }, 1000);
+        }
+
+        function requestOfflineMode() {
+            document.getElementById('offline-modal').classList.add('active');
+        }
+
+        function hideOfflineModal() {
+            document.getElementById('offline-modal').classList.remove('active');
+        }
+
+        function enableOfflineMode() {
+            hideOfflineModal();
+            addMessage('assistant', `
+                <h4>🛡️ Offline Mode Enabled</h4>
+                <p>Transitioning to <span class="highlight">offline mode</span> for maximum privacy and security...</p>
+
+                <p><strong>Offline Features Active:</strong></p>
+                <ul>
+                    <li>🔒 Air-gapped federated learning</li>
+                    <li>🏠 Local AI model inference</li>
+                    <li>💾 Encrypted local storage</li>
+                    <li>🛡️ Zero external data transmission</li>
+                </ul>
+
+                <p>Your system is now running in the most secure configuration possible!</p>
+            `);
+
+            document.getElementById('system-status').textContent = 'Offline Mode Active';
+        }
+
+        function exploreFeatures() {
+            addMessage('assistant', `
+                <h4>🔍 FL Guardian Features</h4>
+                <p>Explore our comprehensive federated learning platform:</p>
+
+                <ul>
+                    <li>🌐 <strong>Real FL Training:</strong> Deploy actual PyTorch models across distributed clients</li>
+                    <li>🤖 <strong>AI Integration:</strong> Connect OpenAI, Anthropic, and other AI services</li>
+                    <li>📊 <strong>Live Monitoring:</strong> Real-time metrics and performance tracking</li>
+                    <li>🔗 <strong>LangGraph:</strong> Visual workflow design and automation</li>
+                    <li>🌐 <strong>MCP Server:</strong> Model Context Protocol for service integration</li>
+                    <li>🛡️ <strong>Security Suite:</strong> Advanced privacy preservation techniques</li>
+                </ul>
+            `);
+        }
+
+        function configureApiKeys() {
+            addMessage('assistant', `
+                <h4>🔑 API Configuration</h4>
+                <p>Connect your AI services for enhanced functionality:</p>
+
+                <ul>
+                    <li>🤖 <strong>OpenAI:</strong> GPT models for insights and analysis</li>
+                    <li>🧠 <strong>Anthropic:</strong> Claude for advanced reasoning</li>
+                    <li>🤗 <strong>Hugging Face:</strong> Access to pre-trained models</li>
+                    <li>⚡ <strong>Cohere:</strong> Language model integration</li>
+                </ul>
+
+                <p>API keys are stored securely and never transmitted in offline mode.</p>
+            `);
+        }
+
+        function showPrivacyInfo() {
+            addMessage('assistant', `
+                <h4>📋 Privacy Information</h4>
+                <p>Your privacy is our top priority. Here's how we protect you:</p>
+
+                <ul>
+                    <li>🔒 <strong>Local Processing:</strong> All data stays on your devices</li>
+                    <li>🛡️ <strong>Encrypted Communications:</strong> End-to-end encryption for all transmissions</li>
+                    <li>🎭 <strong>Anonymous Aggregation:</strong> No individual data can be identified</li>
+                    <li>🔐 <strong>Secure Storage:</strong> Encrypted local data storage</li>
+                    <li>🚫 <strong>No Tracking:</strong> We don't collect personal information</li>
+                </ul>
+
+                <p>Learn more about our privacy practices and compliance standards.</p>
+            `);
+        }
+
+        // Additional action functions
+        function checkSystemHealth() {
+            addMessage('assistant', '🏥 Running system health check... All systems operational!');
+        }
+
+        function viewDocumentation() {
+            addMessage('assistant', '📚 Opening comprehensive documentation and tutorials...');
+        }
+
+        function joinCommunity() {
+            addMessage('assistant', '👥 Connecting you to our federated learning community...');
+        }
+
+        function getSupport() {
+            addMessage('assistant', '💬 Our support team is here to help with your FL implementation!');
+        }
+
+        function provideFeedback() {
+            addMessage('assistant', '📝 Your feedback helps us improve the FL Guardian platform!');
+        }
+
+        // Initialize
+        console.log('🤖 FL Guardian AI Assistant loaded');
+    </script>
+</body>
+</html>

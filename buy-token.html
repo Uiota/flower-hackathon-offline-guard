@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SmartCityPass — Buy Tokens</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Inter:wght@400;600;800;900&display=swap');
+    :root{--primary-bg:#0a0e1a;--secondary-bg:#0f1419;--card-bg:#161b22;--border-primary:#21262d;--border-accent:#30363d;--text-primary:#f0f6fc;--text-secondary:#8b949e;--accent-blue:#1f6feb;--accent-purple:#8b5cf6;--accent-cyan:#06d6a0;--glow-blue:rgba(31,111,235,.3);--glow-purple:rgba(139,92,246,.3);--glow-cyan:rgba(6,214,160,.3)}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Inter',system-ui,Segoe UI,Roboto,Helvetica,Arial;background:var(--primary-bg);color:var(--text-primary);line-height:1.6;min-height:100vh;overflow-x:hidden}
+    .bg{position:fixed;inset:0;z-index:-3;background:
+      radial-gradient(ellipse at top left,rgba(31,111,235,.15) 0%,transparent 50%),
+      radial-gradient(ellipse at top right,rgba(139,92,246,.1) 0%,transparent 50%),
+      radial-gradient(ellipse at bottom left,rgba(6,214,160,.08) 0%,transparent 50%),
+      var(--primary-bg);animation:grad 20s ease-in-out infinite}
+    @keyframes grad{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}
+    .grid{position:fixed;inset:0;z-index:-2;background-image:linear-gradient(var(--border-primary) 1px,transparent 1px),linear-gradient(90deg,var(--border-primary) 1px,transparent 1px);background-size:60px 60px;opacity:.25;animation:grid 30s linear infinite}
+    @keyframes grid{to{transform:translate(60px,60px)}}
+    .container{max-width:1200px;margin:0 auto;padding:32px}
+    header.hdr{display:flex;justify-content:space-between;align-items:center;padding:20px 0;margin-bottom:24px;position:relative}
+    header.hdr::after{content:'';position:absolute;left:0;right:0;bottom:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent-blue),var(--accent-purple),var(--accent-cyan),transparent);opacity:.6}
+    .brand{display:flex;align-items:center;gap:16px}
+    .logo{position:relative;width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg,var(--accent-blue),var(--accent-purple),var(--accent-cyan));display:grid;place-items:center;box-shadow:0 0 30px var(--glow-blue)}
+    .logo::before{content:'';position:absolute;inset:3px;border-radius:13px;background:var(--card-bg)}
+    .logo span{position:relative;z-index:1;font-family:'JetBrains Mono',monospace;font-weight:800;background:linear-gradient(135deg,var(--accent-blue),var(--accent-cyan));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+    .title{font-size:1.8rem;font-weight:900;letter-spacing:-.02em}
+    .subtitle{color:var(--text-secondary);text-transform:uppercase;font-size:.9rem;letter-spacing:.1em}
+    .nav{display:flex;gap:10px;flex-wrap:wrap}
+    .nav a{padding:10px 14px;border-radius:12px;border:1px solid var(--border-primary);color:var(--text-secondary);text-decoration:none}
+    .nav a:hover{color:var(--text-primary);border-color:var(--accent-blue);box-shadow:0 6px 20px rgba(31,111,235,.2)}
+    .page-head{text-align:center;margin:40px 0}
+    .page-title{font-size:3rem;font-weight:900;background:linear-gradient(135deg,#fff,var(--accent-blue),var(--accent-cyan));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-.03em}
+    .page-sub{color:var(--text-secondary);max-width:760px;margin:10px auto 0}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+    .card{background:linear-gradient(135deg,rgba(22,27,34,.85),rgba(33,38,45,.55));border:1px solid var(--border-primary);border-radius:16px;padding:18px;backdrop-filter:blur(20px)}
+    .packs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+    .pack{padding:18px;border-radius:14px;border:1px solid var(--border-primary);cursor:pointer;background:rgba(255,255,255,.02)}
+    .pack.active{border-color:var(--accent-blue);box-shadow:0 8px 24px var(--glow-blue)}
+    .pack h3{margin:6px 0}
+    .muted{color:var(--text-secondary);font-size:.9rem}
+    .row{display:flex;gap:12px;align-items:center;margin:10px 0}
+    .input{flex:1;padding:12px 14px;border-radius:10px;border:1px solid var(--border-accent);background:#0b1117;color:var(--text-primary)}
+    .btn{padding:10px 14px;border-radius:12px;border:1px solid var(--border-primary);background:rgba(255,255,255,.02);color:var(--text-primary);text-decoration:none;cursor:pointer}
+    .btn.primary{background:linear-gradient(135deg,var(--accent-blue),var(--accent-purple));border-color:var(--accent-blue);box-shadow:0 8px 24px var(--glow-blue)}
+    canvas{background:#0b1117;border:1px solid var(--border-accent);border-radius:12px}
+    .steps{display:flex;gap:8px;flex-wrap:wrap}
+    .step{padding:8px 10px;border-radius:999px;border:1px solid var(--border-accent);color:var(--text-secondary);font-size:.85rem}
+    .step.active{border-color:var(--accent-cyan);color:#b7ffe8;box-shadow:0 0 16px var(--glow-cyan)}
+    .balance{font-family:'JetBrains Mono',monospace;font-weight:700}
+    @media (max-width: 900px){.grid-2{grid-template-columns:1fr}}
+  </style>
+  <script>
+    const DEBUG = /[?&]debug=1\b/.test(location.search);
+    const dlog = (...a)=>DEBUG&&console.log('[Buy]',...a);
+    function saveCredits(n){ try{ localStorage.setItem('scp_credits', String(n)) }catch{} }
+    function loadCredits(){ try{ return Number(localStorage.getItem('scp_credits')||'0') }catch{ return 0 } }
+    function hash(s){ let h=2166136261>>>0; for(let i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=Math.imul(h,16777619)} return h>>>0 }
+    function drawPseudoQR(canvas, text){
+      const ctx = canvas.getContext('2d');
+      const size = canvas.width = canvas.height = 240;
+      ctx.fillStyle = '#0b1117'; ctx.fillRect(0,0,size,size);
+      const cells = 33, cell = Math.floor(size/cells);
+      let seed = hash(text);
+      function rnd(){ seed = (seed*1664525 + 1013904223)>>>0; return seed/4294967295 }
+      for(let y=0;y<cells;y++){
+        for(let x=0;x<cells;x++){
+          // Reserve simple finder-like corners
+          const corner = (x<7&&y<7)||(x>cells-8&&y<7)||(x<7&&y>cells-8);
+          const on = corner ? true : rnd()>0.55;
+          ctx.fillStyle = on ? '#e5e7eb' : '#0b1117';
+          ctx.fillRect(x*cell+1,y*cell+1,cell-2,cell-2);
+        }
+      }
+    }
+    function stepper(idx){
+      document.querySelectorAll('.step').forEach((el,i)=>{
+        el.classList.toggle('active', i<=idx);
+      });
+    }
+  </script>
+</head>
+<body>
+  <div class="bg"></div>
+  <div class="grid"></div>
+  <div class="container">
+    <header class="hdr">
+      <div class="brand">
+        <div class="logo"><span>SCP</span></div>
+        <div>
+          <div class="title">SmartCityPass</div>
+          <div class="subtitle">Buy Tokens</div>
+        </div>
+      </div>
+      <nav class="nav">
+        <a href="index.html">Home</a>
+        <a href="smartcitypass.html">Studio</a>
+        <a href="scp-whitepaper.html">Whitepaper</a>
+      </nav>
+    </header>
+    <div class="page-head">
+      <h1 class="page-title">Acquire Credits</h1>
+      <p class="page-sub">Purchase SCP credits for compute, policy budget, and barter flows. Offline-friendly — supports QR transfer.</p>
+    </div>
+    <div class="grid-2">
+      <section class="card">
+        <h3>Select Package</h3>
+        <div class="packs" id="packs">
+          <div class="pack active" data-amount="100" data-price="10">
+            <div class="muted">Starter</div>
+            <h3>100 Credits</h3>
+            <div class="muted">$10 USD</div>
+          </div>
+          <div class="pack" data-amount="500" data-price="45">
+            <div class="muted">Growth</div>
+            <h3>500 Credits</h3>
+            <div class="muted">$45 USD</div>
+          </div>
+          <div class="pack" data-amount="1000" data-price="80">
+            <div class="muted">Pro</div>
+            <h3>1000 Credits</h3>
+            <div class="muted">$80 USD</div>
+          </div>
+        </div>
+        <div class="row">
+          <label class="muted" for="wallet">Wallet</label>
+          <input id="wallet" class="input" placeholder="did:key:z6Mk... or 0x address" />
+        </div>
+        <div class="row">
+          <button id="genQr" class="btn">Generate QR</button>
+          <button id="buy" class="btn primary">Buy (Simulated)</button>
+        </div>
+        <div class="row" style="justify-content:space-between">
+          <div>Current Balance: <span class="balance" id="balance">0</span> credits</div>
+          <div class="steps">
+            <span class="step">Initiated</span>
+            <span class="step">Awaiting</span>
+            <span class="step">Confirmed</span>
+            <span class="step">Synced</span>
+          </div>
+        </div>
+      </section>
+      <section class="card">
+        <h3>Scan & Pay</h3>
+        <p class="muted">Use any wallet to scan and transfer. This QR is a local visual receipt (demo only).</p>
+        <canvas id="qr" width="240" height="240" aria-label="Payment QR"></canvas>
+        <div class="row">
+          <input id="paylink" class="input" readonly />
+          <button id="copy" class="btn">Copy</button>
+        </div>
+      </section>
+    </div>
+  </div>
+  <script>
+    const balEl = document.getElementById('balance');
+    balEl.textContent = String(loadCredits());
+    let selected = { amount: 100, price: 10 };
+    document.querySelectorAll('.pack').forEach(card=>{
+      card.addEventListener('click',()=>{
+        document.querySelectorAll('.pack').forEach(p=>p.classList.remove('active'));
+        card.classList.add('active');
+        selected.amount = Number(card.getAttribute('data-amount'))||100;
+        selected.price = Number(card.getAttribute('data-price'))||10;
+        dlog('Selected', selected);
+      })
+    });
+    function buildLink(){
+      const w = (document.getElementById('wallet').value||'').trim()||'did:key:z6MkDemo';
+      return `scp+pay://credits?to=${encodeURIComponent(w)}&amount=${selected.amount}`;
+    }
+    document.getElementById('genQr').addEventListener('click',()=>{
+      const link = buildLink();
+      document.getElementById('paylink').value = link;
+      drawPseudoQR(document.getElementById('qr'), link);
+      stepper(1);
+    });
+    document.getElementById('copy').addEventListener('click', async ()=>{
+      try{ await navigator.clipboard.writeText(document.getElementById('paylink').value); alert('Copied'); }catch{ alert('Copy failed'); }
+    });
+    document.getElementById('buy').addEventListener('click',()=>{
+      stepper(2);
+      setTimeout(()=>{
+        stepper(3);
+        const newBal = loadCredits() + selected.amount;
+        saveCredits(newBal); balEl.textContent = String(newBal);
+        alert(`Purchased ${selected.amount} credits (simulated).`);
+      }, 1200);
+    });
+    // Initialize default QR
+    drawPseudoQR(document.getElementById('qr'), buildLink());
+  </script>
+</body>
+</html>
+

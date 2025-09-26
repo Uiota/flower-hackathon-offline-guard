@@ -1,0 +1,18 @@
+{
+  "archive": "uiota_offline_guard_sideload_20250926_155657.zip",
+  "size": 234951,
+  "sha256": "9e8746fcba67ae2e78dd6a0005c276acb1e1350c1a3a2f56fd2a4f48149e00c0",
+  "created": "2025-09-26T15:56:57.063159",
+  "contains": {
+    "agents": "Guardian agent system",
+    "scripts": "Deployment and control scripts",
+    "web": "Web interface files",
+    "presentation": "Digital presentation",
+    "config": "Edge device configuration"
+  },
+  "deployment": {
+    "extract": "unzip uiota_offline_guard_sideload_20250926_155657.zip",
+    "verify": "python3 verify_package.py",
+    "launch": "./launch_guardian.sh"
+  }
+}

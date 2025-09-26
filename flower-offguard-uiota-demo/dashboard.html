@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Federated Learning Dashboard | Off-Guard + UIOTA</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <style>
+        /* Modern CSS Variables */
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --warning-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            --dark-bg: #0f0f23;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --text-accent: #64ffda;
+            --shadow-glow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            --blur-bg: rgba(255, 255, 255, 0.08);
+            --border-radius: 16px;
+            --animation-speed: 0.3s;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Animated Background */
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        /* Glass Morphism Header */
+        .header {
+            background: var(--blur-bg);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--card-border);
+            padding: 1.5rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-glow);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo i {
+            font-size: 2rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--blur-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success-gradient);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.2); }
+        }
+
+        /* Dashboard Grid */
+        .dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        /* Advanced Glass Cards */
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow-glow);
+            transition: all var(--animation-speed) ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--primary-gradient);
+            opacity: 0;
+            transition: opacity var(--animation-speed) ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 12px 40px rgba(31, 38, 135, 0.5);
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        /* Card Headers */
+        .card-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-gradient);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        /* Metrics Cards */
+        .metric-card {
+            grid-column: span 1;
+            min-height: 200px;
+        }
+
+        .metric-value {
+            font-size: 3rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--success-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            margin: 1rem 0;
+        }
+
+        .metric-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+
+        .metric-change {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .metric-change.positive {
+            color: #4ade80;
+        }
+
+        .metric-change.negative {
+            color: #f87171;
+        }
+
+        /* Charts */
+        .chart-card {
+            grid-column: span 2;
+            min-height: 400px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 1rem;
+        }
+
+        /* Client Grid */
+        .client-grid {
+            grid-column: span 3;
+        }
+
+        .clients-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .client-card {
+            background: var(--blur-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all var(--animation-speed) ease;
+        }
+
+        .client-card:hover {
+            transform: scale(1.02);
+            border-color: var(--text-accent);
+        }
+
+        .client-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .client-id {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .client-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-training {
+            background: var(--warning-gradient);
+            color: white;
+        }
+
+        .status-completed {
+            background: var(--success-gradient);
+            color: white;
+        }
+
+        .status-offline {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+        }
+
+        .client-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .client-metric {
+            text-align: center;
+        }
+
+        .client-metric-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-accent);
+        }
+
+        .client-metric-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Control Panel */
+        .controls {
+            grid-column: span 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .control-button {
+            background: var(--primary-gradient);
+            border: none;
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all var(--animation-speed) ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .control-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .control-button:active {
+            transform: translateY(0);
+        }
+
+        .control-button.stop {
+            background: var(--secondary-gradient);
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .dashboard {
+                padding: 1rem;
+                grid-template-columns: 1fr;
+            }
+
+            .chart-card,
+            .client-grid {
+                grid-column: span 1;
+            }
+
+            .header {
+                padding: 1rem;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-gradient);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary-gradient);
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div id="particles-js"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-brain"></i>
+                <span>Federated Learning Dashboard</span>
+            </div>
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                <span id="connection-status">Connected</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Dashboard Grid -->
+    <main class="dashboard">
+        <!-- Global Metrics -->
+        <div class="card metric-card">
+            <div class="card-header">
+                <div class="card-title">
+                    <div class="card-icon"><i class="fas fa-target"></i></div>
+                    Global Accuracy
+                </div>
+            </div>
+            <div class="metric-value" id="global-accuracy">0.0%</div>
+            <div class="metric-label">Model Performance</div>
+            <div class="metric-change positive" id="accuracy-change">
+                <i class="fas fa-arrow-up"></i>
+                <span>+0.0%</span>
+            </div>
+        </div>
+
+        <div class="card metric-card">
+            <div class="card-header">
+                <div class="card-title">
+                    <div class="card-icon"><i class="fas fa-chart-line"></i></div>
+                    Training Loss
+                </div>
+            </div>
+            <div class="metric-value" id="global-loss">0.000</div>
+            <div class="metric-label">Cross-Entropy Loss</div>
+            <div class="metric-change negative" id="loss-change">
+                <i class="fas fa-arrow-down"></i>
+                <span>-0.000</span>
+            </div>
+        </div>
+
+        <div class="card metric-card">
+            <div class="card-header">
+                <div class="card-title">
+                    <div class="card-icon"><i class="fas fa-users"></i></div>
+                    Active Clients
+                </div>
+            </div>
+            <div class="metric-value" id="active-clients">0</div>
+            <div class="metric-label">Participating Nodes</div>
+            <div class="metric-change" id="clients-change">
+                <i class="fas fa-users"></i>
+                <span id="total-clients">of 0 total</span>
+            </div>
+        </div>
+
+        <div class="card metric-card">
+            <div class="card-header">
+                <div class="card-title">
+                    <div class="card-icon"><i class="fas fa-sync"></i></div>
+                    Current Round
+                </div>
+            </div>
+            <div class="metric-value" id="current-round">0</div>
+            <div class="metric-label">Training Iteration</div>
+            <div class="metric-change" id="round-status">
+                <i class="fas fa-clock"></i>
+                <span>Initializing</span>
+            </div>
+        </div>
+
+        <!-- Accuracy Chart -->
+        <div class="card chart-card">
+            <div class="card-header">
+                <div class="card-title">
+                    <div class="card-icon"><i class="fas fa-chart-area"></i></div>
+                    Training Progress
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="accuracy-chart"></canvas>
+            </div>
+        </div>
+
+        <!-- Loss Chart -->
+        <div class="card chart-card">
+            <div class="card-header">
+                <div class="card-title">
+                    <div class="card-icon"><i class="fas fa-chart-line"></i></div>
+                    Loss Convergence
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="loss-chart"></canvas>
+            </div>
+        </div>
+
+        <!-- Control Panel -->
+        <div class="card controls">
+            <div class="card-header">
+                <div class="card-title">
+                    <div class="card-icon"><i class="fas fa-cogs"></i></div>
+                    Controls
+                </div>
+            </div>
+            <button class="control-button" id="start-btn" onclick="startTraining()">
+                <i class="fas fa-play"></i>
+                Start Training
+            </button>
+            <button class="control-button stop" id="stop-btn" onclick="stopTraining()">
+                <i class="fas fa-stop"></i>
+                Stop Training
+            </button>
+            <button class="control-button" onclick="location.reload()">
+                <i class="fas fa-refresh"></i>
+                Reset Dashboard
+            </button>
+        </div>
+
+        <!-- Client Status Grid -->
+        <div class="card client-grid">
+            <div class="card-header">
+                <div class="card-title">
+                    <div class="card-icon"><i class="fas fa-network-wired"></i></div>
+                    Client Status
+                </div>
+            </div>
+            <div class="clients-container" id="clients-container">
+                <!-- Client cards will be populated dynamically -->
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Global variables
+        let accuracyChart, lossChart;
+        let trainingData = [];
+        let previousAccuracy = 0;
+        let previousLoss = 0;
+
+        // Initialize Dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeParticles();
+            initializeCharts();
+            startDataPolling();
+        });
+
+        // Initialize particle background
+        function initializeParticles() {
+            particlesJS('particles-js', {
+                particles: {
+                    number: { value: 50 },
+                    color: { value: "#64ffda" },
+                    shape: { type: "circle" },
+                    opacity: { value: 0.3 },
+                    size: { value: 3, random: true },
+                    line_linked: {
+                        enable: true,
+                        distance: 150,
+                        color: "#64ffda",
+                        opacity: 0.2,
+                        width: 1
+                    },
+                    move: {
+                        enable: true,
+                        speed: 2,
+                        direction: "none",
+                        random: false,
+                        straight: false,
+                        out_mode: "out",
+                        bounce: false
+                    }
+                },
+                interactivity: {
+                    detect_on: "canvas",
+                    events: {
+                        onhover: { enable: true, mode: "repulse" },
+                        onclick: { enable: true, mode: "push" },
+                        resize: true
+                    }
+                },
+                retina_detect: true
+            });
+        }
+
+        // Initialize Charts
+        function initializeCharts() {
+            const chartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: {
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                        ticks: { color: '#a0a0a0' }
+                    },
+                    y: {
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                        ticks: { color: '#a0a0a0' }
+                    }
+                }
+            };
+
+            // Accuracy Chart
+            const accuracyCtx = document.getElementById('accuracy-chart').getContext('2d');
+            accuracyChart = new Chart(accuracyCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Global Accuracy',
+                        data: [],
+                        borderColor: '#4facfe',
+                        backgroundColor: 'rgba(79, 172, 254, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    ...chartOptions,
+                    scales: {
+                        ...chartOptions.scales,
+                        y: { ...chartOptions.scales.y, min: 0, max: 1 }
+                    }
+                }
+            });
+
+            // Loss Chart
+            const lossCtx = document.getElementById('loss-chart').getContext('2d');
+            lossChart = new Chart(lossCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Global Loss',
+                        data: [],
+                        borderColor: '#f093fb',
+                        backgroundColor: 'rgba(240, 147, 251, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: chartOptions
+            });
+        }
+
+        // Start data polling
+        function startDataPolling() {
+            setInterval(updateDashboard, 1000); // Update every second
+        }
+
+        // Update dashboard with latest data
+        async function updateDashboard() {
+            try {
+                const response = await fetch('/api/metrics');
+                const data = await response.json();
+
+                updateMetrics(data.global_metrics);
+                updateCharts(data.training_history);
+                updateClients(data.client_metrics);
+
+            } catch (error) {
+                console.error('Failed to fetch data:', error);
+                document.getElementById('connection-status').textContent = 'Disconnected';
+            }
+        }
+
+        // Update metric cards
+        function updateMetrics(metrics) {
+            document.getElementById('global-accuracy').textContent = `${(metrics.accuracy * 100).toFixed(1)}%`;
+            document.getElementById('global-loss').textContent = metrics.loss.toFixed(3);
+            document.getElementById('active-clients').textContent = metrics.active_clients;
+            document.getElementById('total-clients').textContent = `of ${metrics.total_clients} total`;
+            document.getElementById('current-round').textContent = metrics.round;
+
+            // Update change indicators
+            const accuracyChange = metrics.accuracy - previousAccuracy;
+            const lossChange = metrics.loss - previousLoss;
+
+            updateChangeIndicator('accuracy-change', accuracyChange, true);
+            updateChangeIndicator('loss-change', lossChange, false);
+
+            previousAccuracy = metrics.accuracy;
+            previousLoss = metrics.loss;
+
+            // Update status
+            const roundStatus = metrics.round > 0 ? `Round ${metrics.round}` : 'Initializing';
+            document.getElementById('round-status').innerHTML = `<i class="fas fa-clock"></i><span>${roundStatus}</span>`;
+        }
+
+        // Update change indicators
+        function updateChangeIndicator(elementId, change, isPositiveGood) {
+            const element = document.getElementById(elementId);
+            const span = element.querySelector('span');
+            const icon = element.querySelector('i');
+
+            const isPositive = change > 0;
+            const isGood = isPositiveGood ? isPositive : !isPositive;
+
+            element.className = `metric-change ${isGood ? 'positive' : 'negative'}`;
+            icon.className = `fas fa-arrow-${isPositive ? 'up' : 'down'}`;
+            span.textContent = `${isPositive ? '+' : ''}${(change * 100).toFixed(1)}%`;
+        }
+
+        // Update charts
+        function updateCharts(history) {
+            if (history.length === 0) return;
+
+            const rounds = history.map(h => `Round ${h.round}`);
+            const accuracies = history.map(h => h.accuracy);
+            const losses = history.map(h => h.loss);
+
+            // Update accuracy chart
+            accuracyChart.data.labels = rounds;
+            accuracyChart.data.datasets[0].data = accuracies;
+            accuracyChart.update('none');
+
+            // Update loss chart
+            lossChart.data.labels = rounds;
+            lossChart.data.datasets[0].data = losses;
+            lossChart.update('none');
+        }
+
+        // Update client cards
+        function updateClients(clientMetrics) {
+            const container = document.getElementById('clients-container');
+            container.innerHTML = '';
+
+            Object.values(clientMetrics).forEach(client => {
+                const clientCard = createClientCard(client);
+                container.appendChild(clientCard);
+            });
+        }
+
+        // Create client card
+        function createClientCard(client) {
+            const div = document.createElement('div');
+            div.className = 'client-card';
+
+            const statusClass = getStatusClass(client.status);
+
+            div.innerHTML = `
+                <div class="client-header">
+                    <div class="client-id">${client.id}</div>
+                    <div class="client-status ${statusClass}">${client.status}</div>
+                </div>
+                <div class="client-metrics">
+                    <div class="client-metric">
+                        <div class="client-metric-value">${(client.accuracy * 100).toFixed(1)}%</div>
+                        <div class="client-metric-label">Accuracy</div>
+                    </div>
+                    <div class="client-metric">
+                        <div class="client-metric-value">${client.loss.toFixed(3)}</div>
+                        <div class="client-metric-label">Loss</div>
+                    </div>
+                    <div class="client-metric">
+                        <div class="client-metric-value">${client.samples}</div>
+                        <div class="client-metric-label">Samples</div>
+                    </div>
+                    <div class="client-metric">
+                        <div class="client-metric-value">${client.epochs_completed}</div>
+                        <div class="client-metric-label">Epochs</div>
+                    </div>
+                </div>
+            `;
+
+            return div;
+        }
+
+        // Get status class for styling
+        function getStatusClass(status) {
+            if (status.includes('training') || status.includes('epoch')) return 'status-training';
+            if (status === 'completed' || status === 'training_complete') return 'status-completed';
+            return 'status-offline';
+        }
+
+        // Control functions
+        async function startTraining() {
+            const btn = document.getElementById('start-btn');
+            btn.innerHTML = '<div class="loading"></div>Starting...';
+            btn.disabled = true;
+
+            try {
+                await fetch('/api/start');
+                btn.innerHTML = '<i class="fas fa-play"></i>Training Started';
+                setTimeout(() => {
+                    btn.innerHTML = '<i class="fas fa-play"></i>Start Training';
+                    btn.disabled = false;
+                }, 2000);
+            } catch (error) {
+                btn.innerHTML = '<i class="fas fa-exclamation"></i>Error';
+                btn.disabled = false;
+            }
+        }
+
+        async function stopTraining() {
+            const btn = document.getElementById('stop-btn');
+            btn.innerHTML = '<div class="loading"></div>Stopping...';
+            btn.disabled = true;
+
+            try {
+                await fetch('/api/stop');
+                btn.innerHTML = '<i class="fas fa-stop"></i>Training Stopped';
+                setTimeout(() => {
+                    btn.innerHTML = '<i class="fas fa-stop"></i>Stop Training';
+                    btn.disabled = false;
+                }, 2000);
+            } catch (error) {
+                btn.innerHTML = '<i class="fas fa-exclamation"></i>Error';
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>

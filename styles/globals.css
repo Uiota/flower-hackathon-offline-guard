@@ -1,0 +1,44 @@
+:root {
+  /* Dark mode defaults (overridden by ThemeProvider) */
+  --bg: #0b0f14;
+  --panel: #121821;
+  --text: #e6edf6;
+  --muted: #9fb0c3;
+  --orb: #47d7ff;
+  --accent: #76ffe1;
+  --ok: #2ee59d;
+  --warn: #ffc861;
+
+  /* Compatibility variables used by site styles */
+  --header-bg: rgba(18, 24, 33, 0.9);
+  --border: rgba(255, 255, 255, 0.08);
+  --card-bg: var(--panel);
+  --cta-text: var(--bg);
+}
+
+/* Light theme overrides: support both attribute and class approaches */
+[data-theme="light"],
+:root.light {
+  --bg: #f4f4f5;
+  --panel: #ffffff;
+  --text: #0b0f14;
+  --muted: #6b7280;
+  --orb: #0077ff;
+  --accent: #00c4cc;
+  --ok: #10b981;
+  --warn: #f59e0b;
+
+  --header-bg: rgba(255, 255, 255, 0.9);
+  --border: rgba(0, 0, 0, 0.08);
+  --card-bg: var(--panel);
+  --cta-text: #0b0f14;
+}
+
+/* Base usage */
+html, body { background: var(--bg); color: var(--text); }
+
+/* Smooth theme transitions */
+.theme-transition {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+

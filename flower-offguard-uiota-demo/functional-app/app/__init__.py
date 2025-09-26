@@ -1,0 +1,3 @@
+"""
+Federated Learning Web Application
+"""

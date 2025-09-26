@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "uiota-http": {
+      "command": "node",
+      "args": ["scripts/mcp-uiota-bridge.js"],
+      "env": {
+        "UIOTA_API_BASE": "http://127.0.0.1:9090/api/v1",
+        "UIOTA_API_SECRET": "change-me"
+      }
+    }
+  }
+}
+

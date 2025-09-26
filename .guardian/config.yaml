@@ -1,0 +1,29 @@
+# UIOTA Guardian Configuration (Auto-generated)
+guardian:
+  class: "unassigned"
+  level: 1
+  xp: 0
+  auto_save: true
+
+agents:
+  web:
+    enabled: true
+    port: 8080
+    auto_start: true
+
+  ml:
+    enabled: true
+    port: 8888
+    cpu_only: true
+    auto_start: true
+
+system:
+  container_engine: "podman"
+  offline_first: true
+  security_level: "high"
+  auto_setup: true
+
+setup:
+  completed: true
+  timestamp: 2025-09-26 15:13:31
+  agent: "SmoothSetupAgent"

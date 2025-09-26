@@ -1,0 +1,14 @@
+{
+  "name": "UIOTA Offline Guard",
+  "version": "1.0.0",
+  "description": "Sovereign AI ecosystem with Guardian agents",
+  "created": "2025-09-26T15:56:56.959127",
+  "arch": "universal",
+  "os": "linux",
+  "requirements": {
+    "python": ">=3.8",
+    "memory": "512MB",
+    "storage": "2GB",
+    "network": "optional"
+  }
+}

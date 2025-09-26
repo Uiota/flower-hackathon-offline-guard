@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SmartCityPass - Design Preview</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0a; color: white; min-height: 100vh; overflow-x: hidden;
+        }
+        /* Animated mesh gradient background */
+        .bg-gradient { position: fixed; inset: 0; z-index: -2; background:
+            radial-gradient(circle at 20% 30%, rgba(99,102,241,.3) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(139,92,246,.25) 0%, transparent 50%),
+            radial-gradient(circle at 40% 80%, rgba(6,214,160,.2) 0%, transparent 50%);
+            animation: gradientShift 20s ease-in-out infinite; }
+        @keyframes gradientShift { 0%,100%{transform:translateX(0) translateY(0)} 33%{transform:translateX(-10px) translateY(-5px)} 66%{transform:translateX(10px) translateY(5px)} }
+        /* Wireframe overlay */
+        .wireframe { position: fixed; inset: 0; z-index: -1; background-image:
+            linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 40px 40px; animation: wireMove 30s linear infinite; opacity: .4; }
+        @keyframes wireMove { 0%{transform:translate(0,0)} 100%{transform:translate(40px,40px)} }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+        /* Header */
+        .header { text-align: center; padding: 40px 0; }
+        .logo-container { display:flex; align-items:center; justify-content:center; gap:16px; margin-bottom:20px; }
+        .logo { width:80px; height:80px; background: linear-gradient(135deg,#6366f1 0%,#8b5cf6 50%,#06d6a0 100%); border-radius:20px; display:flex; align-items:center; justify-content:center; position:relative; box-shadow:0 0 40px rgba(99,102,241,.4); animation: logoGlow 3s ease-in-out infinite; }
+        @keyframes logoGlow { 0%,100%{ box-shadow:0 0 40px rgba(99,102,241,.4)} 50%{ box-shadow:0 0 60px rgba(99,102,241,.6)} }
+        .logo::before { content:''; position:absolute; inset:3px; background:#0a0a0a; border-radius:17px; }
+        .logo-text { position:relative; z-index:1; font-size:28px; font-weight:900; background: linear-gradient(135deg,#6366f1 0%,#06d6a0 100%); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+        .title { font-size:4rem; font-weight:900; background: linear-gradient(135deg,#ffffff 0%, #9ca3af 100%); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:8px; }
+        .subtitle { font-size:1.2rem; color:#9ca3af; opacity:.8; }
+
+        /* Status Bar */
+        .status-bar { background:rgba(255,255,255,.05); backdrop-filter: blur(20px); border:1px solid rgba(255,255,255,.1); border-radius:16px; padding:20px; margin-bottom:32px; display:grid; grid-template-columns: repeat(auto-fit,minmax(250px,1fr)); gap:20px; }
+        .status-item { display:flex; align-items:center; gap:16px; }
+        .status-icon { width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center; position:relative; }
+        .status-online { background: rgba(16,185,129,.2); border:1px solid #10b981; }
+        .status-warning { background: rgba(245,158,11,.2); border:1px solid #f59e0b; }
+        .status-dot { position:absolute; top:6px; right:6px; width:8px; height:8px; border-radius:50%; animation: pulse 2s infinite; }
+        .status-online .status-dot { background:#10b981; box-shadow:0 0 10px #10b981; }
+        .status-warning .status-dot { background:#f59e0b; box-shadow:0 0 10px #f59e0b; }
+        @keyframes pulse { 0%,100%{opacity:1; transform:scale(1)} 50%{opacity:.7; transform:scale(1.1)} }
+        .status-text h3 { font-size:1rem; font-weight:600; margin-bottom:4px; }
+        .status-text p { font-size:.85rem; color:#9ca3af; }
+
+        /* Navigation */
+        .nav-container { margin-bottom:32px; }
+        .nav-tabs { position:relative; display:flex; flex-wrap:nowrap; gap:8px; background:rgba(255,255,255,.05); backdrop-filter: blur(20px); border:1px solid rgba(255,255,255,.1); border-radius:16px; padding:8px; overflow:hidden; }
+        .nav-indicator { position:absolute; top:8px; left:8px; height: calc(100% - 16px); border-radius:12px; background: linear-gradient(135deg,#6366f1 0%, #8b5cf6 100%); box-shadow:0 8px 24px rgba(99,102,241,.3); transition: left .35s cubic-bezier(.4,0,.2,1), width .35s cubic-bezier(.4,0,.2,1); }
+        .nav-tab { flex:1; padding:16px 20px; border-radius:12px; background:transparent; border:none; color:#9ca3af; font-size:.95rem; font-weight:500; cursor:pointer; transition: color .2s ease, background .2s ease; display:flex; align-items:center; justify-content:center; gap:8px; position:relative; z-index:1; white-space:nowrap; }
+        .nav-tab.active { color:white; }
+        .nav-tab:hover:not(.active) { color:white; background:rgba(255,255,255,.05); }
+
+        /* Main Content */
+        .main-content { background:rgba(255,255,255,.05); backdrop-filter: blur(20px); border:1px solid rgba(255,255,255,.1); border-radius:24px; min-height:600px; position:relative; overflow:hidden; }
+        .main-content::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background: linear-gradient(90deg,#6366f1,#8b5cf6,#06d6a0); opacity:.8; }
+        .content-section { padding:40px; }
+        .section-title { font-size:2.5rem; font-weight:800; margin-bottom:8px; background: linear-gradient(135deg,#ffffff 0%, #6366f1 50%, #06d6a0 100%); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; text-align:center; }
+        .section-subtitle { color:#9ca3af; font-size:1.1rem; margin-bottom:40px; text-align:center; }
+
+        /* Token Studio Layout */
+        .studio-layout { display:grid; grid-template-columns: 1fr 1fr; gap:32px; margin-bottom:32px; }
+        .form-panel, .preview-panel { background: rgba(255,255,255,.02); border:1px solid rgba(255,255,255,.1); border-radius:16px; padding:24px; }
+        .panel-title { font-size:1.2rem; font-weight:600; margin-bottom:20px; }
+        .form-group { margin-bottom:20px; }
+        .form-label { display:block; font-size:.9rem; font-weight:500; margin-bottom:6px; color:#e5e7eb; }
+        .form-input, .form-select { width:100%; padding:12px 16px; background: rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); border-radius:8px; color:white; font-size:.95rem; }
+        .form-input:focus, .form-select:focus { outline:none; border-color:#6366f1; box-shadow:0 0 0 2px rgba(99,102,241,.1); }
+
+        /* Carbon Tracker */
+        .carbon-tracker { background: linear-gradient(135deg, rgba(6,214,160,.1) 0%, rgba(16,185,129,.1) 100%); border:1px solid rgba(6,214,160,.3); border-radius:12px; padding:20px; margin:20px 0; }
+        .carbon-header { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+        .carbon-icon { width:32px; height:32px; background:#06d6a0; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#0a0a0a; font-weight:700; font-size:12px; }
+        .carbon-amount { font-size:2rem; font-weight:800; color:#06d6a0; text-shadow:0 0 20px rgba(6,214,160,.3); }
+
+        /* JSON Preview */
+        .json-preview { background:#111111; border:1px solid rgba(255,255,255,.1); border-radius:8px; padding:16px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; font-size:.9rem; line-height:1.5; color:#e5e7eb; max-height:400px; overflow:auto; }
+
+        /* Action Buttons */
+        .action-buttons { display:flex; gap:16px; justify-content:center; }
+        .btn { padding:14px 28px; border-radius:8px; border:none; font-size:.95rem; font-weight:600; cursor:pointer; transition: all .3s ease; display:flex; align-items:center; gap:8px; }
+        .btn-primary { background: linear-gradient(135deg,#6366f1 0%, #8b5cf6 100%); color:white; box-shadow:0 4px 16px rgba(99,102,241,.3); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow:0 8px 32px rgba(99,102,241,.4); }
+        .btn-secondary { background: rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2); color:white; }
+        .btn-secondary:hover { background: rgba(255,255,255,.15); }
+
+        .toggle { display:inline-flex; align-items:center; gap:10px; cursor:pointer; user-select:none; }
+        .toggle input { display:none; }
+        .toggle .track { width:44px; height:24px; background:#222; border:1px solid #444; border-radius:999px; position:relative; transition:background .2s ease; }
+        .toggle .thumb { position:absolute; top:2px; left:2px; width:20px; height:20px; background:white; border-radius:50%; transition:left .2s ease; }
+        .toggle input:checked + .track { background:#10b981; border-color:#10b981; }
+        .toggle input:checked + .track .thumb { left:22px; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .studio-layout { grid-template-columns: 1fr; }
+            .title { font-size: 2.5rem; }
+            .status-bar { grid-template-columns: 1fr; }
+        }
+    </style>
+    <!-- Simple debug flag via URL: add ?debug=1 to enable logs -->
+    <script>
+      const DEBUG = /[?&]debug=1\b/.test(location.search);
+      const dlog = (...args) => DEBUG && console.log('[SCP]', ...args);
+    </script>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-gradient" aria-hidden="true"></div>
+    <div class="wireframe" aria-hidden="true"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo-container">
+                <div class="logo" aria-hidden="true"><div class="logo-text">SCP</div></div>
+                <div>
+                    <h1 class="title">SmartCityPass</h1>
+                    <p class="subtitle">Advanced Token Infrastructure Platform</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- Status Dashboard -->
+        <div class="status-bar">
+            <div class="status-item" id="offlineStatus">
+                <div class="status-icon status-online" aria-hidden="true">
+                    <div class="status-dot"></div>
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <div class="status-text">
+                    <h3>Offline Mode</h3>
+                    <p id="offlineDesc">Zero external dependencies</p>
+                    <label class="toggle" aria-label="Toggle Offline Mode">
+                        <input id="offlineToggle" type="checkbox" checked />
+                        <span class="track"><span class="thumb"></span></span>
+                        <span style="font-size:.85rem;color:#9ca3af;">Enabled</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="status-item">
+                <div class="status-icon status-online" aria-hidden="true">
+                    <div class="status-dot"></div>
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/>
+                    </svg>
+                </div>
+                <div class="status-text">
+                    <h3>Ledger Service</h3>
+                    <p>SQLite vault ready</p>
+                </div>
+            </div>
+
+            <div class="status-item">
+                <div class="status-icon status-online" aria-hidden="true">
+                    <div class="status-dot"></div>
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5-7l-8 8-3-3"/>
+                    </svg>
+                </div>
+                <div class="status-text">
+                    <h3>OPA Engine</h3>
+                    <p>Policy enforcement active</p>
+                </div>
+            </div>
+
+            <div class="status-item">
+                <div class="status-icon status-warning" aria-hidden="true">
+                    <div class="status-dot"></div>
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                </div>
+                <div class="status-text">
+                    <h3>MCP Server</h3>
+                    <p>Agent interface optional</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="nav-container" aria-label="Sections">
+            <div class="nav-tabs" id="tabs">
+                <div class="nav-indicator" id="indicator" aria-hidden="true"></div>
+                <button class="nav-tab active" data-index="0">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+                    </svg>
+                    Token Studio
+                </button>
+                <button class="nav-tab" data-index="1">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                    </svg>
+                    Secure Vault
+                </button>
+                <button class="nav-tab" data-index="2">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                    </svg>
+                    Agent Tools
+                </button>
+                <button class="nav-tab" data-index="3">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                    Configuration
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="content-section">
+                <h2 class="section-title">Token Studio</h2>
+                <p class="section-subtitle">Create and sign SCP-01 compliant tokens with zero external dependencies</p>
+
+                <div class="studio-layout">
+                    <div class="form-panel">
+                        <h3 class="panel-title">Token Configuration</h3>
+
+                        <div class="form-group">
+                            <label class="form-label" for="tokenType">Token Type</label>
+                            <select class="form-select" id="tokenType">
+                                <option value="">Select token type...</option>
+                                <option value="SCP::COURT">Court Proceedings</option>
+                                <option value="SCP::IP">Intellectual Property</option>
+                                <option value="SCP::MUSIC">Music Rights</option>
+                                <option value="SCP::MINING">Computational Mining</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="subjectDid">Subject DID</label>
+                            <input class="form-input" id="subjectDid" type="text" value="did:key:z6MkSubject..." placeholder="Enter subject DID" />
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="subjectRoles">Subject Roles</label>
+                            <input class="form-input" id="subjectRoles" type="text" value="citizen,verified" placeholder="comma-separated roles" />
+                        </div>
+
+                        <div class="carbon-tracker">
+                            <div class="carbon-header">
+                                <div class="carbon-icon" aria-hidden="true">CO₂</div>
+                                <div>
+                                    <strong>Environmental Impact</strong>
+                                    <p style="margin:0; color:#9ca3af; font-size:.85rem;">Real-time carbon calculation</p>
+                                </div>
+                            </div>
+                            <div style="display:flex; align-items:baseline; gap:8px;">
+                                <span class="carbon-amount" id="carbonAmount">0.1</span>
+                                <span style="color:#9ca3af;">grams CO₂e</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="preview-panel">
+                        <h3 class="panel-title">Live Preview</h3>
+                        <pre class="json-preview" id="jsonPreview" aria-live="polite"></pre>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-primary" id="btnSign">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        Create & Sign Token
+                    </button>
+                    <button class="btn btn-secondary" id="btnStamp">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+                        </svg>
+                        Stamp to Ledger
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Robust tab indicator: aligns to active tab width and position
+        function positionIndicator(activeBtn) {
+            const indicator = document.getElementById('indicator');
+            const tabs = document.getElementById('tabs');
+            if (!indicator || !tabs || !activeBtn) return;
+            const tabRect = activeBtn.getBoundingClientRect();
+            const tabsRect = tabs.getBoundingClientRect();
+            const left = Math.max(8, tabRect.left - tabsRect.left); // account for container padding 8px
+            const width = Math.min(tabRect.width, tabsRect.width - 16); // inside padding
+            indicator.style.left = left + 'px';
+            indicator.style.width = width + 'px';
+        }
+
+        function switchTab(index, btn) {
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+            positionIndicator(btn);
+            dlog('Switched tab', index);
+        }
+
+        // Live JSON preview builder
+        function buildPreview() {
+            const typeEl = document.getElementById('tokenType');
+            const didEl = document.getElementById('subjectDid');
+            const rolesEl = document.getElementById('subjectRoles');
+            const type = typeEl && typeEl.value ? typeEl.value : 'SCP::';
+            const did = didEl && didEl.value ? didEl.value.trim() : '';
+            const rolesRaw = rolesEl && rolesEl.value ? rolesEl.value.trim() : '';
+            const roles = rolesRaw ? rolesRaw.split(',').map(r => r.trim()).filter(Boolean) : [];
+            const now = new Date().toISOString();
+            const doc = {
+                scp_version: '1.0',
+                type,
+                id: '01ARZ3NDEKTSV4RRFFQ69G5FAV',
+                subject: { did, role: roles },
+                issuer: { did: 'did:key:z6MkIssuer...', device: 'smartcitypass-web-v1.0' },
+                ts: now,
+                claims: {},
+                carbon: { grams_co2e: 0.1, method: 'SCP-CARBON-1.0' }
+            };
+            const el = document.getElementById('jsonPreview');
+            if (el) el.textContent = JSON.stringify(doc, null, 2);
+        }
+
+        function init() {
+            // Tabs
+            const buttons = Array.from(document.querySelectorAll('.nav-tab'));
+            buttons.forEach((btn, i) => {
+                btn.addEventListener('click', () => switchTab(i, btn));
+            });
+            // Initial indicator after layout
+            requestAnimationFrame(() => {
+                const active = document.querySelector('.nav-tab.active');
+                if (active) positionIndicator(active);
+            });
+            window.addEventListener('resize', () => {
+                const active = document.querySelector('.nav-tab.active');
+                if (active) positionIndicator(active);
+            });
+
+            // Form preview hooks
+            ['tokenType','subjectDid','subjectRoles'].forEach(id => {
+                const el = document.getElementById(id);
+                el && el.addEventListener('input', buildPreview);
+                el && el.addEventListener('change', buildPreview);
+            });
+            buildPreview();
+
+            // Offline toggle simulation
+            const toggle = document.getElementById('offlineToggle');
+            const offlineStatus = document.getElementById('offlineStatus');
+            const offlineDesc = document.getElementById('offlineDesc');
+            if (toggle && offlineStatus && offlineDesc) {
+                toggle.addEventListener('change', (e) => {
+                    const on = (e && e.target && typeof e.target.checked === 'boolean') ? e.target.checked : (toggle && toggle.checked);
+                    const icon = offlineStatus.querySelector('.status-icon');
+                    if (icon) icon.className = 'status-icon ' + (on ? 'status-online' : 'status-warning');
+                    offlineDesc.textContent = on ? 'Zero external dependencies' : 'Network features simulated';
+                    dlog('Offline mode', on ? 'enabled' : 'disabled');
+                });
+            }
+
+            // Buttons
+            document.getElementById('btnSign')?.addEventListener('click', () => {
+                buildPreview();
+                dlog('Token signed (simulated)');
+                alert('Token signed (simulated). See preview.');
+            });
+            document.getElementById('btnStamp')?.addEventListener('click', () => {
+                dlog('Stamped to ledger (simulated)');
+                alert('Stamped to local ledger (simulated).');
+            });
+        }
+
+        // Ensure DOM is ready even if script is moved
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+    </script>
+</body>
+</html>
+

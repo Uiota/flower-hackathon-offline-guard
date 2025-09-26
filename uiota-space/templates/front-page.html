@@ -1,0 +1,117 @@
+﻿<!doctype html>
+<html <?php language_attributes(); ?> >
+  <head>
+    <meta charset="<?php bloginfo( "charset"); ?>">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <?php wp_head(); ?>
+  </head>
+  <body <?php body_class(); ?>>
+    <header class="container nav">
+      <div class="brand">UIOTA.SPACE</div>
+      <nav>
+        <a href="/about">About</a>&nbsp;&nbsp;
+        <a href="/case-directory">Case Directory</a>&nbsp;&nbsp;
+        <a href="/download">Download</a>&nbsp;&nbsp;
+        <a href="/verify-access">Verify Access</a>
+      </nav>
+    </header>
+
+    <main class="container hero">
+      <div class="grid" style="grid-template-columns: 1.2fr .8fr; gap:2rem">
+        <section>
+          <h1>Offline First. Orbit Ready.<br>Zero Trust Always.</h1>
+          <p>Defending humanity through resilient systems beyond the cloud.
+            UiOTA Space connects Earth, orbit, and all disconnected zones through
+            sovereign mesh, regenerative logic, and Zero Trust by-default.</p>
+          <div style="margin-top:1.25rem;display:flex;gap:.75rem;flex-wrap:wrap">
+            <a class="btn btn-primary" href="#">Enter Command Layer</a>
+            <a class="btn btn-ghost" href="#">Download Whitepaper</a>
+          </div>
+        </section>
+
+        <aside class="orb-wrap">
+          <div class="orb" aria-hidden="true"></div>
+        </aside>
+      </div>
+
+      <section class="grid grid-4" style="margin-top:2.5rem">
+        <!-- Card -->
+        <article class="card">
+          <h3 style="margin:.25rem 0 .5rem">Mission</h3>
+          <small class="text-muted">Institute • Federation • Foundation</small>
+          <p class="text-muted" style="margin-top:.75rem">Core values driven by defense, regeneration, and post-network recovery.</p>
+          <div style="margin-top:1rem">
+            <!-- fingerprint -->
+            <svg class="fp" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true">
+              <path d="M12 3.5c-4 0-7 3.2-7 7.4 0 3.8 1.6 6.9 4.1 8.4" stroke="url(#g1)" stroke-width="1.6" stroke-linecap="round"/>
+              <path d="M12 6.5c-2.6 0-4.5 2.1-4.5 4.7 0 2.5.8 4.4 2.3 5.6" stroke="url(#g2)" stroke-width="1.6" stroke-linecap="round"/>
+              <path d="M12 9.5c-1.2 0-2.2 1-2.2 2.4 0 1.4.4 2.5 1.2 3.2" stroke="url(#g3)" stroke-width="1.6" stroke-linecap="round"/>
+              <defs>
+                <linearGradient id="g1" x1="5" y1="3" x2="19" y2="21"><stop stop-color="#00E5FF"/><stop offset="1" stop-color="#1B6BFF"/></linearGradient>
+                <linearGradient id="g2" x1="6" y1="6" x2="18" y2="20"><stop stop-color="#1B6BFF"/><stop offset="1" stop-color="#714BFF"/></linearGradient>
+                <linearGradient id="g3" x1="8" y1="9" x2="16" y2="17"><stop stop-color="#00E5FF"/><stop offset="1" stop-color="#1B6BFF"/></linearGradient>
+              </defs>
+            </svg>
+          </div>
+        </article>
+
+        <article class="card">
+          <h3 style="margin:.25rem 0 .5rem">Case Directory</h3>
+          <small class="text-muted">Live research & innovation</small>
+          <p class="text-muted" style="margin-top:.75rem">Explore open source projects and sovereign mesh deployments.</p>
+          <div style="margin-top:1rem">
+            <!-- fp svg duplicated for all cards -->
+            <svg class="fp" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true">
+              <path d="M12 3.5c-4 0-7 3.2-7 7.4 0 3.8 1.6 6.9 4.1 8.4" stroke="url(#g1)" stroke-width="1.6" stroke-linecap="round"/>
+              <path d="M12 6.5c-2.6 0-4.5 2.1-4.5 4.7 0 2.5.8 4.4 2.3 5.6" stroke="url(#g2)" stroke-width="1.6" stroke-linecap="round"/>
+              <path d="M12 9.5c-1.2 0-2.2 1-2.2 2.4 0 1.4.4 2.5 1.2 3.2" stroke="url(#g3)" stroke-width="1.6" stroke-linecap="round"/>
+              <defs>
+                <linearGradient id="g1" x1="5" y1="3" x2="19" y2="21"><stop stop-color="#00E5FF"/><stop offset="1" stop-color="#1B6BFF"/></linearGradient>
+                <linearGradient id="g2" x1="6" y1="6" x2="18" y2="20"><stop stop-color="#1B6BFF"/><stop offset="1" stop-color="#714BFF"/></linearGradient>
+                <linearGradient id="g3" x1="8" y1="9" x2="16" y2="17"><stop stop-color="#00E5FF"/><stop offset="1" stop-color="#1B6BFF"/></linearGradient>
+              </defs>
+            </svg>
+          </div>
+        </article>
+
+        <article class="card">
+          <h3 style="margin:.25rem 0 .5rem">Download</h3>
+          <small class="text-muted">Protocols, orbs & node vaults</small>
+          <p class="text-muted" style="margin-top:.75rem">Get developer kits and critical documents for mesh continuity.</p>
+          <div style="margin-top:1rem">
+            <svg class="fp" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true">
+              <path d="M12 3.5c-4 0-7 3.2-7 7.4 0 3.8 1.6 6.9 4.1 8.4" stroke="url(#g1)" stroke-width="1.6" stroke-linecap="round"/>
+              <path d="M12 6.5c-2.6 0-4.5 2.1-4.5 4.7 0 2.5.8 4.4 2.3 5.6" stroke="url(#g2)" stroke-width="1.6" stroke-linecap="round"/>
+              <path d="M12 9.5c-1.2 0-2.2 1-2.2 2.4 0 1.4.4 2.5 1.2 3.2" stroke="url(#g3)" stroke-width="1.6" stroke-linecap="round"/>
+              <defs>
+                <linearGradient id="g1" x1="5" y1="3" x2="19" y2="21"><stop stop-color="#00E5FF"/><stop offset="1" stop-color="#1B6BFF"/></linearGradient>
+                <linearGradient id="g2" x1="6" y1="6" x2="18" y2="20"><stop stop-color="#1B6BFF"/><stop offset="1" stop-color="#714BFF"/></linearGradient>
+                <linearGradient id="g3" x1="8" y1="9" x2="16" y2="17"><stop stop-color="#00E5FF"/><stop offset="1" stop-color="#1B6BFF"/></linearGradient>
+              </defs>
+            </svg>
+          </div>
+        </article>
+
+        <article class="card">
+          <h3 style="margin:.25rem 0 .5rem">Verify Access</h3>
+          <small class="text-muted">Enter secure command center</small>
+          <p class="text-muted" style="margin-top:.75rem">Scan agent badge or verify biometric clearance level.</p>
+          <div style="margin-top:1rem">
+            <svg class="fp" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true">
+              <path d="M12 3.5c-4 0-7 3.2-7 7.4 0 3.8 1.6 6.9 4.1 8.4" stroke="url(#g1)" stroke-width="1.6" stroke-linecap="round"/>
+              <path d="M12 6.5c-2.6 0-4.5 2.1-4.5 4.7 0 2.5.8 4.4 2.3 5.6" stroke="url(#g2)" stroke-width="1.6" stroke-linecap="round"/>
+              <path d="M12 9.5c-1.2 0-2.2 1-2.2 2.4 0 1.4.4 2.5 1.2 3.2" stroke="url(#g3)" stroke-width="1.6" stroke-linecap="round"/>
+              <defs>
+                <linearGradient id="g1" x1="5" y1="3" x2="19" y2="21"><stop stop-color="#00E5FF"/><stop offset="1" stop-color="#1B6BFF"/></linearGradient>
+                <linearGradient id="g2" x1="6" y1="6" x2="18" y2="20"><stop stop-color="#1B6BFF"/><stop offset="1" stop-color="#714BFF"/></linearGradient>
+                <linearGradient id="g3" x1="8" y1="9" x2="16" y2="17"><stop stop-color="#00E5FF"/><stop offset="1" stop-color="#1B6BFF"/></linearGradient>
+              </defs>
+            </svg>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <?php wp_footer(); ?>
+  </body>
+</html>

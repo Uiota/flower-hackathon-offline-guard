@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SmartCityPass — Whitepaper</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Inter:wght@400;600;800;900&display=swap');
+    :root{
+      --primary-bg:#0a0e1a;--secondary-bg:#0f1419;--card-bg:#161b22;--border-primary:#21262d;--border-accent:#30363d;--text-primary:#f0f6fc;--text-secondary:#8b949e;--accent-blue:#1f6feb;--accent-purple:#8b5cf6;--accent-cyan:#06d6a0;--glow-blue:rgba(31,111,235,.3);--glow-purple:rgba(139,92,246,.3);--glow-cyan:rgba(6,214,160,.3)
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Inter',system-ui,Segoe UI,Roboto,Helvetica,Arial;background:var(--primary-bg);color:var(--text-primary);line-height:1.6;min-height:100vh;overflow-x:hidden}
+    .bg{position:fixed;inset:0;z-index:-3;background:
+      radial-gradient(ellipse at top left,rgba(31,111,235,.15) 0%,transparent 50%),
+      radial-gradient(ellipse at top right,rgba(139,92,246,.1) 0%,transparent 50%),
+      radial-gradient(ellipse at bottom left,rgba(6,214,160,.08) 0%,transparent 50%),
+      var(--primary-bg);animation:grad 20s ease-in-out infinite}
+    @keyframes grad{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}
+    .grid{position:fixed;inset:0;z-index:-2;background-image:linear-gradient(var(--border-primary) 1px,transparent 1px),linear-gradient(90deg,var(--border-primary) 1px,transparent 1px);background-size:60px 60px;opacity:.25;animation:grid 30s linear infinite}
+    @keyframes grid{to{transform:translate(60px,60px)}}
+    .container{max-width:1200px;margin:0 auto;padding:32px}
+    header.hdr{display:flex;justify-content:space-between;align-items:center;padding:20px 0;margin-bottom:24px;position:relative}
+    header.hdr::after{content:'';position:absolute;left:0;right:0;bottom:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent-blue),var(--accent-purple),var(--accent-cyan),transparent);opacity:.6}
+    .brand{display:flex;align-items:center;gap:16px}
+    .logo{position:relative;width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg,var(--accent-blue),var(--accent-purple),var(--accent-cyan));display:grid;place-items:center;box-shadow:0 0 30px var(--glow-blue)}
+    .logo::before{content:'';position:absolute;inset:3px;border-radius:13px;background:var(--card-bg)}
+    .logo span{position:relative;z-index:1;font-family:'JetBrains Mono',monospace;font-weight:800;background:linear-gradient(135deg,var(--accent-blue),var(--accent-cyan));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+    .title{font-size:1.8rem;font-weight:900;letter-spacing:-.02em}
+    .subtitle{color:var(--text-secondary);text-transform:uppercase;font-size:.9rem;letter-spacing:.1em}
+    .nav{display:flex;gap:10px;flex-wrap:wrap}
+    .nav a{padding:10px 14px;border-radius:12px;border:1px solid var(--border-primary);color:var(--text-secondary);text-decoration:none}
+    .nav a:hover{color:var(--text-primary);border-color:var(--accent-blue);box-shadow:0 6px 20px rgba(31,111,235,.2)}
+    .page-head{text-align:center;margin:40px 0}
+    .page-title{font-size:3rem;font-weight:900;background:linear-gradient(135deg,#fff,var(--accent-blue),var(--accent-cyan));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-.03em}
+    .page-sub{color:var(--text-secondary);max-width:760px;margin:10px auto 0}
+    .two-col{display:grid;grid-template-columns:300px 1fr;gap:24px}
+    .card{background:linear-gradient(135deg,rgba(22,27,34,.85),rgba(33,38,45,.55));border:1px solid var(--border-primary);border-radius:16px;padding:18px;backdrop-filter:blur(20px)}
+    .toc h3{font-size:1rem;margin-bottom:8px}
+    .toc a{display:block;color:var(--text-secondary);text-decoration:none;padding:8px 10px;border-radius:10px}
+    .toc a:hover{color:var(--text-primary);background:rgba(255,255,255,.04)}
+    .section{margin-bottom:28px}
+    .section h2{font-size:1.4rem;margin-bottom:8px}
+    .mono{font-family:'JetBrains Mono',monospace}
+    .actions{display:flex;gap:12px;flex-wrap:wrap;margin:18px 0}
+    .btn{padding:10px 14px;border-radius:12px;border:1px solid var(--border-primary);background:rgba(255,255,255,.02);color:var(--text-primary);text-decoration:none;cursor:pointer}
+    .btn.primary{background:linear-gradient(135deg,var(--accent-blue),var(--accent-purple));border-color:var(--accent-blue);box-shadow:0 8px 24px var(--glow-blue)}
+    .badge{display:inline-block;padding:4px 8px;border-radius:999px;border:1px solid var(--border-accent);color:var(--text-secondary);font-size:.75rem}
+    pre{background:#0b1117;border:1px solid var(--border-accent);border-radius:12px;padding:14px;overflow:auto}
+    @media (max-width: 900px){.two-col{grid-template-columns:1fr}}
+  </style>
+  <script>
+    const DEBUG = /[?&]debug=1\b/.test(location.search);
+    const dlog = (...a)=>DEBUG&&console.log('[Whitepaper]',...a);
+  </script>
+  </head>
+<body>
+  <div class="bg"></div>
+  <div class="grid"></div>
+  <div class="container">
+    <header class="hdr">
+      <div class="brand">
+        <div class="logo"><span>SCP</span></div>
+        <div>
+          <div class="title">SmartCityPass</div>
+          <div class="subtitle">Whitepaper</div>
+        </div>
+      </div>
+      <nav class="nav">
+        <a href="index.html">Home</a>
+        <a href="smartcitypass.html">Studio</a>
+        <a href="buy-token.html">Buy Tokens</a>
+      </nav>
+    </header>
+    <div class="page-head">
+      <h1 class="page-title">Offline‑First, Orbit‑Ready, Zero‑Trust</h1>
+      <p class="page-sub">This document outlines SmartCityPass principles, architecture, trust tiers, and economic design for resilient AI infrastructure that operates across disconnected environments.</p>
+      <div class="actions">
+        <button class="btn primary" id="downloadBtn">Download PDF (simulated)</button>
+        <a class="btn" href="#toc">Jump to Contents</a>
+        <span class="badge">Draft v0.9</span>
+      </div>
+    </div>
+    <div class="two-col">
+      <aside class="card toc" id="toc">
+        <h3>Contents</h3>
+        <a href="#abstract">1. Abstract</a>
+        <a href="#principles">2. Principles</a>
+        <a href="#architecture">3. Architecture</a>
+        <a href="#tokens">4. Token Economics</a>
+        <a href="#trust">5. Trust Tiers</a>
+        <a href="#roadmap">6. Roadmap</a>
+      </aside>
+      <main>
+        <section class="card section" id="abstract">
+          <h2>1. Abstract</h2>
+          <p>SmartCityPass (SCP) provides a tokenized control-plane for AI agents and municipal systems operating in constrained networks. SCP prioritizes offline continuity, policy verifiability, and sovereign recovery.</p>
+        </section>
+        <section class="card section" id="principles">
+          <h2>2. Principles</h2>
+          <ul>
+            <li>Offline‑First: all core flows run without Internet.</li>
+            <li>Orbit‑Ready: predictable latency and degraded modes.</li>
+            <li>Zero‑Trust: explicit verification and least privilege.</li>
+          </ul>
+        </section>
+        <section class="card section" id="architecture">
+          <h2>3. Architecture</h2>
+          <p>Modules include Token Studio, Local Ledger (SQLite), OPA Policy Gate, and Mesh Sync. Components communicate through verifiable envelopes and SCP‑01 token schema.</p>
+          <pre class="mono">service TokenStudio -> issues SCP-01
+service Ledger(SQLite) -> anchors receipts
+service OPA -> enforces trust tiers
+mesh-sync -> opportunistic, delay-tolerant</pre>
+        </section>
+        <section class="card section" id="tokens">
+          <h2>4. Token Economics</h2>
+          <p>Credits represent compute and policy budget. Barter exchange between agents is modeled as bilateral credit swaps with optional collateral. See Buy Tokens for acquisition.</p>
+        </section>
+        <section class="card section" id="trust">
+          <h2>5. Trust Tiers</h2>
+          <p>Tiers include: Credential Login, QR Trust Badge, and Agent Validation. Each tier raises permissible actions and policy quotas.</p>
+        </section>
+        <section class="card section" id="roadmap">
+          <h2>6. Roadmap</h2>
+          <ul>
+            <li>v1: Local studio, mock ledger, policy gate</li>
+            <li>v2: Mesh sync + agent barter flows</li>
+            <li>v3: Offline QR attestation + device vaults</li>
+          </ul>
+        </section>
+      </main>
+    </div>
+  </div>
+  <script>
+    document.getElementById('downloadBtn')?.addEventListener('click', ()=>{
+      dlog('Whitepaper download initiated');
+      alert('Download started (simulated). In production, serve a PDF.');
+    });
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline AI - Consortium</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <link rel="stylesheet" href="uiota_theme.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: var(--font-sans) !important;
+            background: var(--background) !important;
+            color: var(--foreground) !important;
+            line-height: 1.6 !important;
+            overflow-x: hidden;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--font-sans) !important;
+            font-weight: 700 !important;
+            color: var(--foreground) !important;
+        }
+        
+        .consortium-bg {
+            background: radial-gradient(ellipse at center, rgba(0, 255, 255, 0.03) 0%, transparent 70%),
+                        linear-gradient(135deg, var(--background) 0%, rgba(0, 40, 60, 0.3) 50%, var(--background) 100%);
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        .orb {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, 
+                        rgba(0, 255, 255, 0.9) 0%, 
+                        rgba(0, 200, 200, 0.7) 40%, 
+                        rgba(0, 150, 150, 0.5) 70%, 
+                        rgba(0, 100, 100, 0.3) 100%);
+            box-shadow: var(--orb-glow);
+            position: absolute;
+            right: 15%;
+            top: 30%;
+            animation: orbFloat 6s ease-in-out infinite, orbPulse 3s ease-in-out infinite alternate;
+        }
+        
+        @keyframes orbFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+        
+        @keyframes orbPulse {
+            0% { box-shadow: var(--orb-glow); }
+            100% { 
+                box-shadow: 0 0 60px hsl(180 100% 50% / 0.8), 
+                           0 0 120px hsl(180 100% 50% / 0.6), 
+                           0 0 180px hsl(180 100% 50% / 0.4);
+            }
+        }
+        
+        .title-main {
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 800;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, var(--foreground) 0%, rgba(255, 255, 255, 0.7) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+        
+        .subtitle {
+            font-size: clamp(1.2rem, 3vw, 2rem);
+            font-weight: 300;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--muted-foreground);
+            margin-bottom: 3rem;
+        }
+        
+        .section-title {
+            font-size: clamp(2rem, 5vw, 4rem);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
+        
+        .section-subtitle {
+            font-size: clamp(1rem, 2.5vw, 1.5rem);
+            color: var(--muted-foreground);
+            margin-bottom: 3rem;
+            max-width: 600px;
+        }
+        
+        .action-button {
+            background: var(--card);
+            border: 1px solid var(--border);
+            color: var(--foreground);
+            padding: 20px 40px;
+            border-radius: var(--radius);
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            display: block;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            margin: 0 auto 1.5rem;
+        }
+        
+        .action-button:hover {
+            background: var(--primary);
+            color: var(--primary-foreground);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.3);
+        }
+        
+        .action-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .action-button:hover::before {
+            left: 100%;
+        }
+        
+        .offline-section {
+            margin-top: 4rem;
+            text-align: center;
+        }
+        
+        .offline-title {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+        }
+        
+        .offline-subtitle {
+            color: var(--muted-foreground);
+            font-size: clamp(0.9rem, 2vw, 1.2rem);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .grid-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.03;
+            background-image: 
+                linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+        }
+        
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1s ease-out forwards;
+        }
+        
+        .stagger-1 { animation-delay: 0.2s; }
+        .stagger-2 { animation-delay: 0.4s; }
+        .stagger-3 { animation-delay: 0.6s; }
+        .stagger-4 { animation-delay: 0.8s; }
+        .stagger-5 { animation-delay: 1.0s; }
+        .stagger-6 { animation-delay: 1.2s; }
+        
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .container-main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 10;
+        }
+        
+        @media (max-width: 768px) {
+            .orb {
+                width: 120px;
+                height: 120px;
+                right: 10%;
+                top: 20%;
+            }
+            
+            .action-button {
+                padding: 16px 32px;
+                font-size: 1rem;
+            }
+        }
+        
+        .ai-icon {
+            display: inline-block;
+            margin-right: 12px;
+            opacity: 0.7;
+        }
+        
+        .mesh-sync-highlight {
+            color: var(--primary);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="consortium-bg">
+        <div class="grid-pattern"></div>
+        <div class="orb"></div>
+        
+        <div class="container-main">
+            <div class="min-h-screen flex flex-col justify-center py-20">
+                <!-- Header -->
+                <div class="text-center mb-16">
+                    <h1 class="title-main fade-in">OFFLINE AI</h1>
+                    <p class="subtitle fade-in stagger-1">CONSORTIUM</p>
+                </div>
+                
+                <!-- Main Content -->
+                <div class="max-w-2xl">
+                    <div class="mb-12">
+                        <h2 class="section-title fade-in stagger-2">ACTIVATE<br>AI LAYER</h2>
+                        <p class="section-subtitle fade-in stagger-3">
+                            Initialize local intelligence<br>
+                            for secure processing
+                        </p>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="space-y-6 mb-16">
+                        <button class="action-button fade-in stagger-4">
+                            <i data-lucide="brain-circuit" class="ai-icon"></i>
+                            INITIALIZE AI CORE
+                        </button>
+                        
+                        <button class="action-button fade-in stagger-5">
+                            <i data-lucide="download" class="ai-icon"></i>
+                            DOWNLOAD MODEL
+                        </button>
+                        
+                        <button class="action-button fade-in stagger-6">
+                            <i data-lucide="shield-check" class="ai-icon"></i>
+                            VERIFY INTEGRITY
+                        </button>
+                    </div>
+                    
+                    <!-- Offline Mode Section -->
+                    <div class="offline-section fade-in stagger-6">
+                        <h3 class="offline-title">GO OFFLINE MODE</h3>
+                        <p class="offline-subtitle">
+                            Activate isolated processing using <span class="mesh-sync-highlight">local compute token</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // Add interactive effects to buttons
+        document.querySelectorAll('.action-button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                // Create ripple effect
+                const ripple = document.createElement('span');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                ripple.classList.add('ripple');
+                
+                this.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+                
+                // Simulate action based on button type
+                const originalText = this.innerHTML;
+                let processingText = '';
+                let completedText = '';
+                
+                if (this.innerHTML.includes('INITIALIZE')) {
+                    processingText = '<i data-lucide="loader-2" class="ai-icon animate-spin"></i>INITIALIZING...';
+                    completedText = '<i data-lucide="check" class="ai-icon"></i>AI CORE ACTIVE';
+                } else if (this.innerHTML.includes('DOWNLOAD')) {
+                    processingText = '<i data-lucide="loader-2" class="ai-icon animate-spin"></i>DOWNLOADING...';
+                    completedText = '<i data-lucide="check" class="ai-icon"></i>MODEL READY';
+                } else if (this.innerHTML.includes('VERIFY')) {
+                    processingText = '<i data-lucide="loader-2" class="ai-icon animate-spin"></i>VERIFYING...';
+                    completedText = '<i data-lucide="check" class="ai-icon"></i>VERIFIED';
+                }
+                
+                this.innerHTML = processingText;
+                lucide.createIcons();
+                
+                setTimeout(() => {
+                    this.innerHTML = completedText;
+                    lucide.createIcons();
+                    
+                    setTimeout(() => {
+                        this.innerHTML = originalText;
+                        lucide.createIcons();
+                    }, 2000);
+                }, 1500);
+            });
+        });
+        
+        // Add CSS for ripple effect
+        const style = document.createElement('style');
+        style.textContent = `
+            .ripple {
+                position: absolute;
+                border-radius: 50%;
+                background: rgba(0, 255, 255, 0.3);
+                transform: scale(0);
+                animation: ripple-animation 0.6s linear;
+                pointer-events: none;
+            }
+            
+            @keyframes ripple-animation {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+            
+            .animate-spin {
+                animation: spin 1s linear infinite;
+            }
+            
+            @keyframes spin {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Orb interaction
+        const orb = document.querySelector('.orb');
+        orb.addEventListener('click', function() {
+            this.style.animation = 'orbFloat 6s ease-in-out infinite, orbPulse 3s ease-in-out infinite alternate, orbClick 0.5s ease-out';
+            
+            // Show AI activation message
+            const message = document.createElement('div');
+            message.textContent = 'AI CORE SYNCHRONIZED';
+            message.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: var(--primary);
+                color: var(--primary-foreground);
+                padding: 20px 40px;
+                border-radius: var(--radius);
+                font-weight: 600;
+                letter-spacing: 0.1em;
+                z-index: 1000;
+                animation: fadeInOut 2s ease-out;
+            `;
+            document.body.appendChild(message);
+            
+            setTimeout(() => {
+                message.remove();
+                this.style.animation = 'orbFloat 6s ease-in-out infinite, orbPulse 3s ease-in-out infinite alternate';
+            }, 2000);
+        });
+        
+        // Add orb click animation and fade in/out
+        const orbClickStyle = document.createElement('style');
+        orbClickStyle.textContent = `
+            @keyframes orbClick {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.1); }
+                100% { transform: scale(1); }
+            }
+            
+            @keyframes fadeInOut {
+                0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+                20% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+                80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+                100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+            }
+        `;
+        document.head.appendChild(orbClickStyle);
+    </script>
+</body>
+</html>

@@ -1,0 +1,249 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FL Network Traffic Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .header { background: #2c3e50; color: white; padding: 20px; border-radius: 5px; margin-bottom: 20px; }
+        .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .metric-card { background: white; padding: 15px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .metric-value { font-size: 1.8em; font-weight: bold; color: #3498db; }
+        .metric-label { color: #7f8c8d; font-size: 0.85em; }
+        .charts { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+        .chart-container { background: white; padding: 20px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .network-section { background: white; padding: 20px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        canvas { width: 100%; height: 250px; }
+        .frequency-display { font-family: monospace; background: #ecf0f1; padding: 10px; border-radius: 3px; margin: 10px 0; }
+        .status-indicator { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; }
+        .status-active { background: #27ae60; animation: pulse 2s infinite; }
+        .status-idle { background: #f39c12; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌐 FL Network Traffic Dashboard</h1>
+            <p>Real-time federated learning with network frequency monitoring</p>
+        </div>
+
+        <div class="metrics">
+            <div class="metric-card">
+                <div class="metric-value" id="current-round">0</div>
+                <div class="metric-label">Current Round</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="avg-accuracy">0.000</div>
+                <div class="metric-label">Average Accuracy</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="avg-loss">0.000</div>
+                <div class="metric-label">Average Loss</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="bandwidth">0.0</div>
+                <div class="metric-label">Bandwidth (Mbps)</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="packet-loss">0.0%</div>
+                <div class="metric-label">Packet Loss</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="total-packets">0</div>
+                <div class="metric-label">Total Packets</div>
+            </div>
+        </div>
+
+        <div class="charts">
+            <div class="chart-container">
+                <h3>Training Progress</h3>
+                <canvas id="training-chart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h3>Network Bandwidth</h3>
+                <canvas id="network-chart"></canvas>
+            </div>
+        </div>
+
+        <div class="network-section">
+            <h3>📡 Real-time Network Frequency Monitoring</h3>
+            <div id="frequency-monitor">
+                <p>Initializing network sensor...</p>
+            </div>
+
+            <h4>Connection Status</h4>
+            <div id="connection-status">
+                <p><span class="status-indicator status-active"></span>FL Server: Active</p>
+                <p><span class="status-indicator status-active"></span>Network Sensor: Monitoring</p>
+                <p><span class="status-indicator status-active"></span>Traffic Simulation: Running</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let trainingHistory = [];
+        let networkHistory = [];
+
+        function updateDashboard() {
+            fetch('/api/status')
+                .then(response => response.json())
+                .then(data => {
+                    // Update basic metrics
+                    document.getElementById('current-round').textContent = data.current_round;
+
+                    if (data.training_history.length > 0) {
+                        const latest = data.training_history[data.training_history.length - 1];
+                        document.getElementById('avg-accuracy').textContent = latest.avg_accuracy.toFixed(3);
+                        document.getElementById('avg-loss').textContent = latest.avg_loss.toFixed(3);
+
+                        trainingHistory = data.training_history;
+                        updateTrainingChart();
+                    }
+
+                    // Update network metrics
+                    if (data.network_sensor && data.network_sensor.bandwidth_stats) {
+                        const netStats = data.network_sensor.bandwidth_stats;
+                        document.getElementById('bandwidth').textContent = netStats.avg_bandwidth_mbps.toFixed(2);
+                        document.getElementById('packet-loss').textContent = (netStats.packet_loss_rate * 100).toFixed(1) + '%';
+                        document.getElementById('total-packets').textContent = netStats.total_packets;
+
+                        networkHistory.push({
+                            timestamp: data.timestamp,
+                            bandwidth: netStats.avg_bandwidth_mbps,
+                            packet_loss: netStats.packet_loss_rate
+                        });
+
+                        if (networkHistory.length > 50) networkHistory.shift();
+                        updateNetworkChart();
+                    }
+
+                    // Update frequency monitor
+                    if (data.network_sensor && data.network_sensor.frequency_stats) {
+                        updateFrequencyMonitor(data.network_sensor.frequency_stats);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function updateFrequencyMonitor(freqStats) {
+            const monitor = document.getElementById('frequency-monitor');
+            let html = '<h4>📊 Connection Frequencies</h4>';
+
+            Object.keys(freqStats).forEach(connection => {
+                const stats = freqStats[connection];
+                const freq = stats.frequency_hz.toFixed(2);
+                const packets = stats.total_packets;
+
+                html += `
+                    <div class="frequency-display">
+                        <strong>${connection}</strong><br>
+                        Frequency: ${freq} Hz | Packets: ${packets} | Status:
+                        <span class="status-indicator ${freq > 0.1 ? 'status-active' : 'status-idle'}"></span>
+                        ${freq > 0.1 ? 'Active' : 'Idle'}
+                    </div>
+                `;
+            });
+
+            if (Object.keys(freqStats).length === 0) {
+                html += '<p>No active connections detected</p>';
+            }
+
+            monitor.innerHTML = html;
+        }
+
+        function updateTrainingChart() {
+            const canvas = document.getElementById('training-chart');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if (trainingHistory.length === 0) return;
+
+            const width = canvas.width;
+            const height = canvas.height;
+            const margin = 30;
+
+            // Draw axes
+            ctx.strokeStyle = '#ddd';
+            ctx.beginPath();
+            ctx.moveTo(margin, margin);
+            ctx.lineTo(margin, height - margin);
+            ctx.lineTo(width - margin, height - margin);
+            ctx.stroke();
+
+            // Draw accuracy line
+            ctx.strokeStyle = '#27ae60';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+
+            for (let i = 0; i < trainingHistory.length; i++) {
+                const x = margin + (i / Math.max(1, trainingHistory.length - 1)) * (width - 2 * margin);
+                const y = height - margin - (trainingHistory[i].avg_accuracy * (height - 2 * margin));
+
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+
+            // Labels
+            ctx.fillStyle = '#2c3e50';
+            ctx.font = '12px Arial';
+            ctx.fillText('Accuracy', margin, 20);
+        }
+
+        function updateNetworkChart() {
+            const canvas = document.getElementById('network-chart');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if (networkHistory.length === 0) return;
+
+            const width = canvas.width;
+            const height = canvas.height;
+            const margin = 30;
+
+            // Draw axes
+            ctx.strokeStyle = '#ddd';
+            ctx.beginPath();
+            ctx.moveTo(margin, margin);
+            ctx.lineTo(margin, height - margin);
+            ctx.lineTo(width - margin, height - margin);
+            ctx.stroke();
+
+            // Draw bandwidth line
+            ctx.strokeStyle = '#3498db';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+
+            const maxBandwidth = Math.max(...networkHistory.map(h => h.bandwidth), 0.1);
+
+            for (let i = 0; i < networkHistory.length; i++) {
+                const x = margin + (i / Math.max(1, networkHistory.length - 1)) * (width - 2 * margin);
+                const y = height - margin - ((networkHistory[i].bandwidth / maxBandwidth) * (height - 2 * margin));
+
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+
+            ctx.fillStyle = '#2c3e50';
+            ctx.font = '12px Arial';
+            ctx.fillText('Bandwidth (Mbps)', margin, 20);
+        }
+
+        // Update every 1 second for real-time monitoring
+        setInterval(updateDashboard, 1000);
+        updateDashboard();
+
+        // Setup canvas
+        window.addEventListener('load', function() {
+            ['training-chart', 'network-chart'].forEach(id => {
+                const canvas = document.getElementById(id);
+                canvas.width = canvas.offsetWidth;
+                canvas.height = 250;
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛡️ UIOTA.Space - Unified Guardian Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .unified-header {
+            background: rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px 40px;
+            backdrop-filter: blur(20px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #00ff88, #64ffda);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .connection-status {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 15px;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            font-size: 0.85rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .online { background: #00ff88; }
+        .offline { background: #ff4757; }
+        .local { background: #64ffda; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .main-dashboard {
+            display: grid;
+            grid-template-columns: 300px 1fr 300px;
+            grid-template-rows: auto 1fr;
+            gap: 30px;
+            padding: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+            min-height: calc(100vh - 100px);
+        }
+
+        .sidebar {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 25px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .central-portal {
+            grid-column: 2;
+            grid-row: 1 / -1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .component-selector {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .component-card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            text-align: center;
+        }
+
+        .component-card:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateY(-2px);
+            border-color: rgba(100, 255, 218, 0.3);
+        }
+
+        .component-card.active {
+            background: rgba(100, 255, 218, 0.1);
+            border-color: #64ffda;
+        }
+
+        .component-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .component-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .component-status {
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+
+        .iframe-container {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .iframe-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            min-height: 600px;
+        }
+
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid #64ffda;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .system-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .metric-card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #64ffda;
+            margin-bottom: 5px;
+        }
+
+        .metric-label {
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+
+        .quick-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .action-button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 12px;
+            padding: 12px 20px;
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .guardian-profile {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .guardian-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #64ffda, #00ff88);
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .guardian-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .guardian-class {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            margin-bottom: 10px;
+        }
+
+        .xp-bar {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            height: 8px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .xp-fill {
+            background: linear-gradient(90deg, #64ffda, #00ff88);
+            height: 100%;
+            width: 75%;
+            transition: width 0.3s ease;
+        }
+
+        .xp-text {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .team-panel {
+            grid-column: 3;
+            grid-row: 1 / -1;
+        }
+
+        .team-members {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .team-member {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .member-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .member-info {
+            flex: 1;
+        }
+
+        .member-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .member-status {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .floating-notifications {
+            position: fixed;
+            top: 100px;
+            right: 30px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .notification {
+            background: rgba(0, 0, 0, 0.9);
+            border-radius: 12px;
+            padding: 15px 20px;
+            border-left: 4px solid #00ff88;
+            backdrop-filter: blur(20px);
+            max-width: 300px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .uiota-brand {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 15px 20px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 1200px) {
+            .main-dashboard {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto auto auto;
+                gap: 20px;
+                padding: 20px;
+            }
+
+            .central-portal {
+                grid-column: 1;
+                grid-row: 2;
+            }
+
+            .team-panel {
+                grid-column: 1;
+                grid-row: 3;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="unified-header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo">🛡️ UIOTA.SPACE</div>
+                <div class="connection-status">
+                    <div class="status-indicator">
+                        <div class="status-dot local"></div>
+                        Local AI
+                    </div>
+                    <div class="status-indicator">
+                        <div class="status-dot online"></div>
+                        Guardian Network
+                    </div>
+                    <div class="status-indicator">
+                        <div class="status-dot offline"></div>
+                        Offline Ready
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-dashboard">
+        <!-- Left Sidebar - System & Guardian Info -->
+        <div class="sidebar">
+            <div class="guardian-profile">
+                <div class="guardian-avatar">🤖</div>
+                <div class="guardian-name">AI Guardian</div>
+                <div class="guardian-class">Machine Learning Specialist</div>
+                <div class="xp-bar">
+                    <div class="xp-fill"></div>
+                </div>
+                <div class="xp-text">2,847 / 3,000 XP</div>
+            </div>
+
+            <h3 style="margin-bottom: 15px;">System Metrics</h3>
+            <div class="system-metrics">
+                <div class="metric-card">
+                    <div class="metric-value" id="cpuUsage">34%</div>
+                    <div class="metric-label">CPU Usage</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="memoryUsage">6.2GB</div>
+                    <div class="metric-label">Memory</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="networkNodes">8</div>
+                    <div class="metric-label">Network Nodes</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="flRounds">12</div>
+                    <div class="metric-label">FL Rounds</div>
+                </div>
+            </div>
+
+            <h3 style="margin-bottom: 15px;">Quick Actions</h3>
+            <div class="quick-actions">
+                <button class="action-button" onclick="startFederatedLearning()">🧠 Start FL Round</button>
+                <button class="action-button" onclick="runSystemDiagnostics()">🔧 System Check</button>
+                <button class="action-button" onclick="backupData()">💾 Backup Data</button>
+                <button class="action-button" onclick="toggleOfflineMode()">✈️ Airplane Mode</button>
+            </div>
+        </div>
+
+        <!-- Central Portal - Main Content -->
+        <div class="central-portal">
+            <div class="component-selector">
+                <div class="component-card active" onclick="loadComponent('offline-ai')">
+                    <div class="component-icon">🤖</div>
+                    <div class="component-title">Offline AI</div>
+                    <div class="component-status">Ready</div>
+                </div>
+                <div class="component-card" onclick="loadComponent('fl-dashboard')">
+                    <div class="component-icon">🧠</div>
+                    <div class="component-title">FL Dashboard</div>
+                    <div class="component-status">Connected</div>
+                </div>
+                <div class="component-card" onclick="loadComponent('guardian-portal')">
+                    <div class="component-icon">🛡️</div>
+                    <div class="component-title">Guardian Portal</div>
+                    <div class="component-status">Active</div>
+                </div>
+                <div class="component-card" onclick="loadComponent('airplane-mode')">
+                    <div class="component-icon">✈️</div>
+                    <div class="component-title">Airplane Mode</div>
+                    <div class="component-status">Standby</div>
+                </div>
+            </div>
+
+            <div class="iframe-container">
+                <div class="loading-overlay" id="loadingOverlay">
+                    <div class="spinner"></div>
+                    <div>Loading component...</div>
+                </div>
+                <iframe id="mainIframe" src="offline-ai/index.html"></iframe>
+            </div>
+        </div>
+
+        <!-- Right Sidebar - Team & Collaboration -->
+        <div class="sidebar team-panel">
+            <h3 style="margin-bottom: 15px;">Guardian Team</h3>
+            <div class="team-members">
+                <div class="team-member">
+                    <div class="member-avatar">🤖</div>
+                    <div class="member-info">
+                        <div class="member-name">AI Guardian</div>
+                        <div class="member-status">Online • Level 5</div>
+                    </div>
+                </div>
+                <div class="team-member">
+                    <div class="member-avatar">🛡️</div>
+                    <div class="member-info">
+                        <div class="member-name">Security Guardian</div>
+                        <div class="member-status">Online • Level 7</div>
+                    </div>
+                </div>
+                <div class="team-member">
+                    <div class="member-avatar">📱</div>
+                    <div class="member-info">
+                        <div class="member-name">Mobile Master</div>
+                        <div class="member-status">Offline • Level 3</div>
+                    </div>
+                </div>
+                <div class="team-member">
+                    <div class="member-avatar">🌐</div>
+                    <div class="member-info">
+                        <div class="member-name">Network Guardian</div>
+                        <div class="member-status">Online • Level 6</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="margin: 20px 0 15px;">Recent Activity</h3>
+            <div style="font-size: 0.85rem; opacity: 0.7; line-height: 1.5;">
+                <div style="margin-bottom: 10px;">🧠 FL Round #12 completed</div>
+                <div style="margin-bottom: 10px;">🛡️ Security scan passed</div>
+                <div style="margin-bottom: 10px;">📱 Mobile agent synced</div>
+                <div style="margin-bottom: 10px;">🌐 Network topology updated</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="floating-notifications" id="notifications">
+        <!-- Notifications will be dynamically added here -->
+    </div>
+
+    <div class="uiota-brand">
+        Powered by UIOTA.Space • Offline-First • Digital Sovereignty
+    </div>
+
+    <script>
+        let currentComponent = 'offline-ai';
+        let components = {
+            'offline-ai': 'offline-ai/index.html',
+            'fl-dashboard': 'flower-offguard-uiota-demo/dashboard.html',
+            'guardian-portal': 'web-demo/portal.html',
+            'airplane-mode': 'web-demo/airplane_mode_guardian.html'
+        };
+
+        function loadComponent(componentId) {
+            currentComponent = componentId;
+
+            // Update active state
+            document.querySelectorAll('.component-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            event.target.closest('.component-card').classList.add('active');
+
+            // Show loading
+            document.getElementById('loadingOverlay').style.display = 'flex';
+
+            // Load component
+            const iframe = document.getElementById('mainIframe');
+            iframe.src = components[componentId];
+
+            // Hide loading after delay
+            setTimeout(() => {
+                document.getElementById('loadingOverlay').style.display = 'none';
+            }, 1500);
+
+            // Add notification
+            addNotification(`Loaded ${componentId.replace('-', ' ').toUpperCase()} component`);
+        }
+
+        function addNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+
+            document.getElementById('notifications').appendChild(notification);
+
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        function startFederatedLearning() {
+            addNotification('🧠 Starting new federated learning round...');
+            // Update FL rounds metric
+            const flRounds = document.getElementById('flRounds');
+            flRounds.textContent = parseInt(flRounds.textContent) + 1;
+        }
+
+        function runSystemDiagnostics() {
+            addNotification('🔧 Running system diagnostics...');
+            setTimeout(() => {
+                addNotification('✅ All systems operational');
+            }, 2000);
+        }
+
+        function backupData() {
+            addNotification('💾 Creating data backup...');
+            setTimeout(() => {
+                addNotification('✅ Backup completed successfully');
+            }, 1500);
+        }
+
+        function toggleOfflineMode() {
+            addNotification('✈️ Switching to airplane mode...');
+            loadComponent('airplane-mode');
+        }
+
+        // Simulate real-time updates
+        setInterval(() => {
+            // Update CPU usage
+            const cpu = document.getElementById('cpuUsage');
+            const newCpu = Math.floor(Math.random() * 40) + 20;
+            cpu.textContent = `${newCpu}%`;
+
+            // Update memory occasionally
+            if (Math.random() < 0.3) {
+                const memory = document.getElementById('memoryUsage');
+                const newMemory = (Math.random() * 2 + 5).toFixed(1);
+                memory.textContent = `${newMemory}GB`;
+            }
+        }, 3000);
+
+        // Initial load
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                document.getElementById('loadingOverlay').style.display = 'none';
+                addNotification('🛡️ UIOTA Guardian Portal initialized');
+            }, 1000);
+        });
+
+        // Handle iframe load events
+        document.getElementById('mainIframe').addEventListener('load', () => {
+            document.getElementById('loadingOverlay').style.display = 'none';
+        });
+    </script>
+</body>
+</html>

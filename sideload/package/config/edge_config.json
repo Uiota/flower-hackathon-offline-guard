@@ -1,0 +1,42 @@
+{
+  "deployment": {
+    "mode": "edge",
+    "offline_first": true,
+    "auto_start": true,
+    "interfaces": [
+      "web",
+      "cli",
+      "demo"
+    ]
+  },
+  "agents": {
+    "security_monitor": {
+      "enabled": true,
+      "priority": "high"
+    },
+    "development_agent": {
+      "enabled": true,
+      "priority": "medium"
+    },
+    "communication_hub": {
+      "enabled": true,
+      "priority": "high"
+    },
+    "debug_monitor": {
+      "enabled": true,
+      "priority": "low"
+    }
+  },
+  "network": {
+    "offline_mode": true,
+    "p2p_enabled": true,
+    "web_port": 8888,
+    "api_port": 8889
+  },
+  "security": {
+    "threat_detection": true,
+    "file_monitoring": true,
+    "resource_monitoring": true,
+    "auto_quarantine": true
+  }
+}

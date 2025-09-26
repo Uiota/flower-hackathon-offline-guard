@@ -1,6 +1,10 @@
 MIT License
 
+<<<<<<< HEAD
 Copyright (c) 2025 UIOTA Offline Guard Contributors
+=======
+Copyright (c) 2025 Uiota
+>>>>>>> 1b9bb517b49e6339dfc3ebad122d3a2453b341f3
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,6 +23,9 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+<<<<<<< HEAD
 
 Guardian Character NFTs and related intellectual property are subject to 
 additional terms defined in the UIOTA Guardian License Agreement.
+=======
+>>>>>>> 1b9bb517b49e6339dfc3ebad122d3a2453b341f3

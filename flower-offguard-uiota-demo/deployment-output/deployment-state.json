@@ -1,0 +1,12 @@
+{
+  "started_at": "2025-09-22T11:08:39.869888",
+  "completed_at": "2025-09-22T11:08:39.870772",
+  "current_stage": null,
+  "stages_completed": [],
+  "stages_failed": [],
+  "overall_success": false,
+  "artifacts": {},
+  "errors": [
+    "Environment validation failed"
+  ]
+}

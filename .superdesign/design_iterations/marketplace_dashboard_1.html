@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UIOTA Marketplace Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif !important;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%) !important;
+            color: #ffffff !important;
+            min-height: 100vh;
+        }
+
+        .marketplace-header {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%);
+            border-bottom: 1px solid rgba(16, 185, 129, 0.2);
+            backdrop-filter: blur(20px);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .app-card {
+            background: linear-gradient(135deg, rgba(20, 20, 30, 0.9) 0%, rgba(30, 30, 50, 0.8) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 1rem;
+            backdrop-filter: blur(20px);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .app-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(16, 185, 129, 0.3);
+            border-color: rgba(16, 185, 129, 0.6);
+        }
+
+        .app-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .app-card:hover::before {
+            left: 100%;
+        }
+
+        .app-icon {
+            width: 4rem;
+            height: 4rem;
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .app-icon::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 1rem;
+            padding: 2px;
+            background: linear-gradient(45deg, transparent, rgba(16, 185, 129, 0.5), transparent);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: exclude;
+        }
+
+        .category-filter {
+            background: rgba(30, 30, 50, 0.8);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            color: #ffffff;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .category-filter:hover, .category-filter.active {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: rgba(16, 185, 129, 0.5);
+            color: #10b981;
+        }
+
+        .install-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border: none;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .install-btn:hover {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .install-btn:disabled {
+            background: rgba(107, 114, 128, 0.5);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .featured-banner {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.2) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .featured-banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(16, 185, 129, 0.1) 50%, transparent 70%);
+            background-size: 200% 200%;
+            animation: shimmer 3s infinite linear;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .stats-card {
+            background: rgba(20, 20, 30, 0.8);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .rating-stars {
+            color: #fbbf24;
+        }
+
+        .app-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-live {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .status-beta {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .status-coming {
+            background: rgba(156, 163, 175, 0.2);
+            color: #9ca3af;
+            border: 1px solid rgba(156, 163, 175, 0.3);
+        }
+
+        .search-bar {
+            background: rgba(30, 30, 50, 0.8);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: white;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .search-bar:focus {
+            outline: none;
+            border-color: rgba(16, 185, 129, 0.5);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="marketplace-header">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 bg-gradient-to-br from-emerald-500 to-green-600 rounded-lg flex items-center justify-center">
+                        <i data-lucide="store" class="w-6 h-6 text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold" style="text-shadow: 0 0 20px rgba(16, 185, 129, 0.5);">UIOTA Marketplace</h1>
+                        <p class="text-sm text-gray-400">AI-Powered App Ecosystem</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="relative">
+                        <input type="text" placeholder="Search apps..." class="search-bar pr-10" id="searchInput">
+                        <i data-lucide="search" class="w-5 h-5 absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    </div>
+                    <button class="p-2 rounded-lg hover:bg-white/10 transition-colors">
+                        <i data-lucide="user" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mx-auto px-6 py-8">
+        <!-- Featured Banner -->
+        <div class="featured-banner">
+            <div class="relative z-10">
+                <h2 class="text-3xl font-bold mb-4">Featured: Smart City Pass</h2>
+                <p class="text-lg text-gray-300 mb-6">Revolutionary digital transit solution with NFC and QR capabilities</p>
+                <div class="flex items-center gap-4">
+                    <button onclick="window.open('smartcitypass_template_1.html', '_blank')" class="install-btn">
+                        <i data-lucide="download" class="w-4 h-4 inline mr-2"></i>
+                        Try Demo
+                    </button>
+                    <div class="flex items-center gap-2">
+                        <div class="rating-stars">★★★★★</div>
+                        <span class="text-sm text-gray-400">(4.9) • 12.5K downloads</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="stats-card">
+                <div class="flex items-center justify-center w-12 h-12 bg-emerald-500/20 rounded-lg mx-auto mb-3">
+                    <i data-lucide="download" class="w-6 h-6 text-emerald-400"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-emerald-400">47.2K</h3>
+                <p class="text-sm text-gray-400">Total Downloads</p>
+            </div>
+            
+            <div class="stats-card">
+                <div class="flex items-center justify-center w-12 h-12 bg-blue-500/20 rounded-lg mx-auto mb-3">
+                    <i data-lucide="package" class="w-6 h-6 text-blue-400"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-blue-400">156</h3>
+                <p class="text-sm text-gray-400">Available Apps</p>
+            </div>
+            
+            <div class="stats-card">
+                <div class="flex items-center justify-center w-12 h-12 bg-purple-500/20 rounded-lg mx-auto mb-3">
+                    <i data-lucide="users" class="w-6 h-6 text-purple-400"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-purple-400">8.9K</h3>
+                <p class="text-sm text-gray-400">Active Users</p>
+            </div>
+            
+            <div class="stats-card">
+                <div class="flex items-center justify-center w-12 h-12 bg-yellow-500/20 rounded-lg mx-auto mb-3">
+                    <i data-lucide="star" class="w-6 h-6 text-yellow-400"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-yellow-400">4.7</h3>
+                <p class="text-sm text-gray-400">Avg Rating</p>
+            </div>
+        </div>
+
+        <!-- Category Filters -->
+        <div class="flex flex-wrap gap-3 mb-8">
+            <button class="category-filter active" data-category="all">All Apps</button>
+            <button class="category-filter" data-category="productivity">Productivity</button>
+            <button class="category-filter" data-category="finance">Finance</button>
+            <button class="category-filter" data-category="transport">Transport</button>
+            <button class="category-filter" data-category="ai">AI Tools</button>
+            <button class="category-filter" data-category="utilities">Utilities</button>
+            <button class="category-filter" data-category="games">Games</button>
+        </div>
+
+        <!-- Apps Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="appsGrid">
+            
+            <!-- Smart City Pass -->
+            <div class="app-card p-6" data-category="transport">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="app-icon bg-gradient-to-br from-indigo-500 to-purple-600">
+                        <i data-lucide="credit-card" class="w-8 h-8 text-white"></i>
+                    </div>
+                    <span class="app-status status-live">Live</span>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Smart City Pass</h3>
+                <p class="text-gray-400 text-sm mb-4">Digital transit pass with NFC and QR code support for seamless urban mobility.</p>
+                <div class="flex items-center gap-2 mb-4">
+                    <div class="rating-stars text-sm">★★★★★</div>
+                    <span class="text-xs text-gray-500">(4.9) • 12.5K</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-sm text-emerald-400 font-semibold">Free</span>
+                    <button onclick="window.open('smartcitypass_template_1.html', '_blank')" class="install-btn text-sm py-2 px-4">
+                        Try Demo
+                    </button>
+                </div>
+            </div>
+
+            <!-- AI Chat Assistant -->
+            <div class="app-card p-6" data-category="ai">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="app-icon bg-gradient-to-br from-cyan-500 to-blue-600">
+                        <i data-lucide="message-circle" class="w-8 h-8 text-white"></i>
+                    </div>
+                    <span class="app-status status-live">Live</span>
+                </div>
+                <h3 class="text-xl font-bold mb-2">AI Chat Assistant</h3>
+                <p class="text-gray-400 text-sm mb-4">Intelligent conversational AI powered by local LLM models for privacy-focused interactions.</p>
+                <div class="flex items-center gap-2 mb-4">
+                    <div class="rating-stars text-sm">★★★★☆</div>
+                    <span class="text-xs text-gray-500">(4.6) • 8.2K</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-sm text-emerald-400 font-semibold">Free</span>
+                    <button onclick="showComingSoon('AI Chat Assistant')" class="install-btn text-sm py-2 px-4">
+                        Install
+                    </button>
+                </div>
+            </div>
+
+            <!-- Crypto Wallet -->
+            <div class="app-card p-6" data-category="finance">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="app-icon bg-gradient-to-br from-yellow-500 to-orange-600">
+                        <i data-lucide="wallet" class="w-8 h-8 text-white"></i>
+                    </div>
+                    <span class="app-status status-live">Live</span>
+                </div>
+                <h3 class="text-xl font-bold mb-2">UIOTA Wallet</h3>
+                <p class="text-gray-400 text-sm mb-4">Secure cryptocurrency wallet with multi-chain support and DeFi integration.</p>
+                <div class="flex items-center gap-2 mb-4">
+                    <div class="rating-stars text-sm">★★★★★</div>
+                    <span class="text-xs text-gray-500">(4.8) • 15.7K</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-sm text-emerald-400 font-semibold">Free</span>
+                    <button onclick="showComingSoon('UIOTA Wallet')" class="install-btn text-sm py-2 px-4">
+                        Install
+                    </button>
+                </div>
+            </div>
+
+            <!-- Task Manager -->
+            <div class="app-card p-6" data-category="productivity">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="app-icon bg-gradient-to-br from-green-500 to-teal-600">
+                        <i data-lucide="check-square" class="w-8 h-8 text-white"></i>
+                    </div>
+                    <span class="app-status status-beta">Beta</span>
+                </div>
+                <h3 class="text-xl font-bold mb-2">AI Task Manager</h3>
+                <p class="text-gray-400 text-sm mb-4">Intelligent task management with AI-powered scheduling and priority optimization.</p>
+                <div class="flex items-center gap-2 mb-4">
+                    <div class="rating-stars text-sm">★★★★☆</div>
+                    <span class="text-xs text-gray-500">(4.3) • 3.1K</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-sm text-blue-400 font-semibold">Beta</span>
+                    <button onclick="showComingSoon('AI Task Manager')" class="install-btn text-sm py-2 px-4">
+                        Try Beta
+                    </button>
+                </div>
+            </div>
+
+            <!-- Code Editor -->
+            <div class="app-card p-6" data-category="productivity">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="app-icon bg-gradient-to-br from-purple-500 to-pink-600">
+                        <i data-lucide="code" class="w-8 h-8 text-white"></i>
+                    </div>
+                    <span class="app-status status-live">Live</span>
+                </div>
+                <h3 class="text-xl font-bold mb-2">UIOTA Code</h3>
+                <p class="text-gray-400 text-sm mb-4">Advanced code editor with AI-powered autocomplete and real-time collaboration.</p>
+                <div class="flex items-center gap-2 mb-4">
+                    <div class="rating-stars text-sm">★★★★★</div>
+                    <span class="text-xs text-gray-500">(4.9) • 22.4K</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-sm text-emerald-400 font-semibold">Free</span>
+                    <button onclick="showComingSoon('UIOTA Code')" class="install-btn text-sm py-2 px-4">
+                        Install
+                    </button>
+                </div>
+            </div>
+
+            <!-- Neural Network Visualizer -->
+            <div class="app-card p-6" data-category="ai">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="app-icon bg-gradient-to-br from-red-500 to-pink-600">
+                        <i data-lucide="network" class="w-8 h-8 text-white"></i>
+                    </div>
+                    <span class="app-status status-coming">Coming Soon</span>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Neural Visualizer</h3>
+                <p class="text-gray-400 text-sm mb-4">Interactive neural network visualization tool for ML model understanding and debugging.</p>
+                <div class="flex items-center gap-2 mb-4">
+                    <div class="rating-stars text-sm text-gray-500">★★★★☆</div>
+                    <span class="text-xs text-gray-500">Coming Q2 2024</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-sm text-gray-400 font-semibold">TBA</span>
+                    <button disabled class="install-btn text-sm py-2 px-4">
+                        Notify Me
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Back to Ecosystem Button -->
+    <div class="fixed bottom-6 right-6">
+        <button onclick="window.open('ecosystem_index.html', '_blank')" class="bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/30 text-emerald-400 p-3 rounded-full transition-all duration-300 hover:scale-110">
+            <i data-lucide="home" class="w-6 h-6"></i>
+        </button>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Category filtering
+        const categoryButtons = document.querySelectorAll('.category-filter');
+        const appCards = document.querySelectorAll('.app-card');
+
+        categoryButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Update active button
+                categoryButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+
+                const category = button.dataset.category;
+                
+                // Filter apps
+                appCards.forEach(card => {
+                    if (category === 'all' || card.dataset.category === category) {
+                        card.style.display = 'block';
+                        card.style.animation = 'fadeIn 0.3s ease';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            
+            appCards.forEach(card => {
+                const title = card.querySelector('h3').textContent.toLowerCase();
+                const description = card.querySelector('p').textContent.toLowerCase();
+                
+                if (title.includes(searchTerm) || description.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        // Coming soon function
+        function showComingSoon(appName) {
+            alert(`🚀 ${appName}\n\nThis app is currently in development. You'll be notified when it's available for download!`);
+        }
+
+        // Add hover effects
+        document.querySelectorAll('.app-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-8px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = '';
+            });
+        });
+
+        // Add CSS animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(20px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Offline.ai – Install Claude</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .container { max-width: 720px; padding: 40px 16px; }
+    h1 { font-size: 1.8rem; text-shadow: 0 0 8px #00ff99; margin-bottom: 12px; }
+    p  { opacity: .8; margin-bottom: 16px; }
+    .card { text-align: left; }
+    .steps { display: grid; gap: 16px; }
+    code { background: #0f1113; padding: 2px 6px; border-radius: 4px; }
+    pre { background:#0f1113; padding:12px; border-radius:8px; overflow:auto; box-shadow:0 0 20px rgba(0,255,153,0.1); }
+    .actions { display:flex; gap:12px; flex-wrap:wrap; margin-top:12px; }
+    .btn { padding:12px; border:1px solid rgba(255,255,255,0.3); border-radius:6px; background:transparent; color:#e0e0e0; }
+    .btn:hover { background:rgba(0,255,153,0.1); border-color:#00ff99; }
+  </style>
+  <script>
+    // Very lightweight OS hinting for download buttons
+    document.addEventListener('DOMContentLoaded', () => {
+      const ua = navigator.userAgent.toLowerCase();
+      const mac = ua.includes('mac');
+      const win = ua.includes('win');
+      const macBtn = document.getElementById('dl-mac');
+      const winBtn = document.getElementById('dl-win');
+      if (mac && macBtn) macBtn.style.borderColor = '#00ff99';
+      if (win && winBtn) winBtn.style.borderColor = '#00ff99';
+    });
+  </script>
+  <noscript></noscript>
+</head>
+<body>
+  <header>
+    <div class="logo">Offline.ai<span>TM</span></div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="mission.html">Mission</a>
+      <a href="case_discovery.html">Case Directory</a>
+      <a href="waitlist.html">Early Access</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h1>Install Claude</h1>
+    <p>Choose desktop for conversations or SDK for agent integration. Keep your API key local and operate in Zero Trust by default.</p>
+
+    <section class="grid grid-2">
+      <div class="card">
+        <h4>Desktop App</h4>
+        <p>Use Claude Desktop for secure, local-first chats. No site integration needed.</p>
+        <div class="actions">
+          <a id="dl-mac" class="btn" href="https://claude.ai/download" target="_blank" rel="noopener">Download for macOS</a>
+          <a id="dl-win" class="btn" href="https://claude.ai/download" target="_blank" rel="noopener">Download for Windows</a>
+        </div>
+        <p style="opacity:.7; margin-top:12px;">After installing, sign in and enable the optional system-wide hotkey if desired.</p>
+      </div>
+
+      <div class="card">
+        <h4>SDK (API)</h4>
+        <p>For programmatic access from your services or local agents.</p>
+        <div class="steps">
+          <div>
+            <strong>1. Create API Key</strong>
+            <p>Generate a key in your Anthropic account. Keep it secret.</p>
+          </div>
+          <div>
+            <strong>2. Set environment variable</strong>
+            <pre><code>export ANTHROPIC_API_KEY="&lt;your_key&gt;"   # macOS/Linux
+setx ANTHROPIC_API_KEY "&lt;your_key&gt;"      # Windows (new shell)</code></pre>
+          </div>
+          <div>
+            <strong>3. Install SDK</strong>
+            <pre><code># JavaScript/TypeScript
+npm i @anthropic-ai/sdk
+
+# Python
+pip install anthropic</code></pre>
+          </div>
+          <div>
+            <strong>4. Sample call</strong>
+            <pre><code>// JavaScript
+import Anthropic from '@anthropic-ai/sdk';
+const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+const msg = await anthropic.messages.create({
+  model: 'claude-3-7-sonnet-latest',
+  max_tokens: 256,
+  messages: [{ role: 'user', content: 'Hello from Offline.ai' }]
+});
+console.log(msg.content[0].text);
+</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:24px;">
+      <h4>Offline Mode Note</h4>
+      <p>Claude’s API requires network access. For disconnected operation, cache prompts, tools, and fall back to local models; sync transcripts when links restore.</p>
+      <div class="actions">
+        <a class="btn" href="command_layer.html">Back to Command Layer</a>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
+
