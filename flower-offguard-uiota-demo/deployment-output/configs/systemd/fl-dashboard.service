@@ -1,0 +1,27 @@
+[Unit]
+Description=Federated Learning Dashboard
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=fl-system
+Group=fl-system
+WorkingDirectory=/home/uiota/projects/offline-guard/flower-offguard-uiota-demo
+Environment=OFFLINE_MODE=1
+EnvironmentFile=/home/uiota/projects/offline-guard/flower-offguard-uiota-demo/deployment-output/configs/production.env
+ExecStart=/home/uiota/projects/offline-guard/flower-offguard-uiota-demo/.venv/bin/python dashboard_with_agents.py
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+# Security
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/home/uiota/projects/offline-guard/flower-offguard-uiota-demo/logs /home/uiota/projects/offline-guard/flower-offguard-uiota-demo/data
+
+[Install]
+WantedBy=multi-user.target

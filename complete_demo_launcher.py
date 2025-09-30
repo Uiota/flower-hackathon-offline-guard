@@ -1,546 +1,343 @@
 #!/usr/bin/env python3
 """
-Complete Demo Launcher with Integrated Terminal and Advanced Graphics
-Enhanced federated learning demonstration with OpenAI-style interface
+Complete Off-Guard Demo Launcher
+Integrated demo with all features: Flower FL, AI integration, encryption, and portal
 """
 
 import asyncio
-import json
-import logging
-import os
 import subprocess
-import sys
 import threading
 import time
+import logging
+import json
+import signal
+import sys
+from pathlib import Path
+from typing import Dict, List, Optional
 import webbrowser
 from datetime import datetime
-from pathlib import Path
-from typing import Dict, List, Any, Optional
 
-# Web framework imports
-try:
-    from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request
-    from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
-    from fastapi.staticfiles import StaticFiles
-    import uvicorn
-except ImportError:
-    print("Installing required web dependencies...")
-    subprocess.run([sys.executable, "-m", "pip", "install", "fastapi", "uvicorn", "websockets"])
-    from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request
-    from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
-    from fastapi.staticfiles import StaticFiles
-    import uvicorn
+class CompleteDemoLauncher:
+    """Comprehensive demo launcher for Off-Guard platform"""
 
-# Add project modules to path
-sys.path.insert(0, str(Path(__file__).parent))
-sys.path.insert(0, str(Path(__file__).parent / "flower-offguard-uiota-demo" / "src"))
-sys.path.insert(0, str(Path(__file__).parent / "agents"))
-
-logger = logging.getLogger(__name__)
-
-class AdvancedDemoLauncher:
-    """Complete demo launcher with integrated terminal and advanced graphics."""
-
-    def __init__(self, host: str = "localhost", port: int = 8888):
-        self.host = host
-        self.port = port
-        self.app = FastAPI(title="Advanced FL Demo Launcher", version="2.0.0")
-
-        # Demo components
-        self.fl_server_process = None
-        self.fl_client_processes = []
-        self.terminal_sessions = {}
-        self.active_connections: List[WebSocket] = []
-
-        # Demo state
-        self.demo_running = False
-        self.simulation_data = {
-            "current_round": 0,
-            "global_accuracy": 85.0,
-            "active_clients": 0,
-            "training_loss": 0.245,
-            "convergence": 0.0,
-            "data_points": 50000,
-            "models": [
-                {"name": "CNN Classifier", "accuracy": 94.7, "loss": 0.087},
-                {"name": "LSTM Predictor", "accuracy": 91.2, "loss": 0.124},
-                {"name": "Transformer", "accuracy": 96.3, "loss": 0.056}
-            ]
+    def __init__(self):
+        self.processes = {}
+        self.demo_active = False
+        self.web_server = None
+        self.fl_demo = None
+        self.demo_config = {
+            "web_port": 8000,
+            "fl_server_port": 8080,
+            "auto_open_browser": True,
+            "demo_duration": 300,  # 5 minutes
+            "features": {
+                "flower_fl": True,
+                "ai_integration": True,
+                "encryption": True,
+                "portal_demo": True,
+                "two_device_demo": True,
+                "confidential_llm": True
+            }
         }
 
-        # Terminal history
-        self.terminal_history = [
-            "🤖 Advanced FL Demo System v2.0.0",
-            "✅ System initialized successfully",
-            "🔧 Ready for federated learning simulation",
-            "💡 Type 'help' for available commands"
+    def print_banner(self):
+        """Print startup banner"""
+        banner = """
+    ╔══════════════════════════════════════════════════════════════╗
+    ║                    🛡️  Off-Guard Platform                    ║
+    ║              Complete Federated Learning Demo                ║
+    ║                                                              ║
+    ║  🌸 Flower Framework Integration                             ║
+    ║  🤖 OpenAI + Anthropic AI Integration                       ║
+    ║  🔐 End-to-End Encryption                                   ║
+    ║  📱 Two-Device FL Demo                                      ║
+    ║  💬 Confidential LLM Communication                         ║
+    ║  🌐 Interactive Web Portal                                  ║
+    ╚══════════════════════════════════════════════════════════════╝
+        """
+        print(banner)
+
+    def check_dependencies(self) -> bool:
+        """Check if all required dependencies are available"""
+        required_packages = [
+            "fastapi", "uvicorn", "flwr", "torch", "transformers",
+            "cryptography", "websockets", "aiohttp"
         ]
 
-        self._setup_routes()
-        self._setup_background_tasks()
+        missing_packages = []
+        for package in required_packages:
+            try:
+                __import__(package)
+            except ImportError:
+                missing_packages.append(package)
 
-    def _setup_routes(self):
-        """Set up web routes."""
+        if missing_packages:
+            print(f"❌ Missing packages: {', '.join(missing_packages)}")
+            print("📦 Installing missing packages...")
+            return self.install_dependencies(missing_packages)
 
-        @self.app.get("/", response_class=HTMLResponse)
-        async def dashboard():
-            return FileResponse(Path(__file__).parent / "advanced_fl_dashboard.html")
+        print("✅ All dependencies available")
+        return True
 
-        @self.app.get("/api/status")
-        async def get_status():
-            return JSONResponse({
-                "demo_running": self.demo_running,
-                "simulation_data": self.simulation_data,
-                "terminal_history": self.terminal_history[-20:],  # Last 20 lines
-                "timestamp": datetime.now().isoformat()
-            })
+    def install_dependencies(self, packages: List[str]) -> bool:
+        """Install missing dependencies"""
+        try:
+            for package in packages:
+                print(f"Installing {package}...")
+                subprocess.run([sys.executable, "-m", "pip", "install", package],
+                             check=True, capture_output=True)
+            print("✅ Dependencies installed successfully")
+            return True
+        except subprocess.CalledProcessError as e:
+            print(f"❌ Failed to install dependencies: {e}")
+            return False
 
-        @self.app.post("/api/start-demo")
-        async def start_demo():
-            return await self._start_complete_demo()
+    def setup_environment(self):
+        """Setup demo environment"""
+        print("🔧 Setting up demo environment...")
 
-        @self.app.post("/api/stop-demo")
-        async def stop_demo():
-            return await self._stop_complete_demo()
+        # Create demo directories
+        demo_dirs = ["logs", "models", "data", "keys"]
+        for dir_name in demo_dirs:
+            Path(dir_name).mkdir(exist_ok=True)
 
-        @self.app.post("/api/terminal-command")
-        async def execute_terminal_command(request: Request):
-            data = await request.json()
-            command = data.get("command", "")
-            return await self._execute_terminal_command(command)
+        # Setup logging
+        logging.basicConfig(
+            level=logging.INFO,
+            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+            handlers=[
+                logging.FileHandler('logs/demo.log'),
+                logging.StreamHandler()
+            ]
+        )
 
-        @self.app.websocket("/ws")
-        async def websocket_endpoint(websocket: WebSocket):
-            await self._handle_websocket(websocket)
+        # Generate demo encryption keys
+        from cryptography.fernet import Fernet
+        demo_key = Fernet.generate_key()
+        with open("keys/demo_encryption.key", "wb") as f:
+            f.write(demo_key)
 
-        @self.app.get("/api/export-model")
-        async def export_model():
-            return await self._export_model_data()
+        print("✅ Environment setup complete")
 
-        @self.app.post("/api/add-client")
-        async def add_client():
-            return await self._add_fl_client()
-
-        @self.app.post("/api/reset-simulation")
-        async def reset_simulation():
-            return await self._reset_simulation()
-
-    async def _handle_websocket(self, websocket: WebSocket):
-        """Handle WebSocket connections for real-time updates."""
-        await websocket.accept()
-        self.active_connections.append(websocket)
+    async def start_web_interface(self):
+        """Start the main web interface"""
+        print(f"🌐 Starting web interface on port {self.demo_config['web_port']}...")
 
         try:
-            while True:
-                # Send periodic updates
-                await asyncio.sleep(2)
-                if websocket in self.active_connections:
-                    data = {
-                        "type": "update",
-                        "simulation_data": self.simulation_data,
-                        "terminal_history": self.terminal_history[-5:],  # Last 5 lines
-                        "timestamp": datetime.now().isoformat()
-                    }
-                    await websocket.send_text(json.dumps(data))
-        except WebSocketDisconnect:
-            if websocket in self.active_connections:
-                self.active_connections.remove(websocket)
+            # Start web server
+            process = subprocess.Popen([
+                sys.executable, "web_interface.py"
+            ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-    async def _start_complete_demo(self):
-        """Start the complete federated learning demo."""
-        try:
-            if self.demo_running:
-                return {"success": False, "error": "Demo already running"}
+            self.processes["web_server"] = process
+            await asyncio.sleep(3)  # Allow server to start
 
-            self._add_terminal_message("🚀 Starting complete FL demonstration...")
+            print(f"✅ Web interface started at http://localhost:{self.demo_config['web_port']}")
 
-            # Start FL server simulation
-            await self._start_fl_server_simulation()
-
-            # Start multiple FL clients
-            await self._start_fl_clients_simulation()
-
-            # Start advanced metrics simulation
-            self._start_metrics_simulation()
-
-            self.demo_running = True
-            self._add_terminal_message("✅ Complete demo started successfully")
-            self._add_terminal_message(f"🌐 Server running on http://{self.host}:{self.port}")
-
-            # Broadcast update
-            await self._broadcast_update("demo_started")
-
-            return {"success": True, "message": "Complete demo started"}
-
-        except Exception as e:
-            logger.error(f"Failed to start demo: {e}")
-            return {"success": False, "error": str(e)}
-
-    async def _stop_complete_demo(self):
-        """Stop the complete federated learning demo."""
-        try:
-            if not self.demo_running:
-                return {"success": False, "error": "Demo not running"}
-
-            self._add_terminal_message("⏹️ Stopping complete FL demonstration...")
-
-            # Stop all processes
-            await self._cleanup_processes()
-
-            self.demo_running = False
-            self._add_terminal_message("🔄 Demo stopped successfully")
-
-            # Broadcast update
-            await self._broadcast_update("demo_stopped")
-
-            return {"success": True, "message": "Demo stopped"}
-
-        except Exception as e:
-            logger.error(f"Failed to stop demo: {e}")
-            return {"success": False, "error": str(e)}
-
-    async def _start_fl_server_simulation(self):
-        """Start FL server simulation."""
-        self._add_terminal_message("🌸 Initializing FL server...")
-
-        # Simulate server startup
-        await asyncio.sleep(1)
-
-        self.simulation_data["current_round"] = 1
-        self._add_terminal_message("✅ FL server initialized on port 8080")
-
-    async def _start_fl_clients_simulation(self):
-        """Start FL clients simulation."""
-        self._add_terminal_message("🤖 Starting FL clients...")
-
-        # Simulate multiple clients
-        for i in range(1, 9):  # 8 clients
-            await asyncio.sleep(0.2)
-            self.simulation_data["active_clients"] = i
-            self._add_terminal_message(f"📱 Client {i} connected")
-
-        self._add_terminal_message("✅ All FL clients connected")
-
-    def _start_metrics_simulation(self):
-        """Start advanced metrics simulation."""
-        def simulate_training():
-            while self.demo_running:
-                try:
-                    # Simulate training progress
-                    if self.simulation_data["current_round"] < 500:
-                        self.simulation_data["current_round"] += 1
-
-                        # Simulate accuracy improvement
-                        accuracy_change = (0.5 - abs(0.5 - (self.simulation_data["current_round"] % 100) / 100)) * 0.1
-                        self.simulation_data["global_accuracy"] += accuracy_change
-                        self.simulation_data["global_accuracy"] = min(99.5, max(85.0, self.simulation_data["global_accuracy"]))
-
-                        # Simulate loss reduction
-                        self.simulation_data["training_loss"] = max(0.001, self.simulation_data["training_loss"] - 0.001)
-
-                        # Simulate convergence
-                        self.simulation_data["convergence"] = min(95.0, self.simulation_data["current_round"] / 5)
-
-                        # Update model metrics
-                        for model in self.simulation_data["models"]:
-                            model["accuracy"] += (0.5 - abs(0.5 - (self.simulation_data["current_round"] % 50) / 50)) * 0.05
-                            model["accuracy"] = min(99.9, max(85.0, model["accuracy"]))
-                            model["loss"] = max(0.001, model["loss"] - 0.0005)
-
-                        # Add periodic terminal updates
-                        if self.simulation_data["current_round"] % 10 == 0:
-                            round_num = self.simulation_data["current_round"]
-                            accuracy = self.simulation_data["global_accuracy"]
-                            self._add_terminal_message(f"📊 Round {round_num}: Global accuracy {accuracy:.1f}%")
-
-                    time.sleep(3)  # Update every 3 seconds
-
-                except Exception as e:
-                    logger.error(f"Metrics simulation error: {e}")
-                    time.sleep(5)
-
-        # Start simulation in background thread
-        simulation_thread = threading.Thread(target=simulate_training, daemon=True)
-        simulation_thread.start()
-
-    async def _execute_terminal_command(self, command: str):
-        """Execute terminal command and return response."""
-        try:
-            cmd = command.lower().strip()
-            response_lines = []
-
-            if cmd == "help":
-                response_lines = [
-                    "Available commands:",
-                    "  status     - Show current demo status",
-                    "  start      - Start FL demonstration",
-                    "  stop       - Stop FL demonstration",
-                    "  reset      - Reset simulation parameters",
-                    "  clients    - Show connected clients",
-                    "  metrics    - Display current metrics",
-                    "  models     - List available models",
-                    "  export     - Export model data",
-                    "  clear      - Clear terminal history",
-                    "  help       - Show this help message"
-                ]
-
-            elif cmd == "status":
-                status = "Running" if self.demo_running else "Stopped"
-                response_lines = [
-                    f"Demo Status: {status}",
-                    f"Current Round: {self.simulation_data['current_round']}",
-                    f"Global Accuracy: {self.simulation_data['global_accuracy']:.1f}%",
-                    f"Active Clients: {self.simulation_data['active_clients']}",
-                    f"Training Loss: {self.simulation_data['training_loss']:.3f}"
-                ]
-
-            elif cmd == "start":
-                if not self.demo_running:
-                    await self._start_complete_demo()
-                    response_lines = ["✅ Demo started successfully"]
-                else:
-                    response_lines = ["⚠️ Demo already running"]
-
-            elif cmd == "stop":
-                if self.demo_running:
-                    await self._stop_complete_demo()
-                    response_lines = ["⏹️ Demo stopped successfully"]
-                else:
-                    response_lines = ["⚠️ Demo not running"]
-
-            elif cmd == "reset":
-                await self._reset_simulation()
-                response_lines = ["🔄 Simulation reset to initial state"]
-
-            elif cmd == "clients":
-                response_lines = [f"Active Clients: {self.simulation_data['active_clients']}"]
-                for i in range(1, self.simulation_data['active_clients'] + 1):
-                    status = "🟢 Active" if i % 3 != 0 else "🟡 Training"
-                    response_lines.append(f"  Client {i}: {status}")
-
-            elif cmd == "metrics":
-                response_lines = [
-                    "Current Metrics:",
-                    f"  Global Accuracy: {self.simulation_data['global_accuracy']:.1f}%",
-                    f"  Training Loss: {self.simulation_data['training_loss']:.3f}",
-                    f"  Convergence: {self.simulation_data['convergence']:.1f}%",
-                    f"  Data Points: {self.simulation_data['data_points']:,}"
-                ]
-
-            elif cmd == "models":
-                response_lines = ["Available Models:"]
-                for model in self.simulation_data['models']:
-                    response_lines.append(f"  {model['name']}: {model['accuracy']:.1f}% accuracy")
-
-            elif cmd == "export":
-                response_lines = ["💾 Exporting model data...", "✅ Model exported successfully"]
-
-            elif cmd == "clear":
-                self.terminal_history = ["🧹 Terminal cleared"]
-                response_lines = []
-
-            else:
-                response_lines = [f"❌ Unknown command: {command}", "💡 Type 'help' for available commands"]
-
-            # Add responses to terminal history
-            for line in response_lines:
-                self._add_terminal_message(line)
-
-            return {"success": True, "response": response_lines}
-
-        except Exception as e:
-            error_msg = f"❌ Command execution failed: {e}"
-            self._add_terminal_message(error_msg)
-            return {"success": False, "error": str(e)}
-
-    async def _add_fl_client(self):
-        """Add a new FL client to the simulation."""
-        try:
-            self.simulation_data["active_clients"] += 1
-            client_id = self.simulation_data["active_clients"]
-
-            self._add_terminal_message(f"➕ Client {client_id} added to simulation")
-
-            await self._broadcast_update("client_added")
-
-            return {"success": True, "message": f"Client {client_id} added"}
-
-        except Exception as e:
-            return {"success": False, "error": str(e)}
-
-    async def _reset_simulation(self):
-        """Reset simulation to initial state."""
-        try:
-            self.simulation_data = {
-                "current_round": 0,
-                "global_accuracy": 85.0,
-                "active_clients": 0,
-                "training_loss": 0.245,
-                "convergence": 0.0,
-                "data_points": 50000,
-                "models": [
-                    {"name": "CNN Classifier", "accuracy": 94.7, "loss": 0.087},
-                    {"name": "LSTM Predictor", "accuracy": 91.2, "loss": 0.124},
-                    {"name": "Transformer", "accuracy": 96.3, "loss": 0.056}
-                ]
-            }
-
-            self.demo_running = False
-            self._add_terminal_message("🔄 Simulation reset to initial state")
-
-            await self._broadcast_update("simulation_reset")
-
-            return {"success": True, "message": "Simulation reset"}
-
-        except Exception as e:
-            return {"success": False, "error": str(e)}
-
-    async def _export_model_data(self):
-        """Export model data."""
-        try:
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            export_data = {
-                "timestamp": timestamp,
-                "simulation_data": self.simulation_data,
-                "export_type": "federated_learning_model",
-                "version": "2.0.0"
-            }
-
-            # Save to file
-            export_file = Path(__file__).parent / f"fl_model_export_{timestamp}.json"
-            with open(export_file, 'w') as f:
-                json.dump(export_data, f, indent=2)
-
-            self._add_terminal_message(f"💾 Model exported to {export_file.name}")
-
-            return JSONResponse(export_data)
-
-        except Exception as e:
-            return {"success": False, "error": str(e)}
-
-    def _add_terminal_message(self, message: str):
-        """Add message to terminal history."""
-        timestamp = datetime.now().strftime("%H:%M:%S")
-        formatted_message = f"[{timestamp}] {message}"
-        self.terminal_history.append(formatted_message)
-
-        # Keep only last 100 messages
-        if len(self.terminal_history) > 100:
-            self.terminal_history = self.terminal_history[-100:]
-
-    async def _broadcast_update(self, update_type: str):
-        """Broadcast update to all connected WebSocket clients."""
-        if self.active_connections:
-            data = {
-                "type": update_type,
-                "simulation_data": self.simulation_data,
-                "terminal_history": self.terminal_history[-5:],
-                "timestamp": datetime.now().isoformat()
-            }
-
-            message = json.dumps(data)
-            disconnected = []
-
-            for connection in self.active_connections:
-                try:
-                    await connection.send_text(message)
-                except:
-                    disconnected.append(connection)
-
-            # Remove disconnected clients
-            for connection in disconnected:
-                if connection in self.active_connections:
-                    self.active_connections.remove(connection)
-
-    async def _cleanup_processes(self):
-        """Clean up all running processes."""
-        try:
-            # Stop FL server if running
-            if self.fl_server_process and self.fl_server_process.poll() is None:
-                self.fl_server_process.terminate()
-                self.fl_server_process.wait(timeout=5)
-
-            # Stop all FL clients
-            for client in self.fl_client_processes:
-                if client.poll() is None:
-                    client.terminate()
-                    client.wait(timeout=5)
-
-            self.fl_client_processes.clear()
-
-        except Exception as e:
-            logger.error(f"Cleanup error: {e}")
-
-    def _setup_background_tasks(self):
-        """Set up background tasks."""
-        def heartbeat():
-            while True:
-                try:
-                    # Send periodic updates to connected clients
-                    if self.active_connections and self.demo_running:
-                        loop = asyncio.new_event_loop()
-                        asyncio.set_event_loop(loop)
-                        loop.run_until_complete(self._broadcast_update("heartbeat"))
-                        loop.close()
-
-                    time.sleep(5)
-
-                except Exception as e:
-                    logger.error(f"Heartbeat error: {e}")
-                    time.sleep(10)
-
-        # Start heartbeat in background thread
-        heartbeat_thread = threading.Thread(target=heartbeat, daemon=True)
-        heartbeat_thread.start()
-
-    def run(self):
-        """Run the advanced demo launcher."""
-        print("🚀 Advanced FL Demo Launcher v2.0.0")
-        print("=" * 50)
-        print(f"🌐 Dashboard: http://{self.host}:{self.port}")
-        print("🤖 Advanced federated learning simulation")
-        print("💻 Integrated terminal and real-time monitoring")
-        print("📊 OpenAI-style interface with LangGraph integration")
-        print("=" * 50)
-        print("Press Ctrl+C to stop the launcher")
-        print()
-
-        try:
             # Auto-open browser
-            def open_browser():
-                time.sleep(2)
-                webbrowser.open(f"http://{self.host}:{self.port}")
+            if self.demo_config["auto_open_browser"]:
+                try:
+                    webbrowser.open(f"http://localhost:{self.demo_config['web_port']}")
+                    print("🌐 Browser opened automatically")
+                except Exception as e:
+                    print(f"⚠️  Could not open browser: {e}")
 
-            browser_thread = threading.Thread(target=open_browser, daemon=True)
-            browser_thread.start()
+        except Exception as e:
+            print(f"❌ Web interface startup error: {e}")
 
-            # Run the server
-            uvicorn.run(
-                self.app,
-                host=self.host,
-                port=self.port,
-                log_level="info",
-                access_log=False
-            )
+    async def start_fl_server(self):
+        """Start Flower federated learning server"""
+        if not self.demo_config["features"]["flower_fl"]:
+            return
+
+        print("🌸 Starting Flower FL server...")
+
+        try:
+            # Start FL server in background
+            fl_process = subprocess.Popen([
+                sys.executable, "flower_fl_server.py"
+            ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+            self.processes["fl_server"] = fl_process
+            await asyncio.sleep(3)  # Allow server to start
+
+            if fl_process.poll() is None:
+                print("✅ Flower FL server started successfully")
+            else:
+                print("❌ Failed to start FL server")
+
+        except Exception as e:
+            print(f"❌ FL server startup error: {e}")
+
+    async def run_two_device_demo(self):
+        """Run the two-device federated learning demo"""
+        if not self.demo_config["features"]["two_device_demo"]:
+            return
+
+        print("📱 Starting two-device FL demo...")
+
+        try:
+            # Start demo in background
+            demo_process = subprocess.Popen([
+                sys.executable, "two_device_demo.py"
+            ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+            self.processes["two_device_demo"] = demo_process
+            print("✅ Two-device demo started")
+
+        except Exception as e:
+            print(f"❌ Two-device demo error: {e}")
+
+    async def run_confidential_llm_demo(self):
+        """Run confidential LLM communication demo"""
+        if not self.demo_config["features"]["confidential_llm"]:
+            return
+
+        print("🔐 Starting confidential LLM demo...")
+
+        try:
+            # Start demo in background
+            llm_process = subprocess.Popen([
+                sys.executable, "confidential_llm.py"
+            ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+            self.processes["confidential_llm"] = llm_process
+            print("✅ Confidential LLM demo started")
+
+        except Exception as e:
+            print(f"❌ Confidential LLM demo error: {e}")
+
+    def show_demo_info(self):
+        """Display demo information and URLs"""
+        print("\n" + "="*60)
+        print("🎯 DEMO INFORMATION")
+        print("="*60)
+        print(f"🌐 Main Interface:     http://localhost:{self.demo_config['web_port']}")
+        print(f"📚 SDK Documentation: http://localhost:{self.demo_config['web_port']}/sdk")
+        print(f"🎮 Portal Demo:       http://localhost:{self.demo_config['web_port']}/portal")
+        print(f"📊 API Docs:          http://localhost:{self.demo_config['web_port']}/docs")
+        print(f"🌸 FL Server:         localhost:{self.demo_config['fl_server_port']}")
+        print("="*60)
+        print("🔑 DEMO FEATURES:")
+        print("  • Flower Federated Learning with encryption")
+        print("  • OpenAI + Anthropic AI integration")
+        print("  • Two-device secure training simulation")
+        print("  • Confidential LLM offline communication")
+        print("  • Interactive web portal with all functions")
+        print("  • Complete SDK documentation")
+        print("="*60)
+        print("💡 USAGE TIPS:")
+        print("  • Visit the portal for interactive demos")
+        print("  • Check the SDK docs for implementation details")
+        print("  • Use the chat interface to test AI integration")
+        print("  • Monitor the two-device demo progress")
+        print("="*60)
+
+    async def monitor_demo(self):
+        """Monitor demo status and provide updates"""
+        start_time = time.time()
+
+        while self.demo_active:
+            current_time = time.time()
+            elapsed = current_time - start_time
+
+            # Status update every 30 seconds
+            if int(elapsed) % 30 == 0:
+                status = await self.get_demo_status()
+                print(f"\n📊 Demo Status (Running {elapsed:.0f}s):")
+                print(f"   Web Server: {'✅ Active' if status['web_active'] else '❌ Inactive'}")
+                print(f"   FL Server: {'✅ Active' if status['fl_active'] else '❌ Inactive'}")
+                print(f"   Active Processes: {len([p for p in self.processes.values() if p.poll() is None])}")
+
+            await asyncio.sleep(1)
+
+    async def get_demo_status(self) -> Dict:
+        """Get current demo status"""
+        status = {
+            "web_active": "web_server" in self.processes and self.processes["web_server"].poll() is None,
+            "fl_active": "fl_server" in self.processes and self.processes["fl_server"].poll() is None,
+            "connections": 0,
+            "features_active": self.demo_config["features"],
+            "uptime": time.time(),
+            "active_processes": len([p for p in self.processes.values() if p.poll() is None])
+        }
+
+        return status
+
+    def setup_signal_handlers(self):
+        """Setup signal handlers for graceful shutdown"""
+        def signal_handler(signum, frame):
+            print(f"\n🛑 Received signal {signum}, shutting down gracefully...")
+            asyncio.create_task(self.shutdown())
+
+        signal.signal(signal.SIGINT, signal_handler)
+        signal.signal(signal.SIGTERM, signal_handler)
+
+    async def shutdown(self):
+        """Gracefully shutdown all demo components"""
+        print("🔄 Shutting down demo components...")
+
+        self.demo_active = False
+
+        # Stop all processes
+        for name, process in self.processes.items():
+            if process.poll() is None:
+                process.terminate()
+                print(f"✅ {name} stopped")
+
+        print("🎉 Demo shutdown complete")
+
+    async def run_complete_demo(self):
+        """Run the complete integrated demo"""
+        try:
+            self.demo_active = True
+
+            # Setup
+            self.print_banner()
+
+            if not self.check_dependencies():
+                return
+
+            self.setup_environment()
+            self.setup_signal_handlers()
+
+            # Start core components
+            await self.start_web_interface()
+
+            if self.demo_config["features"]["flower_fl"]:
+                await self.start_fl_server()
+
+            # Start feature demos
+            await self.run_two_device_demo()
+            await self.run_confidential_llm_demo()
+
+            # Show information
+            self.show_demo_info()
+
+            # Start monitoring
+            print("\n🚀 Complete demo launched successfully!")
+            print("📊 Monitoring demo status... (Ctrl+C to stop)")
+
+            await self.monitor_demo()
 
         except KeyboardInterrupt:
-            print("\n🔄 Shutting down demo launcher...")
-            asyncio.run(self._cleanup_processes())
-            print("✅ Shutdown complete")
+            print("\n🛑 Demo interrupted by user")
+        except Exception as e:
+            print(f"❌ Demo error: {e}")
+            logging.exception("Demo error")
+        finally:
+            await self.shutdown()
 
-def create_demo_launcher(host: str = "localhost", port: int = 8888) -> AdvancedDemoLauncher:
-    """Factory function to create the demo launcher."""
-    return AdvancedDemoLauncher(host, port)
+async def main():
+    """Main entry point"""
+    launcher = CompleteDemoLauncher()
+    await launcher.run_complete_demo()
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
-
-    # Parse command line arguments
-    import argparse
-    parser = argparse.ArgumentParser(description="Advanced FL Demo Launcher")
-    parser.add_argument("--host", default="localhost", help="Host to bind to")
-    parser.add_argument("--port", type=int, default=8888, help="Port to bind to")
-    args = parser.parse_args()
-
-    launcher = create_demo_launcher(args.host, args.port)
-    launcher.run()
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print("\n👋 Goodbye!")
+    except Exception as e:
+        print(f"❌ Startup error: {e}")
+        sys.exit(1)

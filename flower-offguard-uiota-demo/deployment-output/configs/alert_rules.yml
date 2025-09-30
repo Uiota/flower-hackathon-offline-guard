@@ -1,0 +1,26 @@
+groups:
+- name: fl_system_alerts
+  rules:
+  - alert: FL_Dashboard_Down
+    expr: up{job="fl-dashboard"} == 0
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      summary: "FL Dashboard is down"
+
+  - alert: FL_Agents_Low
+    expr: fl_active_clients < 3
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Low number of active FL clients"
+
+  - alert: FL_Training_Stalled
+    expr: increase(fl_training_rounds[10m]) == 0
+    for: 10m
+    labels:
+      severity: warning
+    annotations:
+      summary: "FL training appears to be stalled"

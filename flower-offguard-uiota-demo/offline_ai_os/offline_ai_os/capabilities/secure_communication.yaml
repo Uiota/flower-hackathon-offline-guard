@@ -1,0 +1,15 @@
+category: communication
+dependencies:
+- cryptography
+description: Secure inter-agent communication
+name: secure_communication
+resource_requirements:
+  cpu_cores: 0.5
+  disk_mb: 100
+  gpu_memory_mb: 0
+  memory_mb: 256
+skills:
+- encryption
+- message_signing
+- key_exchange
+- secure_channels

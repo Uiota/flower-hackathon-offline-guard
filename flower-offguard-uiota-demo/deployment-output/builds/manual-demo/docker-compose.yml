@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  # Federated Learning Server
+  fl-server:
+    build: .
+    container_name: fl-server
+    environment:
+      - OFFLINE_MODE=1
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./artifacts:/app/artifacts
+      - ./demo_artifacts:/app/demo_artifacts
+    command: ["python3", "-m", "src.server", "--server-address", "0.0.0.0:8080"]
+    networks:
+      - fl-network
+
+  # Federated Learning Clients
+  fl-client-1:
+    build: .
+    container_name: fl-client-1
+    environment:
+      - OFFLINE_MODE=1
+    volumes:
+      - ./artifacts:/app/artifacts
+    command: ["python3", "-m", "src.client", "--cid", "1", "--server-address", "fl-server:8080"]
+    depends_on:
+      - fl-server
+    networks:
+      - fl-network
+
+  fl-client-2:
+    build: .
+    container_name: fl-client-2
+    environment:
+      - OFFLINE_MODE=1
+    volumes:
+      - ./artifacts:/app/artifacts
+    command: ["python3", "-m", "src.client", "--cid", "2", "--server-address", "fl-server:8080"]
+    depends_on:
+      - fl-server
+    networks:
+      - fl-network
+
+  fl-client-3:
+    build: .
+    container_name: fl-client-3
+    environment:
+      - OFFLINE_MODE=1
+    volumes:
+      - ./artifacts:/app/artifacts
+    command: ["python3", "-m", "src.client", "--cid", "3", "--server-address", "fl-server:8080"]
+    depends_on:
+      - fl-server
+    networks:
+      - fl-network
+
+  # Basic Demo (standalone)
+  demo:
+    build: .
+    container_name: fl-demo
+    environment:
+      - OFFLINE_MODE=1
+    volumes:
+      - ./demo_artifacts:/app/demo_artifacts
+    command: ["python3", "demo_basic.py"]
+    profiles:
+      - demo
+
+networks:
+  fl-network:
+    driver: bridge
+
+volumes:
+  fl-data:

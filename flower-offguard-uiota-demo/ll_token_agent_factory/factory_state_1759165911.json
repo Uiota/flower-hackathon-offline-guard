@@ -1,0 +1,990 @@
+{
+  "factory_id": "LLTOKEN_FACTORY_1759165911",
+  "generated_at": "2025-09-29T17:11:51.004883+00:00",
+  "factory_metrics": {
+    "total_agents": 32,
+    "active_agents": 32,
+    "total_tokens_in_circulation": 1173126,
+    "total_fl_rounds": 251,
+    "factory_start_time": "2025-09-29T17:10:50.966246+00:00"
+  },
+  "agent_statistics": {
+    "total_agents": 32,
+    "agent_types": 8,
+    "agents_per_type": 4
+  },
+  "token_economics": {
+    "total_circulation": 1174381,
+    "average_balance": 36699,
+    "total_earned": 14536,
+    "staking_agents": 8
+  },
+  "performance_metrics": {
+    "total_fl_participation": 274,
+    "average_quality": 0.6210625000000001,
+    "total_collaborations": 8,
+    "metaverse_enabled_agents": 12
+  },
+  "agent_roster": [
+    {
+      "agent_id": "compute_provider_00",
+      "agent_type": "compute_provider",
+      "status": "active",
+      "wallet_id": "WALLET_54B99467D791AA40",
+      "token_balance": 49906,
+      "reputation_score": 0.729,
+      "specializations": [
+        "High-performance computing",
+        "GPU acceleration",
+        "Distributed training"
+      ],
+      "capabilities": {
+        "quantum_wallet": true,
+        "offline_operation": true,
+        "metaverse_integration": false,
+        "fl_participation": true,
+        "iso20022_compliance": false,
+        "cross_world_portability": false,
+        "staking_enabled": false,
+        "content_creation": false
+      },
+      "metrics": {
+        "rounds_participated": 11,
+        "tokens_earned": 455,
+        "avg_contribution_quality": 0.574,
+        "uptime_hours": 0.0,
+        "collaborations": 0
+      }
+    },
+    {
+      "agent_id": "compute_provider_01",
+      "agent_type": "compute_provider",
+      "status": "active",
+      "wallet_id": "WALLET_604B903C1A32AD6D",
+      "token_balance": 35929,
+      "reputation_score": 0.631,
+      "specializations": [
+        "High-performance computing",
+        "GPU acceleration",
+        "Distributed training"
+      ],
+      "capabilities": {
+        "quantum_wallet": true,
+        "offline_operation": true,
+        "metaverse_integration": false,
+        "fl_participation": true,
+        "iso20022_compliance": false,
+        "cross_world_portability": false,
+        "staking_enabled": false,
+        "content_creation": false
+      },
+      "metrics": {
+        "rounds_participated": 10,
+        "tokens_earned": 431,
+        "avg_contribution_quality": 0.691,
+        "uptime_hours": 0.0,
+        "collaborations": 0
+      }
+    },
+    {
+      "agent_id": "compute_provider_02",
+      "agent_type": "compute_provider",
+      "status": "active",
+      "wallet_id": "WALLET_C173C318EBFC0358",
+      "token_balance": 22081,
+      "reputation_score": 0.811,
+      "specializations": [
+        "High-performance computing",
+        "GPU acceleration",
+        "Distributed training"
+      ],
+      "capabilities": {
+        "quantum_wallet": true,
+        "offline_operation": true,
+        "metaverse_integration": false,
+        "fl_participation": true,
+        "iso20022_compliance": false,
+        "cross_world_portability": false,
+        "staking_enabled": false,
+        "content_creation": false
+      },
+      "metrics": {
+        "rounds_participated": 7,
+        "tokens_earned": 331,
+        "avg_contribution_quality": 0.589,
+        "uptime_hours": 0.0,
+        "collaborations": 0
+      }
+    },
+    {
+      "agent_id": "compute_provider_03",
+      "agent_type": "compute_provider",
+      "status": "active",
+      "wallet_id": "WALLET_8513BF7316931BD6",
+      "token_balance": 31165,
+      "reputation_score": 0.593,
+      "specializations": [
+        "High-performance computing",
+        "GPU acceleration",
+        "Distributed training"
+      ],
+      "capabilities": {
+        "quantum_wallet": true,
+        "offline_operation": true,
+        "metaverse_integration": false,
+        "fl_participation": true,
+        "iso20022_compliance": false,
+        "cross_world_portability": false,
+        "staking_enabled": false,
+        "content_creation": false
+      },
+      "metrics": {
+        "rounds_participated": 8,
+        "tokens_earned": 346,
+        "avg_contribution_quality": 0.735,
+        "uptime_hours": 0.0,
+        "collaborations": 0
+      }
+    },
+    {
+      "agent_id": "data_curator_00",
+      "agent_type": "data_curator",
+      "status": "active",
+      "wallet_id": "WALLET_91F9F903D80D1130",
+      "token_balance": 42635,
+      "reputation_score": 0.896,
+      "specializations": [
+        "Dataset management",
+        "Data quality assurance",
+        "Privacy preservation"
+      ],
+      "capabilities": {
+        "quantum_wallet": true,
+        "offline_operation": true,
+        "metaverse_integration": false,
+        "fl_participation": true,
+        "iso20022_compliance": false,
+        "cross_world_portability": false,
+        "staking_enabled": false,
+        "content_creation": false
+      },
+      "metrics": {
+        "rounds_participated": 6,
+        "tokens_earned": 314,
+        "avg_contribution_quality": 0.589,
+        "uptime_hours": 0.0,
+        "collaborations": 0
+      }
+    },
+    {
+      "agent_id": "data_curator_01",
+      "agent_type": "data_curator",
+      "status": "active",
+      "wallet_id": "WALLET_854FC79395AA1EC9",
+      "token_balance": 26256,
+      "reputation_score": 0.752,
+      "specializations": [
+        "Dataset management",
+        "Data quality assurance",
+        "Privacy preservation"
+      ],
+      "capabilities": {
+        "quantum_wallet": true,
+        "offline_operation": true,
+        "metaverse_integration": false,
+        "fl_participation": true,
+        "iso20022_compliance": false,
+        "cross_world_portability": false,
+        "staking_enabled": false,
+        "content_creation": false
+      },
+      "metrics": {
+        "rounds_participated": 9,
+        "tokens_earned": 453,
+        "avg_contribution_quality": 0.675,
+        "uptime_hours": 0.0,
+        "collaborations": 0
+      }
+    },
+    {
+      "agent_id": "data_curator_02",
+      "agent_type": "data_curator",
+      "status": "active",
+      "wallet_id": "WALLET_C91E87C4A9ADDFA0",
+      "token_balance": 52479,
+      "reputation_score": 0.535,
+      "specializations": [
+        "Dataset management",
+        "Data quality assurance",
+        "Privacy preservation"
+      ],
+      "capabilities": {
+        "quantum_wallet": true,
+        "offline_operation": true,
+        "metaverse_integration": false,
+        "fl_participation": true,
+        "iso20022_compliance": false,
+        "cross_world_portability": false,
+        "staking_enabled": false,
+        "content_creation": false
+      },
+      "metrics": {
+        "rounds_participated": 7,
+        "tokens_earned": 213,
+        "avg_contribution_quality": 0.579,
+        "uptime_hours": 0.0,
+        "collaborations": 0
+      }
+    },
+    {
+      "agent_id": "data_curator_03",
+      "agent_type": "data_curator",
+      "status": "active",
+      "wallet_id": "WALLET_1C3E8CEEAD8ECDBF",
+      "token_balance": 20040,
+      "reputation_score": 0.709,
+      "specializations": [
+        "Dataset management",
+        "Data quality assurance",
+        "Privacy preservation"
+      ],
+      "capabilities": {
+        "quantum_wallet": true,
+        "offline_operation": true,
+        "metaverse_integration": false,
+        "fl_participation": true,
+        "iso20022_compliance": false,
+        "cross_world_portability": false,
+        "staking_enabled": false,
+        "content_creation": false
+      },
+      "metrics": {
+        "rounds_participated": 10,
+        "tokens_earned": 354,
+        "avg_contribution_quality": 0.508,
+        "uptime_hours": 0.0,
+        "collaborations": 0
+      }
+    },
+    {
+      "agent_id": "model_trainer_00",
+      "agent_type": "model_trainer",
+      "status": "active",
+      "wallet_id": "WALLET_26AB7B0ACDCB6B68",
+      "token_balance": 12922,
+      "reputation_score": 0.85,
+      "specializations": [
+        "Neural network training",
+        "Hyperparameter optimization",
+        "Transfer learning"
+      ],
+      "capabilities": {
+        "quantum_wallet": true,
+        "offline_operation": true,
+        "metaverse_integration": false,
+        "fl_participation": true,
+        "iso20022_compliance": false,
+        "cross_world_portability": false,
+        "staking_enabled": false,
+        "content_creation": false
+      },
+      "metrics": {
+        "rounds_participated": 10,
+        "tokens_earned": 550,
+        "avg_contribution_quality": 0.655,
+        "uptime_hours": 0.0,
+        "collaborations": 0
+      }
+    },
+    {
+      "agent_id": "model_trainer_01",
+      "agent_type": "model_trainer",
+      "status": "active",
+      "wallet_id": "WALLET_AF655B9FF97067A1",
+      "token_balance": 34825,
+      "reputation_score": 0.574,
+      "specializations": [
+        "Neural network training",
+        "Hyperparameter optimization",
+        "Transfer learning"
+      ],
+      "capabilities": {
+        "quantum_wallet": true,
+        "offline_operation": true,
+        "metaverse_integration": false,
+        "fl_participation": true,
+        "iso20022_compliance": false,
+        "cross_world_portability": false,
+        "staking_enabled": false,
+        "content_creation": false
+      },
+      "metrics": {
+        "rounds_participated": 8,
+        "tokens_earned": 286,
+        "avg_contribution_quality": 0.633,
+        "uptime_hours": 0.0,
+        "collaborations": 0
+      }
+    },
+    {
+      "agent_id": "model_trainer_02",
+      "agent_type": "model_trainer",
+      "status": "active",
+      "wallet_id": "WALLET_041CF1420B7DB0E9",
+      "token_balance": 53970,
+      "reputation_score": 0.788,
+      "specializations": [
+        "Neural network training",
+        "Hyperparameter optimization",
+        "Transfer learning"
+      ],
+      "capabilities": {
+        "quantum_wallet": true,
+        "offline_operation": true,
+        "metaverse_integration": false,
+        "fl_participation": true,
+        "iso20022_compliance": false,
+        "cross_world_portability": false,
+        "staking_enabled": false,
+        "content_creation": false
+      },
+      "metrics": {
+        "rounds_participated": 9,
+        "tokens_earned": 419,
+        "avg_contribution_quality": 0.596,
+        "uptime_hours": 0.0,
+        "collaborations": 0
+      }
+    },
+    {
+      "agent_id": "model_trainer_03",
+      "agent_type": "model_trainer",
+      "status": "active",
+      "wallet_id": "WALLET_08F7F1801933C5F2",
+      "token_balance": 48194,
+      "reputation_score": 0.767,
+      "specializations": [
+        "Neural network training",
+        "Hyperparameter optimization",
+        "Transfer learning"
+      ],
+      "capabilities": {
+        "quantum_wallet": true,
+        "offline_operation": true,
+        "metaverse_integration": false,
+        "fl_participation": true,
+        "iso20022_compliance": false,
+        "cross_world_portability": false,
+        "staking_enabled": false,
+        "content_creation": false
+      },
+      "metrics": {
+        "rounds_participated": 10,
+        "tokens_earned": 476,
+        "avg_contribution_quality": 0.63,
+        "uptime_hours": 0.0,
+        "collaborations": 0
+      }
+    },
+    {
+      "agent_id": "validator_00",
+      "agent_type": "validator",
+      "status": "active",
+      "wallet_id": "WALLET_1843746C4CED9B79",
+      "token_balance": 14019,
+      "reputation_score": 0.703,
+      "specializations": [
+        "Model validation",
+        "Quality assessment",
+        "Consensus mechanisms"
+      ],
+      "capabilities": {
+        "quantum_wallet": true,
+        "offline_operation": true,
+        "metaverse_integration": false,
+        "fl_participation": true,
+        "iso20022_compliance": true,
+        "cross_world_portability": false,
+        "staking_enabled": true,
+        "content_creation": false
+      },
+      "metrics": {
+        "rounds_participated": 7,
+        "tokens_earned": 341,
+        "avg_contribution_quality": 0.701,
+        "uptime_hours": 0.0,
+        "collaborations": 0
+      }
+    },
+    {
+      "agent_id": "validator_01",
+      "agent_type": "validator",
+      "status": "active",
+      "wallet_id": "WALLET_A67CA55E0887BD2F",
+      "token_balance": 38258,
+      "reputation_score": 0.634,
+      "specializations": [
+        "Model validation",
+        "Quality assessment",
+        "Consensus mechanisms"
+      ],
+      "capabilities": {
+        "quantum_wallet": true,
+        "offline_operation": true,
+        "metaverse_integration": false,
+        "fl_participation": true,
+        "iso20022_compliance": true,
+        "cross_world_portability": false,
+        "staking_enabled": true,
+        "content_creation": false
+      },
+      "metrics": {
+        "rounds_participated": 8,
+        "tokens_earned": 310,
+        "avg_contribution_quality": 0.619,
+        "uptime_hours": 0.0,
+        "collaborations": 0
+      }
+    },
+    {
+      "agent_id": "validator_02",
+      "agent_type": "validator",
+      "status": "active",
+      "wallet_id": "WALLET_65EA8E8481964E36",
+      "token_balance": 55710,
+      "reputation_score": 0.918,
+      "specializations": [
+        "Model validation",
+        "Quality assessment",
+        "Consensus mechanisms"
+      ],
+      "capabilities": {
+        "quantum_wallet": true,
+        "offline_operation": true,
+        "metaverse_integration": false,
+        "fl_participation": true,
+        "iso20022_compliance": true,
+        "cross_world_portability": false,
+        "staking_enabled": true,
+        "content_creation": false
+      },
+      "metrics": {
+        "rounds_participated": 7,
+        "tokens_earned": 358,
+        "avg_contribution_quality": 0.563,
+        "uptime_hours": 0.0,
+        "collaborations": 0
+      }
+    },
+    {
+      "agent_id": "validator_03",
+      "agent_type": "validator",
+      "status": "active",
+      "wallet_id": "WALLET_D010D1D67CC9C8EC",
+      "token_balance": 35933,
+      "reputation_score": 0.65,
+      "specializations": [
+        "Model validation",
+        "Quality assessment",
+        "Consensus mechanisms"
+      ],
+      "capabilities": {
+        "quantum_wallet": true,
+        "offline_operation": true,
+        "metaverse_integration": false,
+        "fl_participation": true,
+        "iso20022_compliance": true,
+        "cross_world_portability": false,
+        "staking_enabled": true,
+        "content_creation": false
+      },
+      "metrics": {
+        "rounds_participated": 11,
+        "tokens_earned": 371,
+        "avg_contribution_quality": 0.529,
+        "uptime_hours": 0.0,
+        "collaborations": 0
+      }
+    },
+    {
+      "agent_id": "governance_00",
+      "agent_type": "governance",
+      "status": "active",
+      "wallet_id": "WALLET_578645B7851BAAFB",
+      "token_balance": 50520,
+      "reputation_score": 0.71,
+      "specializations": [
+        "Protocol governance",
+        "Voting coordination",
+        "Community management"
+      ],
+      "capabilities": {
+        "quantum_wallet": true,
+        "offline_operation": true,
+        "metaverse_integration": false,
+        "fl_participation": true,
+        "iso20022_compliance": true,
+        "cross_world_portability": false,
+        "staking_enabled": true,
+        "content_creation": false
+      },
+      "metrics": {
+        "rounds_participated": 9,
+        "tokens_earned": 361,
+        "avg_contribution_quality": 0.573,
+        "uptime_hours": 0.0,
+        "collaborations": 0
+      }
+    },
+    {
+      "agent_id": "governance_01",
+      "agent_type": "governance",
+      "status": "active",
+      "wallet_id": "WALLET_BCFD5890F7676F8D",
+      "token_balance": 27263,
+      "reputation_score": 0.951,
+      "specializations": [
+        "Protocol governance",
+        "Voting coordination",
+        "Community management"
+      ],
+      "capabilities": {
+        "quantum_wallet": true,
+        "offline_operation": true,
+        "metaverse_integration": false,
+        "fl_participation": true,
+        "iso20022_compliance": true,
+        "cross_world_portability": false,
+        "staking_enabled": true,
+        "content_creation": false
+      },
+      "metrics": {
+        "rounds_participated": 7,
+        "tokens_earned": 468,
+        "avg_contribution_quality": 0.709,
+        "uptime_hours": 0.0,
+        "collaborations": 0
+      }
+    },
+    {
+      "agent_id": "governance_02",
+      "agent_type": "governance",
+      "status": "active",
+      "wallet_id": "WALLET_9FC1C82E2A9DA34B",
+      "token_balance": 54621,
+      "reputation_score": 0.911,
+      "specializations": [
+        "Protocol governance",
+        "Voting coordination",
+        "Community management"
+      ],
+      "capabilities": {
+        "quantum_wallet": true,
+        "offline_operation": true,
+        "metaverse_integration": false,
+        "fl_participation": true,
+        "iso20022_compliance": true,
+        "cross_world_portability": false,
+        "staking_enabled": true,
+        "content_creation": false
+      },
+      "metrics": {
+        "rounds_participated": 7,
+        "tokens_earned": 371,
+        "avg_contribution_quality": 0.589,
+        "uptime_hours": 0.0,
+        "collaborations": 0
+      }
+    },
+    {
+      "agent_id": "governance_03",
+      "agent_type": "governance",
+      "status": "active",
+      "wallet_id": "WALLET_2AC3D23948326090",
+      "token_balance": 54663,
+      "reputation_score": 0.875,
+      "specializations": [
+        "Protocol governance",
+        "Voting coordination",
+        "Community management"
+      ],
+      "capabilities": {
+        "quantum_wallet": true,
+        "offline_operation": true,
+        "metaverse_integration": false,
+        "fl_participation": true,
+        "iso20022_compliance": true,
+        "cross_world_portability": false,
+        "staking_enabled": true,
+        "content_creation": false
+      },
+      "metrics": {
+        "rounds_participated": 7,
+        "tokens_earned": 346,
+        "avg_contribution_quality": 0.571,
+        "uptime_hours": 0.0,
+        "collaborations": 0
+      }
+    },
+    {
+      "agent_id": "creator_00",
+      "agent_type": "creator",
+      "status": "active",
+      "wallet_id": "WALLET_A75DA9B05A28BA7D",
+      "token_balance": 25847,
+      "reputation_score": 0.582,
+      "specializations": [
+        "Content creation",
+        "Asset development",
+        "Virtual world design"
+      ],
+      "capabilities": {
+        "quantum_wallet": true,
+        "offline_operation": true,
+        "metaverse_integration": true,
+        "fl_participation": true,
+        "iso20022_compliance": false,
+        "cross_world_portability": true,
+        "staking_enabled": false,
+        "content_creation": true
+      },
+      "metrics": {
+        "rounds_participated": 10,
+        "tokens_earned": 1188,
+        "avg_contribution_quality": 0.609,
+        "uptime_hours": 0.0,
+        "collaborations": 2
+      }
+    },
+    {
+      "agent_id": "creator_01",
+      "agent_type": "creator",
+      "status": "active",
+      "wallet_id": "WALLET_3318B8AF59418A63",
+      "token_balance": 39634,
+      "reputation_score": 0.644,
+      "specializations": [
+        "Content creation",
+        "Asset development",
+        "Virtual world design"
+      ],
+      "capabilities": {
+        "quantum_wallet": true,
+        "offline_operation": true,
+        "metaverse_integration": true,
+        "fl_participation": true,
+        "iso20022_compliance": false,
+        "cross_world_portability": true,
+        "staking_enabled": false,
+        "content_creation": true
+      },
+      "metrics": {
+        "rounds_participated": 9,
+        "tokens_earned": 831,
+        "avg_contribution_quality": 0.579,
+        "uptime_hours": 0.0,
+        "collaborations": 1
+      }
+    },
+    {
+      "agent_id": "creator_02",
+      "agent_type": "creator",
+      "status": "active",
+      "wallet_id": "WALLET_8EA167EE5DF12B18",
+      "token_balance": 54658,
+      "reputation_score": 0.531,
+      "specializations": [
+        "Content creation",
+        "Asset development",
+        "Virtual world design"
+      ],
+      "capabilities": {
+        "quantum_wallet": true,
+        "offline_operation": true,
+        "metaverse_integration": true,
+        "fl_participation": true,
+        "iso20022_compliance": false,
+        "cross_world_portability": true,
+        "staking_enabled": false,
+        "content_creation": true
+      },
+      "metrics": {
+        "rounds_participated": 7,
+        "tokens_earned": 1005,
+        "avg_contribution_quality": 0.578,
+        "uptime_hours": 0.0,
+        "collaborations": 2
+      }
+    },
+    {
+      "agent_id": "creator_03",
+      "agent_type": "creator",
+      "status": "active",
+      "wallet_id": "WALLET_CE29CEADAFFBD18A",
+      "token_balance": 23498,
+      "reputation_score": 0.796,
+      "specializations": [
+        "Content creation",
+        "Asset development",
+        "Virtual world design"
+      ],
+      "capabilities": {
+        "quantum_wallet": true,
+        "offline_operation": true,
+        "metaverse_integration": true,
+        "fl_participation": true,
+        "iso20022_compliance": false,
+        "cross_world_portability": true,
+        "staking_enabled": false,
+        "content_creation": true
+      },
+      "metrics": {
+        "rounds_participated": 9,
+        "tokens_earned": 690,
+        "avg_contribution_quality": 0.689,
+        "uptime_hours": 0.0,
+        "collaborations": 0
+      }
+    },
+    {
+      "agent_id": "educator_00",
+      "agent_type": "educator",
+      "status": "active",
+      "wallet_id": "WALLET_F7944A2AACDCDEE4",
+      "token_balance": 44743,
+      "reputation_score": 0.626,
+      "specializations": [
+        "Knowledge sharing",
+        "Tutorial creation",
+        "Skill development"
+      ],
+      "capabilities": {
+        "quantum_wallet": true,
+        "offline_operation": true,
+        "metaverse_integration": true,
+        "fl_participation": true,
+        "iso20022_compliance": false,
+        "cross_world_portability": false,
+        "staking_enabled": false,
+        "content_creation": true
+      },
+      "metrics": {
+        "rounds_participated": 12,
+        "tokens_earned": 424,
+        "avg_contribution_quality": 0.573,
+        "uptime_hours": 0.0,
+        "collaborations": 1
+      }
+    },
+    {
+      "agent_id": "educator_01",
+      "agent_type": "educator",
+      "status": "active",
+      "wallet_id": "WALLET_E055B59636FD0C89",
+      "token_balance": 41035,
+      "reputation_score": 0.678,
+      "specializations": [
+        "Knowledge sharing",
+        "Tutorial creation",
+        "Skill development"
+      ],
+      "capabilities": {
+        "quantum_wallet": true,
+        "offline_operation": true,
+        "metaverse_integration": true,
+        "fl_participation": true,
+        "iso20022_compliance": false,
+        "cross_world_portability": false,
+        "staking_enabled": false,
+        "content_creation": true
+      },
+      "metrics": {
+        "rounds_participated": 9,
+        "tokens_earned": 432,
+        "avg_contribution_quality": 0.718,
+        "uptime_hours": 0.0,
+        "collaborations": 1
+      }
+    },
+    {
+      "agent_id": "educator_02",
+      "agent_type": "educator",
+      "status": "active",
+      "wallet_id": "WALLET_D9C8A17FC444CD6A",
+      "token_balance": 15827,
+      "reputation_score": 0.584,
+      "specializations": [
+        "Knowledge sharing",
+        "Tutorial creation",
+        "Skill development"
+      ],
+      "capabilities": {
+        "quantum_wallet": true,
+        "offline_operation": true,
+        "metaverse_integration": true,
+        "fl_participation": true,
+        "iso20022_compliance": false,
+        "cross_world_portability": false,
+        "staking_enabled": false,
+        "content_creation": true
+      },
+      "metrics": {
+        "rounds_participated": 11,
+        "tokens_earned": 382,
+        "avg_contribution_quality": 0.604,
+        "uptime_hours": 0.0,
+        "collaborations": 0
+      }
+    },
+    {
+      "agent_id": "educator_03",
+      "agent_type": "educator",
+      "status": "active",
+      "wallet_id": "WALLET_3659B05C9AEBF9A5",
+      "token_balance": 59932,
+      "reputation_score": 0.914,
+      "specializations": [
+        "Knowledge sharing",
+        "Tutorial creation",
+        "Skill development"
+      ],
+      "capabilities": {
+        "quantum_wallet": true,
+        "offline_operation": true,
+        "metaverse_integration": true,
+        "fl_participation": true,
+        "iso20022_compliance": false,
+        "cross_world_portability": false,
+        "staking_enabled": false,
+        "content_creation": true
+      },
+      "metrics": {
+        "rounds_participated": 9,
+        "tokens_earned": 451,
+        "avg_contribution_quality": 0.555,
+        "uptime_hours": 0.0,
+        "collaborations": 0
+      }
+    },
+    {
+      "agent_id": "social_00",
+      "agent_type": "social",
+      "status": "active",
+      "wallet_id": "WALLET_9CB5E0F310E5DDA2",
+      "token_balance": 44901,
+      "reputation_score": 0.569,
+      "specializations": [
+        "Community building",
+        "Reputation management",
+        "Collaboration facilitation"
+      ],
+      "capabilities": {
+        "quantum_wallet": true,
+        "offline_operation": true,
+        "metaverse_integration": true,
+        "fl_participation": true,
+        "iso20022_compliance": false,
+        "cross_world_portability": true,
+        "staking_enabled": false,
+        "content_creation": false
+      },
+      "metrics": {
+        "rounds_participated": 7,
+        "tokens_earned": 275,
+        "avg_contribution_quality": 0.698,
+        "uptime_hours": 0.0,
+        "collaborations": 0
+      }
+    },
+    {
+      "agent_id": "social_01",
+      "agent_type": "social",
+      "status": "active",
+      "wallet_id": "WALLET_4E1D90566349FB7D",
+      "token_balance": 10805,
+      "reputation_score": 0.664,
+      "specializations": [
+        "Community building",
+        "Reputation management",
+        "Collaboration facilitation"
+      ],
+      "capabilities": {
+        "quantum_wallet": true,
+        "offline_operation": true,
+        "metaverse_integration": true,
+        "fl_participation": true,
+        "iso20022_compliance": false,
+        "cross_world_portability": true,
+        "staking_enabled": false,
+        "content_creation": false
+      },
+      "metrics": {
+        "rounds_participated": 8,
+        "tokens_earned": 289,
+        "avg_contribution_quality": 0.552,
+        "uptime_hours": 0.0,
+        "collaborations": 0
+      }
+    },
+    {
+      "agent_id": "social_02",
+      "agent_type": "social",
+      "status": "active",
+      "wallet_id": "WALLET_F52AE5DE69152257",
+      "token_balance": 37364,
+      "reputation_score": 0.94,
+      "specializations": [
+        "Community building",
+        "Reputation management",
+        "Collaboration facilitation"
+      ],
+      "capabilities": {
+        "quantum_wallet": true,
+        "offline_operation": true,
+        "metaverse_integration": true,
+        "fl_participation": true,
+        "iso20022_compliance": false,
+        "cross_world_portability": true,
+        "staking_enabled": false,
+        "content_creation": false
+      },
+      "metrics": {
+        "rounds_participated": 7,
+        "tokens_earned": 484,
+        "avg_contribution_quality": 0.741,
+        "uptime_hours": 0.0,
+        "collaborations": 0
+      }
+    },
+    {
+      "agent_id": "social_03",
+      "agent_type": "social",
+      "status": "active",
+      "wallet_id": "WALLET_74F30A5E256C3F72",
+      "token_balance": 14748,
+      "reputation_score": 1.0,
+      "specializations": [
+        "Community building",
+        "Reputation management",
+        "Collaboration facilitation"
+      ],
+      "capabilities": {
+        "quantum_wallet": true,
+        "offline_operation": true,
+        "metaverse_integration": true,
+        "fl_participation": true,
+        "iso20022_compliance": false,
+        "cross_world_portability": true,
+        "staking_enabled": false,
+        "content_creation": false
+      },
+      "metrics": {
+        "rounds_participated": 8,
+        "tokens_earned": 531,
+        "avg_contribution_quality": 0.67,
+        "uptime_hours": 0.0,
+        "collaborations": 1
+      }
+    }
+  ]
+}

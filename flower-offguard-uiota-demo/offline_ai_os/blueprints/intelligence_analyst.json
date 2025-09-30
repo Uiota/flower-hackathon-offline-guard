@@ -1,0 +1,20 @@
+{
+  "name": "intelligence_analyst",
+  "agent_type": "IntelligenceAnalystAgent",
+  "description": "Analyzes threat intelligence",
+  "capabilities": [
+    "threat_intelligence",
+    "secure_communication"
+  ],
+  "config": {
+    "learning_rate": 0.001,
+    "model_update_interval_hours": 24,
+    "correlation_threshold": 0.75
+  },
+  "resource_requirements": {
+    "cpu_cores": 1.5,
+    "memory_mb": 2048,
+    "gpu_memory_mb": 2048,
+    "disk_mb": 10000
+  }
+}

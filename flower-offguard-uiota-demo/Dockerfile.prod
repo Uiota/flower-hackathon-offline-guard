@@ -1,0 +1,44 @@
+FROM python:3.11-slim
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    curl \
+    openssl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create non-root user
+RUN groupadd -r fl-system && useradd -r -g fl-system fl-system
+
+# Set working directory
+WORKDIR /opt/fl-system
+
+# Copy and install Python dependencies
+COPY requirements-full.txt .
+RUN pip install --no-cache-dir -r requirements-full.txt
+
+# Copy application code
+COPY . .
+RUN chown -R fl-system:fl-system /opt/fl-system
+
+# Create necessary directories
+RUN mkdir -p data logs models artifacts && \
+    chown -R fl-system:fl-system data logs models artifacts
+
+# Switch to non-root user
+USER fl-system
+
+# Set environment variables
+ENV OFFLINE_MODE=1
+ENV PRODUCTION_READY=true
+ENV PYTHONPATH=/opt/fl-system
+
+# Expose ports
+EXPOSE 8080 8081
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+    CMD curl -f http://localhost:8081/api/status || exit 1
+
+# Default command
+CMD ["python", "dashboard_with_agents.py"]

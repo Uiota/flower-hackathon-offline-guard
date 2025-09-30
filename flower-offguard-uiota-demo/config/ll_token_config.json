@@ -1,0 +1,51 @@
+{
+  "system": {
+    "name": "LL TOKEN OFFLINE",
+    "version": "1.0.0",
+    "quantum_safe": true,
+    "offline_mode_required": true
+  },
+  "tokenization": {
+    "base_reward_per_round": 100,
+    "quality_multiplier_max": 2.0,
+    "participation_bonus": 50,
+    "validator_reward": 25,
+    "min_quality_threshold": 0.1,
+    "initial_token_allocation": 1000000
+  },
+  "federated_learning": {
+    "default_rounds": 5,
+    "default_agents": 6,
+    "min_agents_per_round": 2,
+    "server_address": "localhost:8080",
+    "dataset": "mnist",
+    "strategy": "fedavg"
+  },
+  "security": {
+    "quantum_safe_encryption": true,
+    "key_size": 256,
+    "iteration_count": 600000,
+    "salt_size": 32,
+    "signature_algorithm": "Ed25519",
+    "hash_algorithm": "SHA256"
+  },
+  "agent_settings": {
+    "training_epochs": 3,
+    "evaluation_samples": 300,
+    "stagger_start_delay": 1.0,
+    "connection_timeout": 30
+  },
+  "paths": {
+    "base_path": "./ll_token_system",
+    "wallet_path": "wallet",
+    "ledger_path": "fl_token_ledger",
+    "artifacts_path": "artifacts",
+    "proofs_path": "proofs"
+  },
+  "monitoring": {
+    "update_interval": 3,
+    "metrics_retention_days": 30,
+    "log_level": "INFO",
+    "dashboard_enabled": false
+  }
+}

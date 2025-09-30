@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LL TOKEN OFFLINE.AI - Federated Learning Platform</title>
+    <link rel="stylesheet" href="css/offline-ai-theme.css">
+    <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+
+    <!-- Modern AI Meta -->
+    <meta name="description" content="Advanced federated learning platform with AI-powered tokenization, biometric security, and blockchain integration">
+    <meta name="keywords" content="federated learning, AI platform, machine learning, blockchain, biometric authentication">
+    <meta name="theme-color" content="#3b82f6">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="ai-nav">
+        <div class="ai-nav-content">
+            <div class="ai-logo">
+                <div class="ai-logo-icon">LL</div>
+                <div>
+                    <div class="ai-logo-text">LL TOKEN OFFLINE.AI</div>
+                    <div class="ai-logo-subtitle">Federated Learning • AI Platform • Quantum Safe</div>
+                </div>
+            </div>
+
+            <div class="ai-nav-tabs">
+                <button id="dashboardTab" class="ai-nav-tab active">Dashboard</button>
+                <button id="federatedTab" class="ai-nav-tab">Federated Learning</button>
+                <button id="biometricsTab" class="ai-nav-tab">Biometric Auth</button>
+                <button id="assetsTab" class="ai-nav-tab">Digital Assets</button>
+                <button id="xrpTab" class="ai-nav-tab">XRP Integration</button>
+                <button id="setupTab" class="ai-nav-tab">Account Setup</button>
+                <button id="bankingTab" class="ai-nav-tab">Banking Dashboard</button>
+                <button id="apiTab" class="ai-nav-tab">API & SDK</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="ai-main">
+        <div class="ai-container">
+
+            <!-- Dashboard Tab -->
+            <div id="dashboardContent" class="ai-tab-content active">
+                <div class="ai-section-header">
+                    <h1 class="ai-heading-1">AI Platform Dashboard</h1>
+                    <p class="ai-subtitle">
+                        Real-time monitoring of federated learning networks, AI model performance, and blockchain integrations.
+                    </p>
+                </div>
+
+                <!-- Key Metrics -->
+                <div class="ai-grid ai-grid-4 ai-mb-xl">
+                    <div class="ai-card ai-glow">
+                        <div class="ai-metric">
+                            <div class="ai-metric-value" id="activeNodes">247</div>
+                            <div class="ai-metric-label">Active ML Nodes</div>
+                            <div class="ai-metric-change positive">
+                                <span>↗</span>
+                                <span>+12% this week</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ai-card ai-glow">
+                        <div class="ai-metric">
+                            <div class="ai-metric-value" id="totalAssets">$2.4M</div>
+                            <div class="ai-metric-label">Assets Under Management</div>
+                            <div class="ai-metric-change positive">
+                                <span>↗</span>
+                                <span>+8.3% today</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ai-card ai-glow">
+                        <div class="ai-metric">
+                            <div class="ai-metric-value" id="trainingRounds">1,543</div>
+                            <div class="ai-metric-label">Training Rounds</div>
+                            <div class="ai-metric-change positive">
+                                <span>↗</span>
+                                <span>+45 today</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ai-card ai-glow">
+                        <div class="ai-metric">
+                            <div class="ai-metric-value" id="securityScore">99.8%</div>
+                            <div class="ai-metric-label">Security Score</div>
+                            <div class="ai-metric-change positive">
+                                <span>✓</span>
+                                <span>Excellent</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Overview -->
+                <div class="ai-grid ai-grid-2 ai-mb-xl">
+                    <div class="ai-card">
+                        <div class="ai-card-header">
+                            <h3 class="ai-card-title">System Status</h3>
+                            <p class="ai-card-subtitle">Real-time platform health monitoring</p>
+                        </div>
+                        <div class="ai-card-content">
+                            <div class="ai-flex ai-items-center ai-justify-between ai-mb-md">
+                                <span>Flower Labs Framework</span>
+                                <span class="ai-status ai-status-success">Operational</span>
+                            </div>
+                            <div class="ai-flex ai-items-center ai-justify-between ai-mb-md">
+                                <span>XRP Ledger Network</span>
+                                <span class="ai-status ai-status-success">Connected</span>
+                            </div>
+                            <div class="ai-flex ai-items-center ai-justify-between ai-mb-md">
+                                <span>Biometric Systems</span>
+                                <span class="ai-status ai-status-success">Active</span>
+                            </div>
+                            <div class="ai-flex ai-items-center ai-justify-between">
+                                <span>Quantum Security</span>
+                                <span class="ai-status ai-status-success">Enabled</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ai-card">
+                        <div class="ai-card-header">
+                            <h3 class="ai-card-title">Recent Activity</h3>
+                            <p class="ai-card-subtitle">Latest system events and transactions</p>
+                        </div>
+                        <div class="ai-card-content">
+                            <div id="recentActivity">
+                                <!-- Activity items populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Model Performance -->
+                <div class="ai-card ai-mb-xl">
+                    <div class="ai-card-header">
+                        <h3 class="ai-card-title">AI Model Performance</h3>
+                        <p class="ai-card-subtitle">Current federated learning model metrics</p>
+                    </div>
+                    <div class="ai-card-content">
+                        <div class="ai-grid ai-grid-3">
+                            <div>
+                                <h4 class="ai-heading-3 ai-mb-sm">Facial Recognition CNN</h4>
+                                <div class="ai-progress ai-mb-sm">
+                                    <div class="ai-progress-fill" style="width: 94.7%"></div>
+                                </div>
+                                <div class="ai-flex ai-justify-between ai-text-secondary">
+                                    <span>Accuracy: 94.7%</span>
+                                    <span>Round 47/100</span>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="ai-heading-3 ai-mb-sm">Fraud Detection Model</h4>
+                                <div class="ai-progress ai-mb-sm">
+                                    <div class="ai-progress-fill" style="width: 96.2%"></div>
+                                </div>
+                                <div class="ai-flex ai-justify-between ai-text-secondary">
+                                    <span>Accuracy: 96.2%</span>
+                                    <span>Round 78/150</span>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="ai-heading-3 ai-mb-sm">NLP Sentiment Analysis</h4>
+                                <div class="ai-progress ai-mb-sm">
+                                    <div class="ai-progress-fill" style="width: 91.8%"></div>
+                                </div>
+                                <div class="ai-flex ai-justify-between ai-text-secondary">
+                                    <span>Accuracy: 91.8%</span>
+                                    <span>Round 23/80</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Federated Learning Tab -->
+            <div id="federatedContent" class="ai-tab-content hidden">
+                <div class="ai-section-header">
+                    <h1 class="ai-heading-1">Federated Learning Network</h1>
+                    <p class="ai-subtitle">
+                        Manage and monitor distributed machine learning with advanced AI orchestration.
+                    </p>
+                </div>
+
+                <div class="ai-grid ai-grid-3 ai-mb-xl">
+                    <div class="ai-card">
+                        <div class="ai-card-header">
+                            <h3 class="ai-card-title">Training Configuration</h3>
+                        </div>
+                        <div class="ai-card-content">
+                            <div class="ai-form-group">
+                                <label class="ai-label">Model Architecture</label>
+                                <select class="ai-select" id="modelType">
+                                    <option>Facial Recognition CNN</option>
+                                    <option>Financial Fraud Detection</option>
+                                    <option>Natural Language Processing</option>
+                                    <option>Computer Vision Transformer</option>
+                                    <option>Reinforcement Learning Agent</option>
+                                </select>
+                            </div>
+                            <div class="ai-form-group">
+                                <label class="ai-label">Minimum Participants</label>
+                                <input type="number" class="ai-input" value="10" min="2">
+                            </div>
+                            <div class="ai-form-group">
+                                <label class="ai-label">Training Rounds</label>
+                                <input type="number" class="ai-input" value="100" min="1">
+                            </div>
+                            <button class="ai-btn ai-btn-primary">Start Training Session</button>
+                        </div>
+                    </div>
+
+                    <div class="ai-card">
+                        <div class="ai-card-header">
+                            <h3 class="ai-card-title">Active Sessions</h3>
+                        </div>
+                        <div class="ai-card-content">
+                            <div class="ai-mb-md">
+                                <div class="ai-flex ai-justify-between ai-mb-sm">
+                                    <span>Facial Recognition</span>
+                                    <span class="ai-text-mono">47/100</span>
+                                </div>
+                                <div class="ai-progress ai-mb-sm">
+                                    <div class="ai-progress-fill" style="width: 47%"></div>
+                                </div>
+                                <div class="ai-text-secondary" style="font-size: 12px;">23 participants • 2.3s avg response</div>
+                            </div>
+                            <div class="ai-mb-md">
+                                <div class="ai-flex ai-justify-between ai-mb-sm">
+                                    <span>Fraud Detection</span>
+                                    <span class="ai-text-mono">78/150</span>
+                                </div>
+                                <div class="ai-progress ai-mb-sm">
+                                    <div class="ai-progress-fill" style="width: 52%"></div>
+                                </div>
+                                <div class="ai-text-secondary" style="font-size: 12px;">31 participants • 1.8s avg response</div>
+                            </div>
+                            <div>
+                                <div class="ai-flex ai-justify-between ai-mb-sm">
+                                    <span>NLP Sentiment</span>
+                                    <span class="ai-text-mono">23/80</span>
+                                </div>
+                                <div class="ai-progress ai-mb-sm">
+                                    <div class="ai-progress-fill" style="width: 29%"></div>
+                                </div>
+                                <div class="ai-text-secondary" style="font-size: 12px;">18 participants • 3.1s avg response</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ai-card">
+                        <div class="ai-card-header">
+                            <h3 class="ai-card-title">Network Overview</h3>
+                        </div>
+                        <div class="ai-card-content">
+                            <div class="ai-metric ai-text-center ai-mb-md">
+                                <div class="ai-metric-value" style="font-size: 24px;">156</div>
+                                <div class="ai-metric-label">Connected Clients</div>
+                            </div>
+                            <div class="ai-metric ai-text-center ai-mb-md">
+                                <div class="ai-metric-value" style="font-size: 24px;">94.7%</div>
+                                <div class="ai-metric-label">Avg Model Accuracy</div>
+                            </div>
+                            <div class="ai-metric ai-text-center">
+                                <div class="ai-metric-value" style="font-size: 24px;">2.3s</div>
+                                <div class="ai-metric-label">Avg Response Time</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Client Management Table -->
+                <div class="ai-card">
+                    <div class="ai-card-header">
+                        <h3 class="ai-card-title">Participant Management</h3>
+                        <p class="ai-card-subtitle">Monitor and manage federated learning participants</p>
+                    </div>
+                    <div class="ai-card-content">
+                        <table class="ai-table">
+                            <thead>
+                                <tr>
+                                    <th>Client ID</th>
+                                    <th>Status</th>
+                                    <th>Model Version</th>
+                                    <th>Accuracy</th>
+                                    <th>Response Time</th>
+                                    <th>Token Rewards</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="clientTable">
+                                <tr>
+                                    <td><span class="ai-text-mono">client_001</span></td>
+                                    <td><span class="ai-status ai-status-success">Active</span></td>
+                                    <td>v2.1.0</td>
+                                    <td>96.2%</td>
+                                    <td>2.1s</td>
+                                    <td class="ai-text-mono">245.67 LLT</td>
+                                    <td>
+                                        <button class="ai-btn ai-btn-ghost" style="font-size: 12px; padding: 4px 8px;">Details</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><span class="ai-text-mono">client_002</span></td>
+                                    <td><span class="ai-status ai-status-warning">Syncing</span></td>
+                                    <td>v2.1.0</td>
+                                    <td>94.8%</td>
+                                    <td>2.5s</td>
+                                    <td class="ai-text-mono">198.34 LLT</td>
+                                    <td>
+                                        <button class="ai-btn ai-btn-ghost" style="font-size: 12px; padding: 4px 8px;">Details</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><span class="ai-text-mono">client_003</span></td>
+                                    <td><span class="ai-status ai-status-success">Training</span></td>
+                                    <td>v2.1.0</td>
+                                    <td>97.1%</td>
+                                    <td>1.9s</td>
+                                    <td class="ai-text-mono">289.45 LLT</td>
+                                    <td>
+                                        <button class="ai-btn ai-btn-ghost" style="font-size: 12px; padding: 4px 8px;">Details</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Biometric Authentication Tab -->
+            <div id="biometricsContent" class="ai-tab-content hidden">
+                <div class="ai-section-header">
+                    <h1 class="ai-heading-1">Biometric Authentication</h1>
+                    <p class="ai-subtitle">
+                        AI-powered facial recognition and biometric security for secure participant verification.
+                    </p>
+                </div>
+
+                <div class="ai-grid ai-grid-2 ai-mb-xl">
+                    <div class="ai-card">
+                        <div class="ai-card-header">
+                            <h3 class="ai-card-title">Live Authentication</h3>
+                        </div>
+                        <div class="ai-card-content ai-text-center">
+                            <div id="cameraContainer" style="width: 240px; height: 180px; border: 2px dashed var(--border-secondary); border-radius: var(--radius-lg); margin: 0 auto var(--space-lg); display: flex; align-items: center; justify-content: center; background: var(--bg-secondary); position: relative;">
+                                <div class="ai-text-secondary">Activating Camera...</div>
+                                <div style="position: absolute; top: 10px; right: 10px; width: 8px; height: 8px; background: var(--success); border-radius: 50%; animation: pulse 2s infinite;"></div>
+                            </div>
+                            <div id="biometricStatus" class="ai-status ai-status-info ai-mb-lg">Initializing Camera</div>
+                            <div style="display: flex; gap: 12px; justify-content: center;">
+                                <button id="authenticateBtn" class="ai-btn ai-btn-primary" onclick="window.OfflineAI?.performBiometricAuthentication()">Authenticate User</button>
+                                <button class="ai-btn ai-btn-secondary" onclick="window.OfflineAI?.debugFaceDetection()" style="font-size: 12px;">Debug Detection</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ai-card">
+                        <div class="ai-card-header">
+                            <h3 class="ai-card-title">Advanced Biometric Metrics</h3>
+                            <p class="ai-card-subtitle">AI-powered facial recognition analytics</p>
+                        </div>
+                        <div class="ai-card-content">
+                            <div class="ai-grid ai-grid-2 ai-gap-lg ai-mb-lg">
+                                <div class="ai-text-center">
+                                    <div id="recognitionAccuracy" class="ai-metric-value" style="font-size: 24px;">99.7%</div>
+                                    <div class="ai-metric-label">Recognition Accuracy</div>
+                                </div>
+                                <div class="ai-text-center">
+                                    <div id="livenessScore" class="ai-metric-value" style="font-size: 24px;">94.2%</div>
+                                    <div class="ai-metric-label">Liveness Detection</div>
+                                </div>
+                                <div class="ai-text-center">
+                                    <div id="responseTime" class="ai-metric-value" style="font-size: 24px;">0.8s</div>
+                                    <div class="ai-metric-label">Response Time</div>
+                                </div>
+                                <div class="ai-text-center">
+                                    <div id="enrolledUsers" class="ai-metric-value" style="font-size: 24px;">1,247</div>
+                                    <div class="ai-metric-label">Enrolled Users</div>
+                                </div>
+                            </div>
+
+                            <!-- Advanced Metrics -->
+                            <div style="border-top: 1px solid var(--border-primary); padding-top: 16px;">
+                                <h4 class="ai-heading-3 ai-mb-md">Real-Time Analysis</h4>
+                                <div class="ai-grid ai-grid-3 ai-gap-md">
+                                    <div class="ai-text-center">
+                                        <div id="facialLandmarks" class="ai-metric-value" style="font-size: 18px; color: var(--brand-primary);">68</div>
+                                        <div class="ai-metric-label" style="font-size: 11px;">Facial Landmarks</div>
+                                    </div>
+                                    <div class="ai-text-center">
+                                        <div id="expressionConfidence" class="ai-metric-value" style="font-size: 18px; color: var(--brand-primary);">87.3%</div>
+                                        <div class="ai-metric-label" style="font-size: 11px;">Expression Analysis</div>
+                                    </div>
+                                    <div class="ai-text-center">
+                                        <div id="antiSpoofing" class="ai-metric-value" style="font-size: 18px; color: var(--brand-primary);">99.1%</div>
+                                        <div class="ai-metric-label" style="font-size: 11px;">Anti-Spoofing</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Security Configuration -->
+                <div class="ai-card">
+                    <div class="ai-card-header">
+                        <h3 class="ai-card-title">Security Configuration</h3>
+                        <p class="ai-card-subtitle">Advanced biometric security and anti-spoofing settings</p>
+                    </div>
+                    <div class="ai-card-content">
+                        <div class="ai-grid ai-grid-3">
+                            <div>
+                                <div class="ai-form-group">
+                                    <label class="ai-label">Confidence Threshold</label>
+                                    <input type="range" class="ai-input" min="80" max="99" value="95" style="margin-bottom: 8px;">
+                                    <div class="ai-text-secondary" style="font-size: 12px;">Current: 95%</div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="ai-form-group">
+                                    <label class="ai-label">Liveness Detection</label>
+                                    <select class="ai-select">
+                                        <option>High Security (3D + Motion)</option>
+                                        <option>Standard (Motion Only)</option>
+                                        <option>Basic Detection</option>
+                                        <option>Disabled</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="ai-form-group">
+                                    <label class="ai-label">Anti-Spoofing</label>
+                                    <select class="ai-select">
+                                        <option>Advanced (Multi-Modal)</option>
+                                        <option>Standard (Deep Learning)</option>
+                                        <option>Basic (Pattern Detection)</option>
+                                        <option>Disabled</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ai-mt-xl ai-flex ai-gap-md">
+                            <button class="ai-btn ai-btn-primary">Update Configuration</button>
+                            <button class="ai-btn ai-btn-secondary">Run Security Test</button>
+                            <button class="ai-btn ai-btn-ghost">Export Logs</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Digital Assets Tab -->
+            <div id="assetsContent" class="ai-tab-content hidden">
+                <div class="ai-section-header">
+                    <h1 class="ai-heading-1">Digital Asset Management</h1>
+                    <p class="ai-subtitle">
+                        Quantum-safe tokenization and portfolio management for federated learning rewards.
+                    </p>
+                </div>
+
+                <div class="ai-grid ai-grid-2 ai-mb-xl">
+                    <div class="ai-card">
+                        <div class="ai-card-header">
+                            <h3 class="ai-card-title">Token Portfolio</h3>
+                        </div>
+                        <div class="ai-card-content">
+                            <div class="ai-mb-lg">
+                                <div class="ai-flex ai-justify-between ai-items-center ai-mb-sm">
+                                    <span>LLT-COMPUTE</span>
+                                    <span class="ai-text-mono">125,750.25</span>
+                                </div>
+                                <div class="ai-text-secondary ai-mb-md" style="font-size: 12px;">Federated Learning Compute Rewards</div>
+
+                                <div class="ai-flex ai-justify-between ai-items-center ai-mb-sm">
+                                    <span>LLT-DATA</span>
+                                    <span class="ai-text-mono">89,432.18</span>
+                                </div>
+                                <div class="ai-text-secondary ai-mb-md" style="font-size: 12px;">Data Quality Validation Tokens</div>
+
+                                <div class="ai-flex ai-justify-between ai-items-center ai-mb-sm">
+                                    <span>LLT-SECURITY</span>
+                                    <span class="ai-text-mono">45,876.32</span>
+                                </div>
+                                <div class="ai-text-secondary ai-mb-lg" style="font-size: 12px;">Biometric Security Tokens</div>
+                            </div>
+
+                            <div class="ai-flex ai-gap-md">
+                                <button class="ai-btn ai-btn-primary">Transfer Tokens</button>
+                                <button class="ai-btn ai-btn-secondary">View Details</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ai-card">
+                        <div class="ai-card-header">
+                            <h3 class="ai-card-title">Recent Transactions</h3>
+                        </div>
+                        <div class="ai-card-content">
+                            <div id="transactionHistory">
+                                <div class="ai-flex ai-justify-between ai-items-center ai-mb-md">
+                                    <div>
+                                        <div class="ai-text-primary">FL Training Reward</div>
+                                        <div class="ai-text-secondary" style="font-size: 12px;">2 minutes ago</div>
+                                    </div>
+                                    <div class="ai-text-right">
+                                        <div class="ai-text-primary">+245.67 LLT-COMPUTE</div>
+                                        <div class="ai-text-secondary" style="font-size: 12px;">Round #47 completion</div>
+                                    </div>
+                                </div>
+
+                                <div class="ai-flex ai-justify-between ai-items-center ai-mb-md">
+                                    <div>
+                                        <div class="ai-text-primary">Biometric Auth Bonus</div>
+                                        <div class="ai-text-secondary" style="font-size: 12px;">15 minutes ago</div>
+                                    </div>
+                                    <div class="ai-text-right">
+                                        <div class="ai-text-primary">+89.23 LLT-SECURITY</div>
+                                        <div class="ai-text-secondary" style="font-size: 12px;">Authentication service</div>
+                                    </div>
+                                </div>
+
+                                <div class="ai-flex ai-justify-between ai-items-center">
+                                    <div>
+                                        <div class="ai-text-primary">Data Validation</div>
+                                        <div class="ai-text-secondary" style="font-size: 12px;">1 hour ago</div>
+                                    </div>
+                                    <div class="ai-text-right">
+                                        <div class="ai-text-primary">+156.45 LLT-DATA</div>
+                                        <div class="ai-text-secondary" style="font-size: 12px;">Quality assurance</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Security Features -->
+                <div class="ai-card">
+                    <div class="ai-card-header">
+                        <h3 class="ai-card-title">Security & Compliance</h3>
+                        <p class="ai-card-subtitle">Advanced tokenization security and regulatory compliance</p>
+                    </div>
+                    <div class="ai-card-content">
+                        <div class="ai-grid ai-grid-3">
+                            <div class="ai-text-center">
+                                <div class="ai-status ai-status-success ai-mb-md">Quantum Security</div>
+                                <p class="ai-text-secondary" style="font-size: 13px;">Post-quantum cryptography with Ed25519 signatures and AES-256-GCM encryption</p>
+                            </div>
+                            <div class="ai-text-center">
+                                <div class="ai-status ai-status-success ai-mb-md">ISO 20022 Compliant</div>
+                                <p class="ai-text-secondary" style="font-size: 13px;">Full compliance with international financial messaging standards</p>
+                            </div>
+                            <div class="ai-text-center">
+                                <div class="ai-status ai-status-info ai-mb-md">Multi-Signature</div>
+                                <p class="ai-text-secondary" style="font-size: 13px;">Enterprise-grade multi-signature wallets with customizable workflows</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- XRP Integration Tab -->
+            <div id="xrpContent" class="ai-tab-content hidden">
+                <!-- Robinhood-Style Header -->
+                <div style="text-align: center; margin-bottom: 48px;">
+                    <h1 style="font-size: 28px; font-weight: 600; margin-bottom: 8px; color: var(--text-primary);">XRP</h1>
+                    <div style="font-size: 48px; font-weight: 700; margin-bottom: 4px; color: var(--text-primary);">$0.52</div>
+                    <div style="font-size: 16px; color: var(--success); display: flex; align-items: center; justify-content: center; gap: 4px;">
+                        <span>↗</span>
+                        <span>+$0.03 (6.12%) Today</span>
+                    </div>
+                </div>
+
+                <!-- Balance Card - Robinhood Style -->
+                <div class="ai-card" style="margin-bottom: 24px; text-align: center; padding: 32px;">
+                    <div style="font-size: 16px; color: var(--text-secondary); margin-bottom: 8px;">Your XRP Balance</div>
+                    <div style="font-size: 36px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">125,000 XRP</div>
+                    <div style="font-size: 18px; color: var(--text-secondary);">≈ $65,000.00</div>
+                </div>
+
+                <!-- Simple Action Buttons -->
+                <div style="display: flex; gap: 16px; margin-bottom: 32px;">
+                    <button id="buyXRPBtn" class="ai-btn ai-btn-primary" style="flex: 1; padding: 16px; font-size: 16px; font-weight: 600;">
+                        Buy XRP
+                    </button>
+                    <button id="sendXRPBtn" class="ai-btn ai-btn-secondary" style="flex: 1; padding: 16px; font-size: 16px; font-weight: 600;">
+                        Send XRP
+                    </button>
+                </div>
+
+                <!-- Simple Stats Grid -->
+                <div class="ai-grid ai-grid-2 ai-mb-xl" style="gap: 16px;">
+                    <div class="ai-card" style="padding: 20px; text-align: center;">
+                        <div style="font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Avg Settlement</div>
+                        <div style="font-size: 24px; font-weight: 600; color: var(--text-primary);">3.2s</div>
+                    </div>
+                    <div class="ai-card" style="padding: 20px; text-align: center;">
+                        <div style="font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Network Fee</div>
+                        <div style="font-size: 24px; font-weight: 600; color: var(--text-primary);">$0.0002</div>
+                    </div>
+                </div>
+
+                <!-- Recent Transactions - Simplified -->
+                <div class="ai-card">
+                    <div style="padding: 24px 24px 16px 24px; border-bottom: 1px solid var(--border-primary);">
+                        <h3 style="font-size: 18px; font-weight: 600; color: var(--text-primary);">Recent Activity</h3>
+                    </div>
+                    <div style="padding: 0;">
+                        <!-- Transaction Item -->
+                        <div style="padding: 20px 24px; border-bottom: 1px solid var(--border-primary); display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; align-items: center; gap: 16px;">
+                                <div style="width: 40px; height: 40px; background: rgba(16, 185, 129, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                    <span style="color: var(--success); font-size: 18px;">↓</span>
+                                </div>
+                                <div>
+                                    <div style="font-size: 16px; font-weight: 500; color: var(--text-primary); margin-bottom: 2px;">Received XRP</div>
+                                    <div style="font-size: 14px; color: var(--text-secondary);">2 minutes ago</div>
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 16px; font-weight: 600; color: var(--success);">+12,500 XRP</div>
+                                <div style="font-size: 14px; color: var(--text-secondary);">+$6,500.00</div>
+                            </div>
+                        </div>
+
+                        <!-- Transaction Item -->
+                        <div style="padding: 20px 24px; border-bottom: 1px solid var(--border-primary); display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; align-items: center; gap: 16px;">
+                                <div style="width: 40px; height: 40px; background: rgba(239, 68, 68, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                    <span style="color: var(--error); font-size: 18px;">↑</span>
+                                </div>
+                                <div>
+                                    <div style="font-size: 16px; font-weight: 500; color: var(--text-primary); margin-bottom: 2px;">Sent XRP</div>
+                                    <div style="font-size: 14px; color: var(--text-secondary);">1 hour ago</div>
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 16px; font-weight: 600; color: var(--text-primary);">-5,000 XRP</div>
+                                <div style="font-size: 14px; color: var(--text-secondary);">-$2,600.00</div>
+                            </div>
+                        </div>
+
+                        <!-- Transaction Item -->
+                        <div style="padding: 20px 24px; display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; align-items: center; gap: 16px;">
+                                <div style="width: 40px; height: 40px; background: rgba(59, 130, 246, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                    <span style="color: var(--info); font-size: 18px;">🔒</span>
+                                </div>
+                                <div>
+                                    <div style="font-size: 16px; font-weight: 500; color: var(--text-primary); margin-bottom: 2px;">Escrow Released</div>
+                                    <div style="font-size: 14px; color: var(--text-secondary);">3 hours ago</div>
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 16px; font-weight: 600; color: var(--success);">+8,750 XRP</div>
+                                <div style="font-size: 14px; color: var(--text-secondary);">+$4,550.00</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hidden Send Form Modal -->
+                <div id="sendXRPModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 1000; padding: 20px;">
+                    <div style="max-width: 400px; margin: 80px auto; background: var(--bg-tertiary); border-radius: 16px; padding: 32px; border: 1px solid var(--border-primary);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+                            <h3 style="font-size: 20px; font-weight: 600; color: var(--text-primary);">Send XRP</h3>
+                            <button id="closeSendModal" style="background: none; border: none; color: var(--text-secondary); font-size: 24px; cursor: pointer;">×</button>
+                        </div>
+
+                        <div style="margin-bottom: 24px;">
+                            <label style="display: block; font-size: 14px; font-weight: 500; color: var(--text-primary); margin-bottom: 8px;">To Address</label>
+                            <input id="sendToAddress" type="text" placeholder="Enter XRP address" style="width: 100%; padding: 16px; background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 8px; color: var(--text-primary); font-size: 16px;">
+                        </div>
+
+                        <div style="margin-bottom: 32px;">
+                            <label style="display: block; font-size: 14px; font-weight: 500; color: var(--text-primary); margin-bottom: 8px;">Amount</label>
+                            <input id="sendAmount" type="number" placeholder="0" style="width: 100%; padding: 16px; background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 8px; color: var(--text-primary); font-size: 20px; font-weight: 600;">
+                            <div style="font-size: 14px; color: var(--text-secondary); margin-top: 8px;">Available: 125,000 XRP</div>
+                        </div>
+
+                        <button id="confirmSendXRP" class="ai-btn ai-btn-primary" style="width: 100%; padding: 16px; font-size: 16px; font-weight: 600;">
+                            Send XRP
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Hidden Buy Form Modal -->
+                <div id="buyXRPModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 1000; padding: 20px;">
+                    <div style="max-width: 400px; margin: 80px auto; background: var(--bg-tertiary); border-radius: 16px; padding: 32px; border: 1px solid var(--border-primary);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+                            <h3 style="font-size: 20px; font-weight: 600; color: var(--text-primary);">Buy XRP</h3>
+                            <button id="closeBuyModal" style="background: none; border: none; color: var(--text-secondary); font-size: 24px; cursor: pointer;">×</button>
+                        </div>
+
+                        <div style="text-align: center; margin-bottom: 32px; padding: 24px; background: var(--bg-secondary); border-radius: 12px;">
+                            <div style="font-size: 14px; color: var(--text-secondary); margin-bottom: 8px;">Current Price</div>
+                            <div style="font-size: 28px; font-weight: 700; color: var(--text-primary);">$0.52</div>
+                            <div style="font-size: 14px; color: var(--success);">+6.12% today</div>
+                        </div>
+
+                        <div style="margin-bottom: 24px;">
+                            <label style="display: block; font-size: 14px; font-weight: 500; color: var(--text-primary); margin-bottom: 8px;">Amount to Buy</label>
+                            <input id="buyAmount" type="number" placeholder="0" style="width: 100%; padding: 16px; background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 8px; color: var(--text-primary); font-size: 20px; font-weight: 600;">
+                            <div id="buyUSDValue" style="font-size: 14px; color: var(--text-secondary); margin-top: 8px;">≈ $0.00</div>
+                        </div>
+
+                        <button id="confirmBuyXRP" class="ai-btn ai-btn-primary" style="width: 100%; padding: 16px; font-size: 16px; font-weight: 600;">
+                            Buy XRP
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Account Setup Tab -->
+            <div id="setupContent" class="ai-tab-content hidden">
+                <div class="ai-section-header">
+                    <h1 class="ai-heading-1">Account Setup & Onboarding</h1>
+                    <p class="ai-subtitle">
+                        Complete your account setup with biometric enrollment, KYC verification, and security configuration.
+                    </p>
+                </div>
+
+                <!-- Progress Indicator -->
+                <div class="ai-card ai-mb-xl">
+                    <div class="ai-card-content">
+                        <div class="ai-flex ai-justify-between ai-items-center ai-mb-lg">
+                            <div class="ai-text-center" style="flex: 1;">
+                                <div class="ai-status ai-status-success ai-mb-sm">✓</div>
+                                <div class="ai-text-secondary" style="font-size: 14px;">Personal Info</div>
+                            </div>
+                            <div style="height: 1px; background: var(--border-primary); flex: 1; margin: 0 16px;"></div>
+                            <div class="ai-text-center" style="flex: 1;">
+                                <div class="ai-status ai-status-success ai-mb-sm">✓</div>
+                                <div class="ai-text-secondary" style="font-size: 14px;">Biometric Setup</div>
+                            </div>
+                            <div style="height: 1px; background: var(--border-primary); flex: 1; margin: 0 16px;"></div>
+                            <div class="ai-text-center" style="flex: 1;">
+                                <div class="ai-status ai-status-info ai-mb-sm">3</div>
+                                <div class="ai-text-secondary" style="font-size: 14px;">Bank Connection</div>
+                            </div>
+                            <div style="height: 1px; background: var(--border-primary); flex: 1; margin: 0 16px;"></div>
+                            <div class="ai-text-center" style="flex: 1;">
+                                <div class="ai-status ai-status-warning ai-mb-sm">4</div>
+                                <div class="ai-text-secondary" style="font-size: 14px;">KYC Verification</div>
+                            </div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div class="ai-text-primary ai-mb-sm" style="font-size: 18px; font-weight: 600;">Step 3: Connect Your Bank</div>
+                            <div class="ai-text-secondary">Link your bank account for seamless XRP transactions and fiat conversion</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ai-grid ai-grid-2 ai-mb-xl">
+                    <!-- Bank Connection -->
+                    <div class="ai-card">
+                        <div class="ai-card-header">
+                            <h3 class="ai-card-title">Bank Account Connection</h3>
+                            <p class="ai-card-subtitle">Securely link your bank account</p>
+                        </div>
+                        <div class="ai-card-content">
+                            <div class="ai-form-group">
+                                <label class="ai-label">Bank Institution</label>
+                                <select class="ai-select">
+                                    <option>Select your bank...</option>
+                                    <option>Chase Bank</option>
+                                    <option>Bank of America</option>
+                                    <option>Wells Fargo</option>
+                                    <option>Citibank</option>
+                                    <option>US Bank</option>
+                                    <option>PNC Bank</option>
+                                    <option>Capital One</option>
+                                    <option>Other</option>
+                                </select>
+                            </div>
+                            <div class="ai-form-group">
+                                <label class="ai-label">Account Type</label>
+                                <select class="ai-select">
+                                    <option>Checking Account</option>
+                                    <option>Savings Account</option>
+                                    <option>Business Checking</option>
+                                </select>
+                            </div>
+                            <div class="ai-form-group">
+                                <label class="ai-label">Routing Number</label>
+                                <input type="text" class="ai-input" placeholder="9-digit routing number" maxlength="9">
+                            </div>
+                            <div class="ai-form-group">
+                                <label class="ai-label">Account Number</label>
+                                <input type="text" class="ai-input" placeholder="Account number" maxlength="17">
+                            </div>
+                            <div class="ai-form-group">
+                                <label class="ai-label">Account Holder Name</label>
+                                <input type="text" class="ai-input" placeholder="Name on account">
+                            </div>
+                            <button class="ai-btn ai-btn-primary" style="width: 100%;">Connect Bank Account</button>
+                            <div class="ai-text-secondary ai-mt-sm" style="font-size: 12px; text-align: center;">
+                                🔒 Bank details are encrypted with AES-256 and stored securely
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Security Preferences -->
+                    <div class="ai-card">
+                        <div class="ai-card-header">
+                            <h3 class="ai-card-title">Security Preferences</h3>
+                            <p class="ai-card-subtitle">Configure your security settings</p>
+                        </div>
+                        <div class="ai-card-content">
+                            <div class="ai-form-group">
+                                <label class="ai-label">Two-Factor Authentication</label>
+                                <select class="ai-select">
+                                    <option>Biometric + SMS</option>
+                                    <option>Biometric Only</option>
+                                    <option>SMS Only</option>
+                                    <option>Authenticator App</option>
+                                </select>
+                            </div>
+                            <div class="ai-form-group">
+                                <label class="ai-label">Transaction Limits</label>
+                                <div class="ai-grid ai-grid-2 ai-gap-md">
+                                    <div>
+                                        <label class="ai-label" style="font-size: 12px;">Daily Limit</label>
+                                        <input type="number" class="ai-input" value="10000" placeholder="USD">
+                                    </div>
+                                    <div>
+                                        <label class="ai-label" style="font-size: 12px;">Per Transaction</label>
+                                        <input type="number" class="ai-input" value="5000" placeholder="USD">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ai-form-group">
+                                <label class="ai-label">Notification Preferences</label>
+                                <div style="display: flex; flex-direction: column; gap: 8px;">
+                                    <label style="display: flex; align-items: center; gap: 8px;">
+                                        <input type="checkbox" checked> Email notifications
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 8px;">
+                                        <input type="checkbox" checked> SMS alerts
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 8px;">
+                                        <input type="checkbox" checked> Push notifications
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 8px;">
+                                        <input type="checkbox"> Transaction confirmations
+                                    </label>
+                                </div>
+                            </div>
+                            <button class="ai-btn ai-btn-secondary" style="width: 100%;">Save Security Settings</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KYC Section -->
+                <div class="ai-card ai-mb-xl">
+                    <div class="ai-card-header">
+                        <h3 class="ai-card-title">KYC Verification</h3>
+                        <p class="ai-card-subtitle">Complete identity verification for full platform access</p>
+                    </div>
+                    <div class="ai-card-content">
+                        <div class="ai-grid ai-grid-3">
+                            <div class="ai-text-center">
+                                <div style="width: 80px; height: 80px; background: var(--bg-secondary); border: 2px dashed var(--border-secondary); border-radius: var(--radius-lg); margin: 0 auto var(--space-md); display: flex; align-items: center; justify-content: center;">
+                                    📄
+                                </div>
+                                <h4 class="ai-heading-3 ai-mb-sm">Government ID</h4>
+                                <p class="ai-text-secondary ai-mb-md" style="font-size: 13px;">Upload driver's license or passport</p>
+                                <button class="ai-btn ai-btn-outline" style="font-size: 14px;">Upload ID</button>
+                            </div>
+                            <div class="ai-text-center">
+                                <div style="width: 80px; height: 80px; background: var(--bg-secondary); border: 2px dashed var(--border-secondary); border-radius: var(--radius-lg); margin: 0 auto var(--space-md); display: flex; align-items: center; justify-content: center;">
+                                    🏠
+                                </div>
+                                <h4 class="ai-heading-3 ai-mb-sm">Proof of Address</h4>
+                                <p class="ai-text-secondary ai-mb-md" style="font-size: 13px;">Utility bill or bank statement</p>
+                                <button class="ai-btn ai-btn-outline" style="font-size: 14px;">Upload Document</button>
+                            </div>
+                            <div class="ai-text-center">
+                                <div style="width: 80px; height: 80px; background: var(--bg-secondary); border: 2px dashed var(--border-secondary); border-radius: var(--radius-lg); margin: 0 auto var(--space-md); display: flex; align-items: center; justify-content: center;">
+                                    👤
+                                </div>
+                                <h4 class="ai-heading-3 ai-mb-sm">Identity Selfie</h4>
+                                <p class="ai-text-secondary ai-mb-md" style="font-size: 13px;">Biometric facial verification</p>
+                                <button class="ai-btn ai-btn-outline" style="font-size: 14px;">Take Selfie</button>
+                            </div>
+                        </div>
+                        <div class="ai-mt-xl ai-text-center">
+                            <button class="ai-btn ai-btn-primary ai-btn-lg">Complete KYC Verification</button>
+                            <div class="ai-text-secondary ai-mt-md" style="font-size: 13px;">
+                                Verification typically completes within 2-5 business days
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Account Summary -->
+                <div class="ai-card">
+                    <div class="ai-card-header">
+                        <h3 class="ai-card-title">Account Setup Summary</h3>
+                        <p class="ai-card-subtitle">Review your account configuration</p>
+                    </div>
+                    <div class="ai-card-content">
+                        <div class="ai-grid ai-grid-2">
+                            <div>
+                                <div class="ai-flex ai-justify-between ai-items-center ai-mb-md">
+                                    <span>Personal Information</span>
+                                    <span class="ai-status ai-status-success">Complete</span>
+                                </div>
+                                <div class="ai-flex ai-justify-between ai-items-center ai-mb-md">
+                                    <span>Biometric Enrollment</span>
+                                    <span class="ai-status ai-status-success">Active</span>
+                                </div>
+                                <div class="ai-flex ai-justify-between ai-items-center ai-mb-md">
+                                    <span>Two-Factor Authentication</span>
+                                    <span class="ai-status ai-status-info">Configured</span>
+                                </div>
+                                <div class="ai-flex ai-justify-between ai-items-center">
+                                    <span>Security Level</span>
+                                    <span class="ai-status ai-status-success">High</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="ai-flex ai-justify-between ai-items-center ai-mb-md">
+                                    <span>Bank Account</span>
+                                    <span class="ai-status ai-status-warning">Pending</span>
+                                </div>
+                                <div class="ai-flex ai-justify-between ai-items-center ai-mb-md">
+                                    <span>KYC Verification</span>
+                                    <span class="ai-status ai-status-warning">In Progress</span>
+                                </div>
+                                <div class="ai-flex ai-justify-between ai-items-center ai-mb-md">
+                                    <span>Platform Access</span>
+                                    <span class="ai-status ai-status-info">Limited</span>
+                                </div>
+                                <div class="ai-flex ai-justify-between ai-items-center">
+                                    <span>Account Status</span>
+                                    <span class="ai-status ai-status-info">Active</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Banking Dashboard Tab -->
+            <div id="bankingContent" class="ai-tab-content hidden">
+                <div class="ai-section-header">
+                    <h1 class="ai-heading-1">Banking Dashboard</h1>
+                    <p class="ai-subtitle">
+                        Comprehensive financial management with real-time balances, transactions, and XRP integration.
+                    </p>
+                </div>
+
+                <!-- Account Overview Cards -->
+                <div class="ai-grid ai-grid-3 ai-mb-xl">
+                    <div class="ai-card ai-glow">
+                        <div class="ai-card-content ai-text-center">
+                            <div class="ai-text-secondary ai-mb-sm" style="font-size: 14px;">Total Balance</div>
+                            <div class="ai-metric-value" style="font-size: 32px;">$127,845.67</div>
+                            <div class="ai-metric-change positive ai-mt-sm">
+                                <span>↗</span>
+                                <span>+$2,156.23 this month</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ai-card ai-glow">
+                        <div class="ai-card-content ai-text-center">
+                            <div class="ai-text-secondary ai-mb-sm" style="font-size: 14px;">XRP Holdings</div>
+                            <div class="ai-metric-value" style="font-size: 32px;">125,000 XRP</div>
+                            <div class="ai-metric-change positive ai-mt-sm">
+                                <span>↗</span>
+                                <span>≈ $65,000.00</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ai-card ai-glow">
+                        <div class="ai-card-content ai-text-center">
+                            <div class="ai-text-secondary ai-mb-sm" style="font-size: 14px;">Monthly Income</div>
+                            <div class="ai-metric-value" style="font-size: 32px;">$8,423.50</div>
+                            <div class="ai-metric-change positive ai-mt-sm">
+                                <span>↗</span>
+                                <span>+12.3% vs last month</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="ai-card ai-mb-xl">
+                    <div class="ai-card-header">
+                        <h3 class="ai-card-title">Quick Actions</h3>
+                    </div>
+                    <div class="ai-card-content">
+                        <div class="ai-grid ai-grid-4 ai-gap-lg">
+                            <button class="ai-btn ai-btn-outline" style="padding: 20px; height: auto; flex-direction: column; gap: 8px;">
+                                <div style="font-size: 24px;">💸</div>
+                                <div>Send Money</div>
+                            </button>
+                            <button class="ai-btn ai-btn-outline" style="padding: 20px; height: auto; flex-direction: column; gap: 8px;">
+                                <div style="font-size: 24px;">💰</div>
+                                <div>Receive Payment</div>
+                            </button>
+                            <button class="ai-btn ai-btn-outline" style="padding: 20px; height: auto; flex-direction: column; gap: 8px;">
+                                <div style="font-size: 24px;">🔄</div>
+                                <div>Convert XRP</div>
+                            </button>
+                            <button class="ai-btn ai-btn-outline" style="padding: 20px; height: auto; flex-direction: column; gap: 8px;">
+                                <div style="font-size: 24px;">📊</div>
+                                <div>View Reports</div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ai-grid ai-grid-2 ai-mb-xl">
+                    <!-- Connected Accounts -->
+                    <div class="ai-card">
+                        <div class="ai-card-header">
+                            <h3 class="ai-card-title">Connected Accounts</h3>
+                            <p class="ai-card-subtitle">Linked bank accounts and digital wallets</p>
+                        </div>
+                        <div class="ai-card-content">
+                            <div class="ai-mb-lg">
+                                <div class="ai-flex ai-justify-between ai-items-center ai-mb-md">
+                                    <div class="ai-flex ai-items-center ai-gap-md">
+                                        <div style="width: 40px; height: 40px; background: #005A9C; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 14px;">
+                                            CHASE
+                                        </div>
+                                        <div>
+                                            <div class="ai-text-primary">Chase Checking</div>
+                                            <div class="ai-text-secondary" style="font-size: 12px;">****1234</div>
+                                        </div>
+                                    </div>
+                                    <div class="ai-text-right">
+                                        <div class="ai-text-primary">$52,345.67</div>
+                                        <div class="ai-status ai-status-success" style="font-size: 10px;">Connected</div>
+                                    </div>
+                                </div>
+
+                                <div class="ai-flex ai-justify-between ai-items-center ai-mb-md">
+                                    <div class="ai-flex ai-items-center ai-gap-md">
+                                        <div style="width: 40px; height: 40px; background: #E31837; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 14px;">
+                                            BOA
+                                        </div>
+                                        <div>
+                                            <div class="ai-text-primary">BofA Savings</div>
+                                            <div class="ai-text-secondary" style="font-size: 12px;">****5678</div>
+                                        </div>
+                                    </div>
+                                    <div class="ai-text-right">
+                                        <div class="ai-text-primary">$10,500.00</div>
+                                        <div class="ai-status ai-status-success" style="font-size: 10px;">Connected</div>
+                                    </div>
+                                </div>
+
+                                <div class="ai-flex ai-justify-between ai-items-center">
+                                    <div class="ai-flex ai-items-center ai-gap-md">
+                                        <div style="width: 40px; height: 40px; background: var(--brand-primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 12px;">
+                                            XRP
+                                        </div>
+                                        <div>
+                                            <div class="ai-text-primary">XRP Wallet</div>
+                                            <div class="ai-text-secondary" style="font-size: 12px;">r9cZ...x3mN</div>
+                                        </div>
+                                    </div>
+                                    <div class="ai-text-right">
+                                        <div class="ai-text-primary">125,000 XRP</div>
+                                        <div class="ai-status ai-status-success" style="font-size: 10px;">Active</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button class="ai-btn ai-btn-ghost" style="width: 100%;">+ Connect New Account</button>
+                        </div>
+                    </div>
+
+                    <!-- Recent Transactions -->
+                    <div class="ai-card">
+                        <div class="ai-card-header">
+                            <h3 class="ai-card-title">Recent Transactions</h3>
+                            <p class="ai-card-subtitle">Latest account activity across all connections</p>
+                        </div>
+                        <div class="ai-card-content">
+                            <div id="bankingTransactions">
+                                <div class="ai-flex ai-justify-between ai-items-center ai-mb-md">
+                                    <div class="ai-flex ai-items-center ai-gap-md">
+                                        <div style="width: 32px; height: 32px; background: rgba(16, 185, 129, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                            <span style="color: var(--success); font-size: 14px;">↓</span>
+                                        </div>
+                                        <div>
+                                            <div class="ai-text-primary" style="font-size: 14px;">FL Training Reward</div>
+                                            <div class="ai-text-secondary" style="font-size: 12px;">2 minutes ago</div>
+                                        </div>
+                                    </div>
+                                    <div class="ai-text-right">
+                                        <div class="ai-text-primary" style="font-size: 14px;">+$245.67</div>
+                                        <div class="ai-text-secondary" style="font-size: 11px;">LLT → USD</div>
+                                    </div>
+                                </div>
+
+                                <div class="ai-flex ai-justify-between ai-items-center ai-mb-md">
+                                    <div class="ai-flex ai-items-center ai-gap-md">
+                                        <div style="width: 32px; height: 32px; background: rgba(239, 68, 68, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                            <span style="color: var(--error); font-size: 14px;">↑</span>
+                                        </div>
+                                        <div>
+                                            <div class="ai-text-primary" style="font-size: 14px;">Utility Payment</div>
+                                            <div class="ai-text-secondary" style="font-size: 12px;">1 hour ago</div>
+                                        </div>
+                                    </div>
+                                    <div class="ai-text-right">
+                                        <div class="ai-text-primary" style="font-size: 14px;">-$127.45</div>
+                                        <div class="ai-text-secondary" style="font-size: 11px;">Chase Auto</div>
+                                    </div>
+                                </div>
+
+                                <div class="ai-flex ai-justify-between ai-items-center ai-mb-md">
+                                    <div class="ai-flex ai-items-center ai-gap-md">
+                                        <div style="width: 32px; height: 32px; background: rgba(59, 130, 246, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                            <span style="color: var(--info); font-size: 14px;">🔄</span>
+                                        </div>
+                                        <div>
+                                            <div class="ai-text-primary" style="font-size: 14px;">XRP Exchange</div>
+                                            <div class="ai-text-secondary" style="font-size: 12px;">3 hours ago</div>
+                                        </div>
+                                    </div>
+                                    <div class="ai-text-right">
+                                        <div class="ai-text-primary" style="font-size: 14px;">+12,500 XRP</div>
+                                        <div class="ai-text-secondary" style="font-size: 11px;">$6,500 USD</div>
+                                    </div>
+                                </div>
+
+                                <div class="ai-flex ai-justify-between ai-items-center">
+                                    <div class="ai-flex ai-items-center ai-gap-md">
+                                        <div style="width: 32px; height: 32px; background: rgba(16, 185, 129, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                            <span style="color: var(--success); font-size: 14px;">📧</span>
+                                        </div>
+                                        <div>
+                                            <div class="ai-text-primary" style="font-size: 14px;">Salary Deposit</div>
+                                            <div class="ai-text-secondary" style="font-size: 12px;">Yesterday</div>
+                                        </div>
+                                    </div>
+                                    <div class="ai-text-right">
+                                        <div class="ai-text-primary" style="font-size: 14px;">+$4,200.00</div>
+                                        <div class="ai-text-secondary" style="font-size: 11px;">Direct Deposit</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Financial Insights -->
+                <div class="ai-card">
+                    <div class="ai-card-header">
+                        <h3 class="ai-card-title">Financial Insights</h3>
+                        <p class="ai-card-subtitle">AI-powered financial analysis and recommendations</p>
+                    </div>
+                    <div class="ai-card-content">
+                        <div class="ai-grid ai-grid-3">
+                            <div>
+                                <h4 class="ai-heading-3 ai-mb-sm">Spending Analysis</h4>
+                                <div class="ai-mb-md">
+                                    <div class="ai-flex ai-justify-between ai-mb-sm">
+                                        <span style="font-size: 14px;">Utilities & Bills</span>
+                                        <span style="font-size: 14px;">$1,247</span>
+                                    </div>
+                                    <div class="ai-progress ai-mb-sm">
+                                        <div class="ai-progress-fill" style="width: 62%"></div>
+                                    </div>
+                                </div>
+                                <div class="ai-mb-md">
+                                    <div class="ai-flex ai-justify-between ai-mb-sm">
+                                        <span style="font-size: 14px;">Food & Dining</span>
+                                        <span style="font-size: 14px;">$687</span>
+                                    </div>
+                                    <div class="ai-progress ai-mb-sm">
+                                        <div class="ai-progress-fill" style="width: 34%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="ai-flex ai-justify-between ai-mb-sm">
+                                        <span style="font-size: 14px;">Transportation</span>
+                                        <span style="font-size: 14px;">$423</span>
+                                    </div>
+                                    <div class="ai-progress">
+                                        <div class="ai-progress-fill" style="width: 21%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="ai-heading-3 ai-mb-sm">Income Sources</h4>
+                                <div class="ai-mb-md">
+                                    <div class="ai-flex ai-justify-between ai-items-center ai-mb-sm">
+                                        <span style="font-size: 14px;">Salary</span>
+                                        <span style="font-size: 14px; color: var(--success);">$4,200</span>
+                                    </div>
+                                    <div class="ai-flex ai-justify-between ai-items-center ai-mb-sm">
+                                        <span style="font-size: 14px;">FL Rewards</span>
+                                        <span style="font-size: 14px; color: var(--success);">$1,847</span>
+                                    </div>
+                                    <div class="ai-flex ai-justify-between ai-items-center ai-mb-sm">
+                                        <span style="font-size: 14px;">XRP Gains</span>
+                                        <span style="font-size: 14px; color: var(--success);">$856</span>
+                                    </div>
+                                    <div class="ai-flex ai-justify-between ai-items-center">
+                                        <span style="font-size: 14px;">Investments</span>
+                                        <span style="font-size: 14px; color: var(--success);">$2,076</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="ai-heading-3 ai-mb-sm">Recommendations</h4>
+                                <div class="ai-mb-md">
+                                    <div class="ai-status ai-status-info ai-mb-sm">Investment Opportunity</div>
+                                    <p class="ai-text-secondary" style="font-size: 13px;">Consider investing 15% of XRP gains into diversified portfolio</p>
+                                </div>
+                                <div class="ai-mb-md">
+                                    <div class="ai-status ai-status-success ai-mb-sm">Savings Goal</div>
+                                    <p class="ai-text-secondary" style="font-size: 13px;">You're on track to save $45K this year</p>
+                                </div>
+                                <div>
+                                    <div class="ai-status ai-status-warning ai-mb-sm">Spending Alert</div>
+                                    <p class="ai-text-secondary" style="font-size: 13px;">Dining expenses up 23% this month</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API & SDK Tab -->
+            <div id="apiContent" class="ai-tab-content hidden">
+                <div class="ai-section-header">
+                    <h1 class="ai-heading-1">Developer API & SDKs</h1>
+                    <p class="ai-subtitle">
+                        Comprehensive APIs and SDKs for federated learning, biometric auth, and blockchain integration.
+                    </p>
+                </div>
+
+                <div class="ai-grid ai-grid-2 ai-mb-xl">
+                    <div class="ai-card">
+                        <div class="ai-card-header">
+                            <h3 class="ai-card-title">API Endpoints</h3>
+                        </div>
+                        <div class="ai-card-content">
+                            <div class="ai-mb-md">
+                                <div class="ai-text-mono ai-mb-sm" style="color: var(--brand-primary);">POST /api/v1/fl/training/start</div>
+                                <div class="ai-text-secondary" style="font-size: 13px;">Initialize federated learning training session</div>
+                            </div>
+                            <div class="ai-mb-md">
+                                <div class="ai-text-mono ai-mb-sm" style="color: var(--brand-primary);">GET /api/v1/biometrics/verify</div>
+                                <div class="ai-text-secondary" style="font-size: 13px;">Facial recognition authentication endpoint</div>
+                            </div>
+                            <div class="ai-mb-md">
+                                <div class="ai-text-mono ai-mb-sm" style="color: var(--brand-primary);">POST /api/v1/xrp/payment</div>
+                                <div class="ai-text-secondary" style="font-size: 13px;">Send XRP Ledger payment transaction</div>
+                            </div>
+                            <div>
+                                <div class="ai-text-mono ai-mb-sm" style="color: var(--brand-primary);">GET /api/v1/tokens/balance</div>
+                                <div class="ai-text-secondary" style="font-size: 13px;">Query token balances and portfolio</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ai-card">
+                        <div class="ai-card-header">
+                            <h3 class="ai-card-title">SDK Support</h3>
+                        </div>
+                        <div class="ai-card-content">
+                            <div class="ai-flex ai-justify-between ai-items-center ai-mb-md">
+                                <span>Python SDK</span>
+                                <span class="ai-status ai-status-success">Available</span>
+                            </div>
+                            <div class="ai-flex ai-justify-between ai-items-center ai-mb-md">
+                                <span>JavaScript SDK</span>
+                                <span class="ai-status ai-status-success">Available</span>
+                            </div>
+                            <div class="ai-flex ai-justify-between ai-items-center ai-mb-md">
+                                <span>Java SDK</span>
+                                <span class="ai-status ai-status-success">Available</span>
+                            </div>
+                            <div class="ai-flex ai-justify-between ai-items-center ai-mb-md">
+                                <span>Go SDK</span>
+                                <span class="ai-status ai-status-info">Beta</span>
+                            </div>
+                            <div class="ai-flex ai-justify-between ai-items-center ai-mb-md">
+                                <span>Rust SDK</span>
+                                <span class="ai-status ai-status-warning">Coming Soon</span>
+                            </div>
+                            <div class="ai-flex ai-justify-between ai-items-center">
+                                <span>Swift SDK</span>
+                                <span class="ai-status ai-status-warning">Planned</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Code Examples -->
+                <div class="ai-card">
+                    <div class="ai-card-header">
+                        <h3 class="ai-card-title">Integration Examples</h3>
+                        <p class="ai-card-subtitle">Quick start code examples for common operations</p>
+                    </div>
+                    <div class="ai-card-content">
+                        <h4 class="ai-heading-3 ai-mb-md">Python - Federated Learning</h4>
+                        <div class="ai-code ai-mb-xl">
+<code>import lltoken_offline_ai as ll
+
+# Initialize the federated learning client
+client = ll.FederatedLearningClient(
+    api_key="your_api_key",
+    endpoint="https://api.lltoken.offline.ai"
+)
+
+# Configure training session
+config = ll.TrainingConfig(
+    model_type="facial_recognition_cnn",
+    min_clients=10,
+    rounds=100,
+    privacy_level="high",
+    quantum_safe=True
+)
+
+# Start training
+session = await client.start_training(config)
+print(f"Training session {session.id} started")
+
+# Monitor progress
+async for update in client.monitor_training(session.id):
+    print(f"Round {update.round}: Accuracy {update.accuracy}%")</code>
+                        </div>
+
+                        <h4 class="ai-heading-3 ai-mb-md">JavaScript - Biometric Authentication</h4>
+                        <div class="ai-code">
+<code>import { BiometricAuth, OfflineAI } from '@lltoken/offline-ai-sdk';
+
+const auth = new BiometricAuth({
+  apiKey: 'your_api_key',
+  endpoint: 'https://api.lltoken.offline.ai',
+  confidenceThreshold: 0.95
+});
+
+// Capture and authenticate user
+const captureVideo = async () => {
+  const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+  const video = document.getElementById('videoElement');
+  video.srcObject = stream;
+
+  // Authenticate after face detection
+  const result = await auth.authenticateFromVideo(video);
+
+  if (result.authenticated) {
+    console.log(`User verified: ${result.userId}`);
+    console.log(`Confidence: ${result.confidence}`);
+    return result.authToken;
+  }
+};
+
+// Use authentication token for secure operations
+const token = await captureVideo();</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="js/offline-ai-app.js"></script>
+
+    <!-- Pulse animation for live indicators -->
+    <style>
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        /* Add error status styling if not in CSS file */
+        .ai-status-error {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+    </style>
+</body>
+</html>

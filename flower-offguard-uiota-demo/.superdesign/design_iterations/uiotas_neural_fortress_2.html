@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UIOTAS Framework - Neural Fortress (Enhanced)</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Theme CSS -->
+    <link rel="stylesheet" href="neural_fortress_theme.css">
+
+    <style>
+        /* Additional page-specific styles */
+        .nf-hero-section {
+            background: linear-gradient(135deg, var(--nf-primary) 0%, var(--nf-surface) 100%);
+            padding: var(--nf-spacing-2xl);
+            border-radius: var(--nf-radius-xl);
+            margin-bottom: var(--nf-spacing-xl);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nf-hero-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
+            animation: heroFloat 6s ease-in-out infinite;
+        }
+
+        @keyframes heroFloat {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-20px) scale(1.05); }
+        }
+
+        .nf-hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .nf-hero-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0 0 var(--nf-spacing-md) 0;
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--nf-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nf-hero-subtitle {
+            font-size: 1.125rem;
+            color: var(--nf-text-secondary);
+            margin: 0;
+            max-width: 600px;
+        }
+
+        .nf-section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0 0 var(--nf-spacing-lg) 0;
+            color: var(--nf-text-primary);
+            display: flex;
+            align-items: center;
+            gap: var(--nf-spacing-md);
+        }
+
+        .nf-section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--nf-secondary);
+            border-radius: 2px;
+        }
+
+        .nf-vault-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--nf-spacing-lg);
+            margin-bottom: var(--nf-spacing-2xl);
+        }
+
+        .nf-vault-card {
+            background: var(--nf-surface);
+            border: 1px solid var(--nf-border);
+            border-radius: var(--nf-radius-lg);
+            padding: var(--nf-spacing-lg);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all var(--nf-transition-base);
+        }
+
+        .nf-vault-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--nf-secondary);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform var(--nf-transition-base);
+        }
+
+        .nf-vault-card:hover {
+            border-color: var(--nf-secondary);
+            transform: translateY(-4px);
+            box-shadow: var(--nf-shadow-xl);
+        }
+
+        .nf-vault-card:hover::after {
+            transform: scaleX(1);
+        }
+
+        .nf-vault-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: var(--nf-spacing-md);
+        }
+
+        .nf-vault-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--nf-radius-md);
+            background: var(--nf-surface-elevated);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .nf-pulse-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--nf-success);
+            animation: pulse 2s ease-in-out infinite;
+            box-shadow: 0 0 10px var(--nf-success);
+        }
+
+        .nf-vault-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin: var(--nf-spacing-sm) 0;
+            color: var(--nf-text-primary);
+        }
+
+        .nf-vault-stats {
+            display: flex;
+            gap: var(--nf-spacing-lg);
+            margin-top: var(--nf-spacing-md);
+            padding-top: var(--nf-spacing-md);
+            border-top: 1px solid var(--nf-border);
+        }
+
+        .nf-vault-stat {
+            flex: 1;
+        }
+
+        .nf-vault-stat-value {
+            font-family: var(--nf-font-primary);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--nf-secondary);
+        }
+
+        .nf-vault-stat-label {
+            font-size: 0.75rem;
+            color: var(--nf-text-muted);
+            margin-top: var(--nf-spacing-xs);
+        }
+    </style>
+</head>
+<body class="theme-neural-fortress">
+    <div class="nf-container">
+        <!-- Sidebar -->
+        <aside class="nf-sidebar">
+            <div class="nf-sidebar-header">
+                <div class="nf-logo">🛡️</div>
+                <div class="nf-brand">
+                    <h1 class="nf-brand-name">UIOTAS</h1>
+                    <p class="nf-brand-tagline">Neural Fortress</p>
+                </div>
+            </div>
+
+            <nav class="nf-nav">
+                <div class="nf-nav-section">
+                    <h3 class="nf-nav-section-title">Core</h3>
+                    <a href="#" class="nf-nav-item active">
+                        <span class="nf-nav-icon">🧠</span>
+                        <span class="nf-nav-label">Neural Core</span>
+                    </a>
+                    <a href="#" class="nf-nav-item">
+                        <span class="nf-nav-icon">📊</span>
+                        <span class="nf-nav-label">Overview</span>
+                    </a>
+                </div>
+
+                <div class="nf-nav-section">
+                    <h3 class="nf-nav-section-title">Vault Chambers</h3>
+                    <a href="#" class="nf-nav-item">
+                        <span class="nf-nav-icon">💼</span>
+                        <span class="nf-nav-label">IP Sanctuary</span>
+                        <span class="nf-nav-badge">2.3TB</span>
+                    </a>
+                    <a href="#" class="nf-nav-item">
+                        <span class="nf-nav-icon">⚖️</span>
+                        <span class="nf-nav-label">Legal Archive</span>
+                        <span class="nf-nav-badge">890GB</span>
+                    </a>
+                    <a href="#" class="nf-nav-item">
+                        <span class="nf-nav-icon">🏦</span>
+                        <span class="nf-nav-label">Banking Vault</span>
+                        <span class="nf-nav-badge">1.5TB</span>
+                    </a>
+                    <a href="#" class="nf-nav-item">
+                        <span class="nf-nav-icon">📜</span>
+                        <span class="nf-nav-label">Will & Trust</span>
+                        <span class="nf-nav-badge">345GB</span>
+                    </a>
+                    <a href="#" class="nf-nav-item">
+                        <span class="nf-nav-icon">👨‍👩‍👧‍👦</span>
+                        <span class="nf-nav-label">Legacy Vault</span>
+                        <span class="nf-nav-badge">1.2TB</span>
+                    </a>
+                    <a href="#" class="nf-nav-item">
+                        <span class="nf-nav-icon">🔬</span>
+                        <span class="nf-nav-label">Research Lab</span>
+                        <span class="nf-nav-badge">456GB</span>
+                    </a>
+                </div>
+
+                <div class="nf-nav-section">
+                    <h3 class="nf-nav-section-title">Neural Clusters</h3>
+                    <a href="#" class="nf-nav-item">
+                        <span class="nf-nav-icon">⚡</span>
+                        <span class="nf-nav-label">Active Agents</span>
+                        <span class="nf-nav-badge">15/18</span>
+                    </a>
+                    <a href="#" class="nf-nav-item">
+                        <span class="nf-nav-icon">🎯</span>
+                        <span class="nf-nav-label">Threat Radar</span>
+                    </a>
+                    <a href="#" class="nf-nav-item">
+                        <span class="nf-nav-icon">🔍</span>
+                        <span class="nf-nav-label">Neural Insights</span>
+                    </a>
+                </div>
+
+                <div class="nf-nav-section">
+                    <h3 class="nf-nav-section-title">System</h3>
+                    <a href="#" class="nf-nav-item">
+                        <span class="nf-nav-icon">⚙️</span>
+                        <span class="nf-nav-label">Fortress Config</span>
+                    </a>
+                    <a href="#" class="nf-nav-item">
+                        <span class="nf-nav-icon">🎨</span>
+                        <span class="nf-nav-label">Theme Switcher</span>
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="nf-main">
+            <!-- Header -->
+            <header class="nf-header">
+                <div class="nf-header-left">
+                    <h2 class="nf-header-title">Neural Fortress</h2>
+                    <div class="nf-status-indicator">
+                        <span class="nf-status-dot"></span>
+                        <span>FORTRESS SECURE</span>
+                    </div>
+                </div>
+
+                <div class="nf-header-right">
+                    <div class="nf-system-metrics">
+                        <div class="nf-metric">
+                            <span class="nf-metric-label">CPU</span>
+                            <span class="nf-metric-value">45%</span>
+                        </div>
+                        <div class="nf-metric">
+                            <span class="nf-metric-label">GPU</span>
+                            <span class="nf-metric-value">12%</span>
+                        </div>
+                        <div class="nf-metric">
+                            <span class="nf-metric-label">RAM</span>
+                            <span class="nf-metric-value">8.2GB</span>
+                        </div>
+                    </div>
+
+                    <button class="nf-btn">⚙️</button>
+                    <button class="nf-btn-danger nf-btn">🔴 LOCK</button>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <div class="nf-content">
+                <!-- Hero Section -->
+                <div class="nf-hero-section">
+                    <div class="nf-hero-content">
+                        <h1 class="nf-hero-title">Fortress Neural Network - Active Protection</h1>
+                        <p class="nf-hero-subtitle">
+                            Your digital assets are protected by 15 autonomous neural clusters including specialized banking and estate planning security.
+                            Real-time threat detection, adaptive learning, and autonomous response systems are operational.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Dashboard Grid -->
+                <div class="nf-dashboard-grid">
+                    <div class="nf-card">
+                        <div class="nf-card-header">
+                            <h3 class="nf-card-title">Total Protected</h3>
+                            <div class="nf-card-icon">💾</div>
+                        </div>
+                        <div class="nf-card-body">
+                            <p class="nf-card-metric">6.7 TB</p>
+                            <p class="nf-card-label">Across 6 vault chambers</p>
+                        </div>
+                        <div class="nf-card-footer">
+                            <span class="nf-status-badge success">
+                                <span class="nf-pulse-indicator"></span>
+                                All vaults secure
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="nf-card">
+                        <div class="nf-card-header">
+                            <h3 class="nf-card-title">Neural Clusters</h3>
+                            <div class="nf-card-icon">⚡</div>
+                        </div>
+                        <div class="nf-card-body">
+                            <p class="nf-card-metric">15/18</p>
+                            <p class="nf-card-label">Active agent clusters</p>
+                        </div>
+                        <div class="nf-card-footer">
+                            <span class="nf-status-badge success">
+                                <span class="nf-pulse-indicator"></span>
+                                Operating normally
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="nf-card">
+                        <div class="nf-card-header">
+                            <h3 class="nf-card-title">Threats Detected</h3>
+                            <div class="nf-card-icon">🛡️</div>
+                        </div>
+                        <div class="nf-card-body">
+                            <p class="nf-card-metric">0</p>
+                            <p class="nf-card-label">Last 24 hours</p>
+                        </div>
+                        <div class="nf-card-footer">
+                            <span class="nf-status-badge success">
+                                <span class="nf-pulse-indicator"></span>
+                                No threats
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="nf-card">
+                        <div class="nf-card-header">
+                            <h3 class="nf-card-title">Chain Verified</h3>
+                            <div class="nf-card-icon">⛓️</div>
+                        </div>
+                        <div class="nf-card-body">
+                            <p class="nf-card-metric">100%</p>
+                            <p class="nf-card-label">Blockchain integrity</p>
+                        </div>
+                        <div class="nf-card-footer">
+                            <span class="nf-status-badge success">
+                                <span class="nf-pulse-indicator"></span>
+                                Immutable
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vault Chambers -->
+                <h2 class="nf-section-title">Vault Chambers</h2>
+                <div class="nf-vault-grid">
+                    <div class="nf-vault-card">
+                        <div class="nf-vault-header">
+                            <div class="nf-vault-icon">💼</div>
+                            <div class="nf-pulse-indicator"></div>
+                        </div>
+                        <h3 class="nf-vault-title">IP Sanctuary</h3>
+                        <p class="nf-card-label">Patents, trade secrets, proprietary code</p>
+                        <div class="nf-vault-stats">
+                            <div class="nf-vault-stat">
+                                <div class="nf-vault-stat-value">2.3TB</div>
+                                <div class="nf-vault-stat-label">Storage</div>
+                            </div>
+                            <div class="nf-vault-stat">
+                                <div class="nf-vault-stat-value">99%</div>
+                                <div class="nf-vault-stat-label">Health</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="nf-vault-card">
+                        <div class="nf-vault-header">
+                            <div class="nf-vault-icon">⚖️</div>
+                            <div class="nf-pulse-indicator"></div>
+                        </div>
+                        <h3 class="nf-vault-title">Legal Archive</h3>
+                        <p class="nf-card-label">Court documents, contracts, evidence</p>
+                        <div class="nf-vault-stats">
+                            <div class="nf-vault-stat">
+                                <div class="nf-vault-stat-value">890GB</div>
+                                <div class="nf-vault-stat-label">Storage</div>
+                            </div>
+                            <div class="nf-vault-stat">
+                                <div class="nf-vault-stat-value">100%</div>
+                                <div class="nf-vault-stat-label">Health</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="nf-vault-card">
+                        <div class="nf-vault-header">
+                            <div class="nf-vault-icon">🏦</div>
+                            <div class="nf-pulse-indicator"></div>
+                        </div>
+                        <h3 class="nf-vault-title">Banking Vault</h3>
+                        <p class="nf-card-label">Financial records, statements, investment docs</p>
+                        <div class="nf-vault-stats">
+                            <div class="nf-vault-stat">
+                                <div class="nf-vault-stat-value">1.5TB</div>
+                                <div class="nf-vault-stat-label">Storage</div>
+                            </div>
+                            <div class="nf-vault-stat">
+                                <div class="nf-vault-stat-value">100%</div>
+                                <div class="nf-vault-stat-label">Health</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="nf-vault-card">
+                        <div class="nf-vault-header">
+                            <div class="nf-vault-icon">📜</div>
+                            <div class="nf-pulse-indicator"></div>
+                        </div>
+                        <h3 class="nf-vault-title">Will & Trust</h3>
+                        <p class="nf-card-label">Estate plans, trusts, inheritance documents</p>
+                        <div class="nf-vault-stats">
+                            <div class="nf-vault-stat">
+                                <div class="nf-vault-stat-value">345GB</div>
+                                <div class="nf-vault-stat-label">Storage</div>
+                            </div>
+                            <div class="nf-vault-stat">
+                                <div class="nf-vault-stat-value">100%</div>
+                                <div class="nf-vault-stat-label">Health</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="nf-vault-card">
+                        <div class="nf-vault-header">
+                            <div class="nf-vault-icon">👨‍👩‍👧‍👦</div>
+                            <div class="nf-pulse-indicator"></div>
+                        </div>
+                        <h3 class="nf-vault-title">Legacy Vault</h3>
+                        <p class="nf-card-label">Family memories, photos, videos</p>
+                        <div class="nf-vault-stats">
+                            <div class="nf-vault-stat">
+                                <div class="nf-vault-stat-value">1.2TB</div>
+                                <div class="nf-vault-stat-label">Storage</div>
+                            </div>
+                            <div class="nf-vault-stat">
+                                <div class="nf-vault-stat-value">98%</div>
+                                <div class="nf-vault-stat-label">Health</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="nf-vault-card">
+                        <div class="nf-vault-header">
+                            <div class="nf-vault-icon">🔬</div>
+                            <div class="nf-pulse-indicator"></div>
+                        </div>
+                        <h3 class="nf-vault-title">Research Lab</h3>
+                        <p class="nf-card-label">Biotech research, clinical trials</p>
+                        <div class="nf-vault-stats">
+                            <div class="nf-vault-stat">
+                                <div class="nf-vault-stat-value">456GB</div>
+                                <div class="nf-vault-stat-label">Storage</div>
+                            </div>
+                            <div class="nf-vault-stat">
+                                <div class="nf-vault-stat-value">97%</div>
+                                <div class="nf-vault-stat-label">Health</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Neural Cluster Activity -->
+                <h2 class="nf-section-title">Neural Cluster Activity</h2>
+                <div class="nf-activity-feed">
+                    <div class="nf-activity-item">
+                        <div class="nf-activity-icon">🏦</div>
+                        <div class="nf-activity-content">
+                            <p class="nf-activity-title">Cluster-14: Banking vault encrypted → Secure</p>
+                            <p class="nf-activity-meta">1 minute ago • Banking Vault</p>
+                        </div>
+                    </div>
+
+                    <div class="nf-activity-item">
+                        <div class="nf-activity-icon">📜</div>
+                        <div class="nf-activity-content">
+                            <p class="nf-activity-title">Cluster-15: Will & Trust verified → Immutable</p>
+                            <p class="nf-activity-meta">3 minutes ago • Will & Trust</p>
+                        </div>
+                    </div>
+
+                    <div class="nf-activity-item">
+                        <div class="nf-activity-icon">⚡</div>
+                        <div class="nf-activity-content">
+                            <p class="nf-activity-title">Cluster-07: Malware scan complete → Clean</p>
+                            <p class="nf-activity-meta">5 minutes ago • IP Sanctuary</p>
+                        </div>
+                    </div>
+
+                    <div class="nf-activity-item">
+                        <div class="nf-activity-icon">🔍</div>
+                        <div class="nf-activity-content">
+                            <p class="nf-activity-title">Cluster-03: Blockchain verified → Immutable</p>
+                            <p class="nf-activity-meta">8 minutes ago • Legal Archive</p>
+                        </div>
+                    </div>
+
+                    <div class="nf-activity-item">
+                        <div class="nf-activity-icon">✅</div>
+                        <div class="nf-activity-content">
+                            <p class="nf-activity-title">Cluster-05: Legal doc validated → Archived</p>
+                            <p class="nf-activity-meta">12 minutes ago • Legal Archive</p>
+                        </div>
+                    </div>
+
+                    <div class="nf-activity-item">
+                        <div class="nf-activity-icon">🧬</div>
+                        <div class="nf-activity-content">
+                            <p class="nf-activity-title">Cluster-09: Neural learning → Adapting</p>
+                            <p class="nf-activity-meta">15 minutes ago • All chambers</p>
+                        </div>
+                    </div>
+
+                    <div class="nf-activity-item">
+                        <div class="nf-activity-icon">💾</div>
+                        <div class="nf-activity-content">
+                            <p class="nf-activity-title">Cluster-01: Backup complete → Verified</p>
+                            <p class="nf-activity-meta">20 minutes ago • All chambers</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Simple interactions
+        document.querySelectorAll('.nf-nav-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.querySelectorAll('.nf-nav-item').forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+            });
+        });
+
+        // Simulate real-time updates
+        function updateMetrics() {
+            const cpuValue = document.querySelector('.nf-metric-value');
+            if (cpuValue) {
+                const cpu = 40 + Math.random() * 15;
+                cpuValue.textContent = `${Math.round(cpu)}%`;
+            }
+        }
+
+        setInterval(updateMetrics, 3000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,238 @@
+version: '3.8'
+
+services:
+  # Federated Learning Server
+  fl-server:
+    build:
+      context: ..
+      dockerfile: containers/Dockerfile.server
+    ports:
+      - "5000:5000"    # Web dashboard
+      - "8080:8080"    # FL server
+    environment:
+      - PYTHONPATH=/app
+      - FLASK_ENV=production
+      - LOG_LEVEL=INFO
+    volumes:
+      - fl_data:/app/data
+      - fl_logs:/app/logs
+      - fl_artifacts:/app/artifacts
+    networks:
+      - fl_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # FL Client 1
+  fl-client-1:
+    build:
+      context: ..
+      dockerfile: containers/Dockerfile.client
+    environment:
+      - PYTHONPATH=/app
+      - CLIENT_ID=client-1
+      - SERVER_ADDRESS=fl-server:8080
+      - LOG_LEVEL=INFO
+    volumes:
+      - client1_data:/app/data
+      - client1_logs:/app/logs
+      - mesh1_data:/app/mesh_data
+    networks:
+      - fl_network
+      - mesh_network
+    depends_on:
+      - fl-server
+    restart: unless-stopped
+    command: >
+      sh -c "sleep 10 && python -m client.fl_client
+             --client-id client-1
+             --server-address fl-server:8080
+             --dataset mnist
+             --model cnn
+             --local-epochs 2
+             --batch-size 32"
+
+  # FL Client 2
+  fl-client-2:
+    build:
+      context: ..
+      dockerfile: containers/Dockerfile.client
+    environment:
+      - PYTHONPATH=/app
+      - CLIENT_ID=client-2
+      - SERVER_ADDRESS=fl-server:8080
+      - LOG_LEVEL=INFO
+    volumes:
+      - client2_data:/app/data
+      - client2_logs:/app/logs
+      - mesh2_data:/app/mesh_data
+    networks:
+      - fl_network
+      - mesh_network
+    depends_on:
+      - fl-server
+    restart: unless-stopped
+    command: >
+      sh -c "sleep 15 && python -m client.fl_client
+             --client-id client-2
+             --server-address fl-server:8080
+             --dataset mnist
+             --model cnn
+             --local-epochs 2
+             --batch-size 32"
+
+  # FL Client 3
+  fl-client-3:
+    build:
+      context: ..
+      dockerfile: containers/Dockerfile.client
+    environment:
+      - PYTHONPATH=/app
+      - CLIENT_ID=client-3
+      - SERVER_ADDRESS=fl-server:8080
+      - LOG_LEVEL=INFO
+    volumes:
+      - client3_data:/app/data
+      - client3_logs:/app/logs
+      - mesh3_data:/app/mesh_data
+    networks:
+      - fl_network
+      - mesh_network
+    depends_on:
+      - fl-server
+    restart: unless-stopped
+    command: >
+      sh -c "sleep 20 && python -m client.fl_client
+             --client-id client-3
+             --server-address fl-server:8080
+             --dataset mnist
+             --model cnn
+             --local-epochs 2
+             --batch-size 32"
+
+  # Mesh Network Node 1 (can operate offline)
+  mesh-node-1:
+    build:
+      context: ..
+      dockerfile: containers/Dockerfile.client
+    ports:
+      - "8081:8081"
+    environment:
+      - PYTHONPATH=/app
+      - NODE_ID=mesh-1
+      - LOG_LEVEL=INFO
+    volumes:
+      - mesh1_data:/app/mesh_data
+    networks:
+      - mesh_network
+    restart: unless-stopped
+    command: >
+      python -m mesh.p2p_network
+      --node-id mesh-1
+      --port 8081
+
+  # Mesh Network Node 2 (can operate offline)
+  mesh-node-2:
+    build:
+      context: ..
+      dockerfile: containers/Dockerfile.client
+    ports:
+      - "8082:8081"
+    environment:
+      - PYTHONPATH=/app
+      - NODE_ID=mesh-2
+      - LOG_LEVEL=INFO
+    volumes:
+      - mesh2_data:/app/mesh_data
+    networks:
+      - mesh_network
+    depends_on:
+      - mesh-node-1
+    restart: unless-stopped
+    command: >
+      sh -c "sleep 5 && python -m mesh.p2p_network
+             --node-id mesh-2
+             --port 8081
+             --peers mesh-node-1:8081"
+
+  # Dashboard Monitor
+  dashboard-monitor:
+    build:
+      context: ..
+      dockerfile: containers/Dockerfile.client
+    environment:
+      - PYTHONPATH=/app
+      - LOG_LEVEL=INFO
+    volumes:
+      - monitor_data:/app/data
+    networks:
+      - fl_network
+      - mesh_network
+    depends_on:
+      - fl-server
+    restart: unless-stopped
+    command: >
+      python -m dashboard.monitor
+      --log-level INFO
+      --update-interval 5
+
+  # Nginx reverse proxy (optional)
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - nginx_logs:/var/log/nginx
+    networks:
+      - fl_network
+    depends_on:
+      - fl-server
+    restart: unless-stopped
+
+networks:
+  fl_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+  mesh_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.21.0.0/16
+
+volumes:
+  fl_data:
+    driver: local
+  fl_logs:
+    driver: local
+  fl_artifacts:
+    driver: local
+  client1_data:
+    driver: local
+  client1_logs:
+    driver: local
+  client2_data:
+    driver: local
+  client2_logs:
+    driver: local
+  client3_data:
+    driver: local
+  client3_logs:
+    driver: local
+  mesh1_data:
+    driver: local
+  mesh2_data:
+    driver: local
+  mesh3_data:
+    driver: local
+  monitor_data:
+    driver: local
+  nginx_logs:
+    driver: local

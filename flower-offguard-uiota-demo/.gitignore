@@ -1,0 +1,8 @@
+# Security files
+.secrets/
+*.key
+*.pem
+*.p12
+*.keystore
+config/production.env
+.env.production

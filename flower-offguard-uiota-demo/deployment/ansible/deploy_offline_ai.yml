@@ -1,0 +1,580 @@
+---
+# ==========================================
+# Ansible Playbook - Offline AI OS Deployment
+# Deploy complete system with security hardening
+# ==========================================
+
+- name: Deploy Offline AI Operating System
+  hosts: ai_nodes
+  become: yes
+  vars:
+    base_dir: /opt/offline-ai
+    models_dir: "{{ base_dir }}/models"
+    config_dir: "{{ base_dir }}/config"
+    deployment_version: "1.0.0"
+
+  tasks:
+    # ====================
+    # PHASE 1: SYSTEM HARDENING
+    # ====================
+
+    - name: System Hardening
+      block:
+        - name: Update system packages
+          apt:
+            update_cache: yes
+            upgrade: dist
+            cache_valid_time: 3600
+
+        - name: Install security tools
+          apt:
+            name:
+              - ufw
+              - fail2ban
+              - aide
+              - auditd
+              - apparmor
+              - apparmor-utils
+              - libpam-pwquality
+              - rkhunter
+              - lynis
+            state: present
+
+        - name: Configure UFW firewall
+          ufw:
+            state: enabled
+            policy: deny
+            logging: 'on'
+
+        - name: Allow required ports
+          ufw:
+            rule: allow
+            port: "{{ item.port }}"
+            proto: "{{ item.proto | default('tcp') }}"
+            comment: "{{ item.comment }}"
+          loop:
+            - { port: 22, comment: "SSH" }
+            - { port: 443, comment: "HTTPS" }
+            - { port: 6443, comment: "Kubernetes API" }
+            - { port: 3000, comment: "Grafana" }
+            - { port: 9090, comment: "Prometheus" }
+
+        - name: Configure fail2ban
+          copy:
+            content: |
+              [DEFAULT]
+              bantime = 3600
+              findtime = 600
+              maxretry = 3
+
+              [sshd]
+              enabled = true
+              port = 22
+
+              [nginx-http-auth]
+              enabled = true
+              port = http,https
+            dest: /etc/fail2ban/jail.local
+            mode: '0644'
+          notify: restart fail2ban
+
+        - name: Disable unnecessary services
+          systemd:
+            name: "{{ item }}"
+            state: stopped
+            enabled: no
+          loop:
+            - bluetooth
+            - avahi-daemon
+          ignore_errors: yes
+
+    # ====================
+    # PHASE 2: CONTAINER RUNTIME
+    # ====================
+
+    - name: Install Container Runtime
+      block:
+        - name: Remove old Docker versions
+          apt:
+            name:
+              - docker
+              - docker-engine
+              - docker.io
+              - containerd
+              - runc
+            state: absent
+
+        - name: Install Docker prerequisites
+          apt:
+            name:
+              - ca-certificates
+              - curl
+              - gnupg
+              - lsb-release
+            state: present
+
+        - name: Add Docker GPG key
+          apt_key:
+            url: https://download.docker.com/linux/ubuntu/gpg
+            state: present
+
+        - name: Add Docker repository
+          apt_repository:
+            repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+            state: present
+
+        - name: Install Docker
+          apt:
+            name:
+              - docker-ce
+              - docker-ce-cli
+              - containerd.io
+              - docker-buildx-plugin
+              - docker-compose-plugin
+            state: present
+            update_cache: yes
+
+        - name: Start Docker service
+          systemd:
+            name: docker
+            state: started
+            enabled: yes
+
+        - name: Add admin user to docker group
+          user:
+            name: "{{ ansible_user }}"
+            groups: docker
+            append: yes
+
+    # ====================
+    # PHASE 3: GPU SUPPORT
+    # ====================
+
+    - name: Setup GPU Support
+      block:
+        - name: Check for NVIDIA GPU
+          shell: lspci | grep -i nvidia
+          register: nvidia_check
+          failed_when: false
+          changed_when: false
+
+        - name: Install NVIDIA driver
+          apt:
+            name: nvidia-driver-535
+            state: present
+          when: nvidia_check.rc == 0
+
+        - name: Add NVIDIA Container Toolkit repository
+          shell: |
+            distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
+            curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg
+            curl -s -L https://nvidia.github.io/libnvidia-container/$distribution/libnvidia-container.list | \
+              sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | \
+              tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
+          when: nvidia_check.rc == 0
+          args:
+            creates: /etc/apt/sources.list.d/nvidia-container-toolkit.list
+
+        - name: Install NVIDIA Container Toolkit
+          apt:
+            name: nvidia-container-toolkit
+            state: present
+            update_cache: yes
+          when: nvidia_check.rc == 0
+
+        - name: Configure Docker for GPU
+          copy:
+            content: |
+              {
+                "runtimes": {
+                  "nvidia": {
+                    "path": "nvidia-container-runtime",
+                    "runtimeArgs": []
+                  }
+                },
+                "default-runtime": "nvidia",
+                "log-driver": "json-file",
+                "log-opts": {
+                  "max-size": "100m",
+                  "max-file": "3"
+                }
+              }
+            dest: /etc/docker/daemon.json
+            mode: '0644'
+          when: nvidia_check.rc == 0
+          notify: restart docker
+
+    # ====================
+    # PHASE 4: DIRECTORY STRUCTURE
+    # ====================
+
+    - name: Create Directory Structure
+      file:
+        path: "{{ item.path }}"
+        state: directory
+        mode: "{{ item.mode }}"
+        owner: root
+        group: root
+      loop:
+        - { path: "{{ base_dir }}", mode: '0755' }
+        - { path: "{{ models_dir }}", mode: '0755' }
+        - { path: "{{ config_dir }}", mode: '0750' }
+        - { path: "{{ base_dir }}/logs", mode: '0755' }
+        - { path: "{{ base_dir }}/data", mode: '0750' }
+        - { path: "{{ base_dir }}/backups", mode: '0700' }
+        - { path: "{{ base_dir }}/ssl", mode: '0700' }
+        - { path: "{{ base_dir }}/deployment", mode: '0755' }
+        - { path: "{{ base_dir }}/monitoring", mode: '0755' }
+
+    # ====================
+    # PHASE 5: CONFIGURATION FILES
+    # ====================
+
+    - name: Deploy Configuration Files
+      block:
+        - name: Generate secure passwords
+          set_fact:
+            postgres_password: "{{ lookup('password', '/dev/null length=32 chars=ascii_letters,digits') }}"
+            mongo_password: "{{ lookup('password', '/dev/null length=32 chars=ascii_letters,digits') }}"
+            redis_password: "{{ lookup('password', '/dev/null length=32 chars=ascii_letters,digits') }}"
+            minio_password: "{{ lookup('password', '/dev/null length=32 chars=ascii_letters,digits') }}"
+            rabbitmq_password: "{{ lookup('password', '/dev/null length=32 chars=ascii_letters,digits') }}"
+            grafana_password: "{{ lookup('password', '/dev/null length=32 chars=ascii_letters,digits') }}"
+          no_log: true
+
+        - name: Create environment file
+          copy:
+            content: |
+              # Generated by Ansible on {{ ansible_date_time.iso8601 }}
+              # Version: {{ deployment_version }}
+
+              # Database Passwords
+              POSTGRES_PASSWORD={{ postgres_password }}
+              MONGO_PASSWORD={{ mongo_password }}
+              REDIS_PASSWORD={{ redis_password }}
+
+              # MinIO Credentials
+              MINIO_USER=ai_admin
+              MINIO_PASSWORD={{ minio_password }}
+
+              # RabbitMQ Credentials
+              RABBITMQ_USER=ai_admin
+              RABBITMQ_PASSWORD={{ rabbitmq_password }}
+
+              # Grafana Admin Password
+              GRAFANA_PASSWORD={{ grafana_password }}
+
+              # Encryption Keys
+              VAULT_ENCRYPTION_KEY={{ lookup('password', '/dev/null length=32 chars=ascii_letters,digits') }}
+
+              # Resource Limits
+              MAX_AGENTS=50
+              MAX_MEMORY_PER_AGENT=2G
+              GPU_MEMORY_FRACTION=0.8
+            dest: "{{ base_dir }}/.env"
+            mode: '0600'
+            owner: root
+            group: root
+          no_log: true
+
+        - name: Copy docker-compose file
+          copy:
+            src: ../docker-compose.yml
+            dest: "{{ base_dir }}/deployment/docker-compose.yml"
+            mode: '0644'
+
+    # ====================
+    # PHASE 6: ENCRYPTION & CERTIFICATES
+    # ====================
+
+    - name: Setup Encryption
+      block:
+        - name: Generate SSL certificates
+          command: |
+            openssl req -x509 -nodes -days 365 -newkey rsa:4096 \
+              -keyout {{ base_dir }}/ssl/private.key \
+              -out {{ base_dir }}/ssl/certificate.crt \
+              -subj "/C=US/ST=State/L=City/O=OfflineAI/CN=offline-ai.local"
+          args:
+            creates: "{{ base_dir }}/ssl/certificate.crt"
+
+        - name: Set certificate permissions
+          file:
+            path: "{{ item }}"
+            mode: '0600'
+            owner: root
+            group: root
+          loop:
+            - "{{ base_dir }}/ssl/private.key"
+            - "{{ base_dir }}/ssl/certificate.crt"
+
+    # ====================
+    # PHASE 7: DEPLOY APPLICATION
+    # ====================
+
+    - name: Deploy Application
+      block:
+        - name: Pull Docker images
+          community.docker.docker_image:
+            name: "{{ item }}"
+            source: pull
+          loop:
+            - postgres:15-alpine
+            - mongo:7
+            - redis:7-alpine
+            - qdrant/qdrant:latest
+            - minio/minio:latest
+            - rabbitmq:3-management-alpine
+            - prom/prometheus:latest
+            - grafana/grafana:latest
+            - nginx:alpine
+
+        - name: Start services with docker-compose
+          community.docker.docker_compose:
+            project_src: "{{ base_dir }}/deployment"
+            state: present
+          environment:
+            COMPOSE_FILE: docker-compose.yml
+
+        - name: Wait for services to be healthy
+          wait_for:
+            host: localhost
+            port: "{{ item }}"
+            timeout: 120
+            state: started
+          loop:
+            - 5432   # PostgreSQL
+            - 27017  # MongoDB
+            - 6379   # Redis
+            - 6333   # Qdrant
+            - 9000   # MinIO
+            - 5672   # RabbitMQ
+
+    # ====================
+    # PHASE 8: MONITORING SETUP
+    # ====================
+
+    - name: Configure Monitoring
+      block:
+        - name: Deploy Prometheus config
+          copy:
+            content: |
+              global:
+                scrape_interval: 15s
+                evaluation_interval: 15s
+
+              scrape_configs:
+                - job_name: 'prometheus'
+                  static_configs:
+                    - targets: ['localhost:9090']
+
+                - job_name: 'agent_controller'
+                  static_configs:
+                    - targets: ['agent_controller:8000']
+
+                - job_name: 'node_exporter'
+                  static_configs:
+                    - targets: ['localhost:9100']
+            dest: "{{ base_dir }}/monitoring/prometheus.yml"
+            mode: '0644'
+
+    # ====================
+    # PHASE 9: BACKUP SYSTEM
+    # ====================
+
+    - name: Setup Backup System
+      block:
+        - name: Create backup script
+          copy:
+            content: |
+              #!/bin/bash
+              set -e
+
+              BACKUP_DIR="{{ base_dir }}/backups"
+              DATE=$(date +%Y%m%d_%H%M%S)
+              LOG_FILE="{{ base_dir }}/logs/backup_$DATE.log"
+
+              echo "Starting backup at $(date)" | tee -a $LOG_FILE
+
+              # Backup databases
+              echo "Backing up PostgreSQL..." | tee -a $LOG_FILE
+              docker exec offline_ai_postgres pg_dumpall -U ai_admin | \
+                gzip > $BACKUP_DIR/postgres_$DATE.sql.gz
+
+              echo "Backing up MongoDB..." | tee -a $LOG_FILE
+              docker exec offline_ai_mongodb mongodump --archive | \
+                gzip > $BACKUP_DIR/mongo_$DATE.archive.gz
+
+              # Backup configurations
+              echo "Backing up configurations..." | tee -a $LOG_FILE
+              tar -czf $BACKUP_DIR/config_$DATE.tar.gz {{ config_dir }}
+
+              # Backup Redis
+              echo "Backing up Redis..." | tee -a $LOG_FILE
+              docker exec offline_ai_redis redis-cli --raw SAVE
+              cp /var/lib/docker/volumes/deployment_redis_data/_data/dump.rdb \
+                $BACKUP_DIR/redis_$DATE.rdb
+
+              # Keep only last 7 days
+              echo "Cleaning old backups..." | tee -a $LOG_FILE
+              find $BACKUP_DIR -name "*.sql.gz" -mtime +7 -delete
+              find $BACKUP_DIR -name "*.archive.gz" -mtime +7 -delete
+              find $BACKUP_DIR -name "*.tar.gz" -mtime +7 -delete
+              find $BACKUP_DIR -name "*.rdb" -mtime +7 -delete
+
+              echo "Backup completed at $(date)" | tee -a $LOG_FILE
+            dest: /usr/local/bin/backup-ai-system.sh
+            mode: '0750'
+            owner: root
+            group: root
+
+        - name: Schedule backup cron job
+          cron:
+            name: "Backup AI System"
+            minute: "0"
+            hour: "2"
+            job: "/usr/local/bin/backup-ai-system.sh"
+            user: root
+
+    # ====================
+    # PHASE 10: SECURITY AUDIT
+    # ====================
+
+    - name: Security Audit
+      block:
+        - name: Initialize AIDE
+          command: aide --init
+          args:
+            creates: /var/lib/aide/aide.db.new
+
+        - name: Move AIDE database
+          command: mv /var/lib/aide/aide.db.new /var/lib/aide/aide.db
+          args:
+            creates: /var/lib/aide/aide.db
+
+        - name: Setup audit rules
+          copy:
+            content: |
+              # Audit AI system changes
+              -w {{ base_dir }}/ -p wa -k ai_system_changes
+              -w /etc/docker/ -p wa -k docker_config
+              -w /etc/fail2ban/ -p wa -k fail2ban_config
+
+              # Audit authentication
+              -w /var/log/auth.log -p wa -k auth_log
+              -w /etc/ssh/sshd_config -p wa -k sshd_config
+
+              # Audit process execution
+              -a always,exit -F arch=b64 -S execve -k process_execution
+
+              # Audit network connections
+              -a always,exit -F arch=b64 -S connect -k network_connect
+            dest: /etc/audit/rules.d/ai-system.rules
+            mode: '0640'
+          notify: restart auditd
+
+        - name: Schedule AIDE checks
+          cron:
+            name: "AIDE integrity check"
+            minute: "0"
+            hour: "3"
+            job: "aide --check | mail -s 'AIDE Report' root"
+
+    # ====================
+    # PHASE 11: POST-DEPLOYMENT VERIFICATION
+    # ====================
+
+    - name: Verify Deployment
+      block:
+        - name: Check Docker containers
+          command: docker ps --format "table {{.Names}}\t{{.Status}}"
+          register: docker_ps
+          changed_when: false
+
+        - name: Display running containers
+          debug:
+            var: docker_ps.stdout_lines
+
+        - name: Test database connections
+          command: "{{ item.cmd }}"
+          loop:
+            - { cmd: "docker exec offline_ai_postgres pg_isready", name: "PostgreSQL" }
+            - { cmd: "docker exec offline_ai_redis redis-cli ping", name: "Redis" }
+          register: db_tests
+          failed_when: false
+
+        - name: Create deployment summary
+          copy:
+            content: |
+              Offline AI Operating System - Deployment Summary
+              ================================================
+
+              Deployment Date: {{ ansible_date_time.iso8601 }}
+              Version: {{ deployment_version }}
+              Host: {{ ansible_hostname }}
+
+              Services Deployed:
+              - PostgreSQL (port 5432)
+              - MongoDB (port 27017)
+              - Redis (port 6379)
+              - Qdrant (port 6333)
+              - MinIO (ports 9000, 9001)
+              - RabbitMQ (ports 5672, 15672)
+              - Prometheus (port 9090)
+              - Grafana (port 3000)
+              - Nginx Gateway (ports 80, 443)
+
+              Access URLs:
+              - Grafana: https://{{ ansible_default_ipv4.address }}:3000
+              - Prometheus: http://{{ ansible_default_ipv4.address }}:9090
+              - MinIO Console: http://{{ ansible_default_ipv4.address }}:9001
+              - RabbitMQ Management: http://{{ ansible_default_ipv4.address }}:15672
+
+              Security:
+              - UFW Firewall: Enabled
+              - Fail2ban: Active
+              - AIDE: Initialized
+              - Auditd: Monitoring system changes
+              - SSL Certificates: Generated
+
+              Backups:
+              - Schedule: Daily at 2:00 AM
+              - Location: {{ base_dir }}/backups
+              - Retention: 7 days
+
+              Next Steps:
+              1. Update default passwords in {{ base_dir }}/.env
+              2. Configure Grafana dashboards
+              3. Review firewall rules
+              4. Test backup/restore procedures
+            dest: "{{ base_dir }}/DEPLOYMENT_SUMMARY.txt"
+            mode: '0644'
+
+        - name: Display deployment summary
+          command: cat {{ base_dir }}/DEPLOYMENT_SUMMARY.txt
+          register: summary
+          changed_when: false
+
+        - name: Show summary
+          debug:
+            var: summary.stdout_lines
+
+  # ====================
+  # HANDLERS
+  # ====================
+
+  handlers:
+    - name: restart fail2ban
+      systemd:
+        name: fail2ban
+        state: restarted
+
+    - name: restart docker
+      systemd:
+        name: docker
+        state: restarted
+
+    - name: restart auditd
+      systemd:
+        name: auditd
+        state: restarted

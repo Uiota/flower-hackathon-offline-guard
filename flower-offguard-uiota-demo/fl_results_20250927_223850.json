@@ -1,0 +1,916 @@
+{
+  "training_history": [
+    {
+      "round": 1,
+      "avg_loss": 0.28570139649558607,
+      "avg_accuracy": 0.9166666666666666,
+      "num_clients": 3,
+      "total_samples": 600,
+      "network_frequency": {
+        "fl_server->client_0": {
+          "frequency_hz": 0.06666666666666667,
+          "total_packets": 2,
+          "window_seconds": 30
+        },
+        "fl_server->client_1": {
+          "frequency_hz": 0.06666666666666667,
+          "total_packets": 2,
+          "window_seconds": 30
+        },
+        "fl_server->client_2": {
+          "frequency_hz": 0.06666666666666667,
+          "total_packets": 2,
+          "window_seconds": 30
+        },
+        "client_0->fl_server": {
+          "frequency_hz": 0.03333333333333333,
+          "total_packets": 1,
+          "window_seconds": 30
+        },
+        "client_1->fl_server": {
+          "frequency_hz": 0.03333333333333333,
+          "total_packets": 1,
+          "window_seconds": 30
+        },
+        "client_2->fl_server": {
+          "frequency_hz": 0.03333333333333333,
+          "total_packets": 1,
+          "window_seconds": 30
+        }
+      },
+      "network_bandwidth": {
+        "avg_bandwidth_mbps": 0.06562506666666666,
+        "total_packets": 9,
+        "total_bytes": 246094,
+        "packet_loss_rate": 0.0
+      },
+      "timestamp": 1759027099.1923249
+    },
+    {
+      "round": 2,
+      "avg_loss": 0.058808883344422545,
+      "avg_accuracy": 0.9966666666666667,
+      "num_clients": 3,
+      "total_samples": 600,
+      "network_frequency": {
+        "fl_server->client_0": {
+          "frequency_hz": 0.13333333333333333,
+          "total_packets": 4,
+          "window_seconds": 30
+        },
+        "fl_server->client_1": {
+          "frequency_hz": 0.13333333333333333,
+          "total_packets": 4,
+          "window_seconds": 30
+        },
+        "fl_server->client_2": {
+          "frequency_hz": 0.13333333333333333,
+          "total_packets": 4,
+          "window_seconds": 30
+        },
+        "client_0->fl_server": {
+          "frequency_hz": 0.06666666666666667,
+          "total_packets": 2,
+          "window_seconds": 30
+        },
+        "client_1->fl_server": {
+          "frequency_hz": 0.06666666666666667,
+          "total_packets": 2,
+          "window_seconds": 30
+        },
+        "client_2->fl_server": {
+          "frequency_hz": 0.06666666666666667,
+          "total_packets": 2,
+          "window_seconds": 30
+        }
+      },
+      "network_bandwidth": {
+        "avg_bandwidth_mbps": 0.13089226666666667,
+        "total_packets": 18,
+        "total_bytes": 490846,
+        "packet_loss_rate": 0.05555555555555555
+      },
+      "timestamp": 1759027105.08859
+    },
+    {
+      "round": 3,
+      "avg_loss": 0.032972745107348274,
+      "avg_accuracy": 0.9966666666666667,
+      "num_clients": 3,
+      "total_samples": 600,
+      "network_frequency": {
+        "fl_server->client_0": {
+          "frequency_hz": 0.2,
+          "total_packets": 6,
+          "window_seconds": 30
+        },
+        "fl_server->client_1": {
+          "frequency_hz": 0.2,
+          "total_packets": 6,
+          "window_seconds": 30
+        },
+        "fl_server->client_2": {
+          "frequency_hz": 0.2,
+          "total_packets": 6,
+          "window_seconds": 30
+        },
+        "client_0->fl_server": {
+          "frequency_hz": 0.1,
+          "total_packets": 3,
+          "window_seconds": 30
+        },
+        "client_1->fl_server": {
+          "frequency_hz": 0.1,
+          "total_packets": 3,
+          "window_seconds": 30
+        },
+        "client_2->fl_server": {
+          "frequency_hz": 0.1,
+          "total_packets": 3,
+          "window_seconds": 30
+        }
+      },
+      "network_bandwidth": {
+        "avg_bandwidth_mbps": 0.1960288,
+        "total_packets": 27,
+        "total_bytes": 735108,
+        "packet_loss_rate": 0.1111111111111111
+      },
+      "timestamp": 1759027110.9297655
+    },
+    {
+      "round": 4,
+      "avg_loss": 0.02418753422381165,
+      "avg_accuracy": 1.0,
+      "num_clients": 3,
+      "total_samples": 600,
+      "network_frequency": {
+        "fl_server->client_0": {
+          "frequency_hz": 0.26666666666666666,
+          "total_packets": 8,
+          "window_seconds": 30
+        },
+        "fl_server->client_1": {
+          "frequency_hz": 0.26666666666666666,
+          "total_packets": 8,
+          "window_seconds": 30
+        },
+        "fl_server->client_2": {
+          "frequency_hz": 0.26666666666666666,
+          "total_packets": 8,
+          "window_seconds": 30
+        },
+        "client_0->fl_server": {
+          "frequency_hz": 0.13333333333333333,
+          "total_packets": 4,
+          "window_seconds": 30
+        },
+        "client_1->fl_server": {
+          "frequency_hz": 0.13333333333333333,
+          "total_packets": 4,
+          "window_seconds": 30
+        },
+        "client_2->fl_server": {
+          "frequency_hz": 0.13333333333333333,
+          "total_packets": 4,
+          "window_seconds": 30
+        }
+      },
+      "network_bandwidth": {
+        "avg_bandwidth_mbps": 0.2610616,
+        "total_packets": 36,
+        "total_bytes": 978981,
+        "packet_loss_rate": 0.08333333333333333
+      },
+      "timestamp": 1759027116.6728683
+    },
+    {
+      "round": 5,
+      "avg_loss": 0.017635921528139007,
+      "avg_accuracy": 1.0,
+      "num_clients": 3,
+      "total_samples": 600,
+      "network_frequency": {
+        "fl_server->client_0": {
+          "frequency_hz": 0.3333333333333333,
+          "total_packets": 10,
+          "window_seconds": 30
+        },
+        "fl_server->client_1": {
+          "frequency_hz": 0.3333333333333333,
+          "total_packets": 10,
+          "window_seconds": 30
+        },
+        "fl_server->client_2": {
+          "frequency_hz": 0.3333333333333333,
+          "total_packets": 10,
+          "window_seconds": 30
+        },
+        "client_0->fl_server": {
+          "frequency_hz": 0.16666666666666666,
+          "total_packets": 5,
+          "window_seconds": 30
+        },
+        "client_1->fl_server": {
+          "frequency_hz": 0.16666666666666666,
+          "total_packets": 5,
+          "window_seconds": 30
+        },
+        "client_2->fl_server": {
+          "frequency_hz": 0.16666666666666666,
+          "total_packets": 5,
+          "window_seconds": 30
+        }
+      },
+      "network_bandwidth": {
+        "avg_bandwidth_mbps": 0.32604133333333335,
+        "total_packets": 45,
+        "total_bytes": 1222655,
+        "packet_loss_rate": 0.06666666666666667
+      },
+      "timestamp": 1759027122.3045938
+    },
+    {
+      "round": 6,
+      "avg_loss": 0.014523690910320417,
+      "avg_accuracy": 0.9983333333333334,
+      "num_clients": 3,
+      "total_samples": 600,
+      "network_frequency": {
+        "fl_server->client_0": {
+          "frequency_hz": 0.3333333333333333,
+          "total_packets": 10,
+          "window_seconds": 30
+        },
+        "fl_server->client_1": {
+          "frequency_hz": 0.3333333333333333,
+          "total_packets": 10,
+          "window_seconds": 30
+        },
+        "fl_server->client_2": {
+          "frequency_hz": 0.36666666666666664,
+          "total_packets": 11,
+          "window_seconds": 30
+        },
+        "client_0->fl_server": {
+          "frequency_hz": 0.16666666666666666,
+          "total_packets": 5,
+          "window_seconds": 30
+        },
+        "client_1->fl_server": {
+          "frequency_hz": 0.16666666666666666,
+          "total_packets": 5,
+          "window_seconds": 30
+        },
+        "client_2->fl_server": {
+          "frequency_hz": 0.2,
+          "total_packets": 6,
+          "window_seconds": 30
+        }
+      },
+      "network_bandwidth": {
+        "avg_bandwidth_mbps": 0.33991893333333334,
+        "total_packets": 47,
+        "total_bytes": 1274696,
+        "packet_loss_rate": 0.10638297872340426
+      },
+      "timestamp": 1759027128.0012167
+    }
+  ],
+  "network_stats": {
+    "frequency": {
+      "fl_server->client_0": {
+        "frequency_hz": 0.2,
+        "total_packets": 12,
+        "window_seconds": 60
+      },
+      "fl_server->client_1": {
+        "frequency_hz": 0.2,
+        "total_packets": 12,
+        "window_seconds": 60
+      },
+      "fl_server->client_2": {
+        "frequency_hz": 0.2,
+        "total_packets": 12,
+        "window_seconds": 60
+      },
+      "client_0->fl_server": {
+        "frequency_hz": 0.1,
+        "total_packets": 6,
+        "window_seconds": 60
+      },
+      "client_1->fl_server": {
+        "frequency_hz": 0.1,
+        "total_packets": 6,
+        "window_seconds": 60
+      },
+      "client_2->fl_server": {
+        "frequency_hz": 0.1,
+        "total_packets": 6,
+        "window_seconds": 60
+      }
+    },
+    "bandwidth": {
+      "avg_bandwidth_mbps": 0.19549533333333333,
+      "total_packets": 54,
+      "total_bytes": 1466215,
+      "packet_loss_rate": 0.09259259259259259
+    }
+  },
+  "traffic_log": [
+    {
+      "timestamp": 1759027095.3805795,
+      "source": "fl_server",
+      "destination": "client_0",
+      "packet_type": "global_model_broadcast",
+      "payload_size": 27317,
+      "transmission_time": 0.20841217041015625,
+      "latency": 71.35910343858488,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027095.6604688,
+      "source": "fl_server",
+      "destination": "client_1",
+      "packet_type": "global_model_broadcast",
+      "payload_size": 27317,
+      "transmission_time": 0.20841217041015625,
+      "latency": 51.661688011832794,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027095.9206612,
+      "source": "fl_server",
+      "destination": "client_2",
+      "packet_type": "global_model_broadcast",
+      "payload_size": 27317,
+      "transmission_time": 0.20841217041015625,
+      "latency": 72.0082631607022,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027096.2032993,
+      "source": "fl_server",
+      "destination": "client_0",
+      "packet_type": "global_model",
+      "payload_size": 27317,
+      "transmission_time": 0.20841217041015625,
+      "latency": 55.71772315655828,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027096.9146104,
+      "source": "client_0",
+      "destination": "fl_server",
+      "packet_type": "model_update",
+      "payload_size": 27536,
+      "transmission_time": 0.2100830078125,
+      "latency": 73.26828229328498,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027097.1997592,
+      "source": "fl_server",
+      "destination": "client_1",
+      "packet_type": "global_model",
+      "payload_size": 27261,
+      "transmission_time": 0.20798492431640625,
+      "latency": 73.23070779695342,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027097.9200351,
+      "source": "client_1",
+      "destination": "fl_server",
+      "packet_type": "model_update",
+      "payload_size": 27454,
+      "transmission_time": 0.2094573974609375,
+      "latency": 65.831047189259,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027098.196749,
+      "source": "fl_server",
+      "destination": "client_2",
+      "packet_type": "global_model",
+      "payload_size": 27179,
+      "transmission_time": 0.20735931396484375,
+      "latency": 77.77273005212112,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027098.9144418,
+      "source": "client_2",
+      "destination": "fl_server",
+      "packet_type": "model_update",
+      "payload_size": 27396,
+      "transmission_time": 0.209014892578125,
+      "latency": 67.48107880338196,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027101.1937687,
+      "source": "fl_server",
+      "destination": "client_0",
+      "packet_type": "global_model_broadcast",
+      "payload_size": 27124,
+      "transmission_time": 0.206939697265625,
+      "latency": 77.21729355812349,
+      "packet_lost": true,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027101.478038,
+      "source": "fl_server",
+      "destination": "client_1",
+      "packet_type": "global_model_broadcast",
+      "payload_size": 27124,
+      "transmission_time": 0.206939697265625,
+      "latency": 66.5934556818185,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027101.7517042,
+      "source": "fl_server",
+      "destination": "client_2",
+      "packet_type": "global_model_broadcast",
+      "payload_size": 27124,
+      "transmission_time": 0.206939697265625,
+      "latency": 72.44292986792959,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027102.0334785,
+      "source": "fl_server",
+      "destination": "client_0",
+      "packet_type": "global_model",
+      "payload_size": 27124,
+      "transmission_time": 0.206939697265625,
+      "latency": 76.38719637291925,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027102.7282038,
+      "source": "client_0",
+      "destination": "fl_server",
+      "packet_type": "model_update",
+      "payload_size": 27372,
+      "transmission_time": 0.208831787109375,
+      "latency": 75.67606701442024,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027103.0154574,
+      "source": "fl_server",
+      "destination": "client_1",
+      "packet_type": "global_model",
+      "payload_size": 27100,
+      "transmission_time": 0.206756591796875,
+      "latency": 77.68825715464216,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027103.7598927,
+      "source": "client_1",
+      "destination": "fl_server",
+      "packet_type": "model_update",
+      "payload_size": 27358,
+      "transmission_time": 0.2087249755859375,
+      "latency": 75.32968261125471,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027104.0466797,
+      "source": "fl_server",
+      "destination": "client_2",
+      "packet_type": "global_model",
+      "payload_size": 27085,
+      "transmission_time": 0.20664215087890625,
+      "latency": 71.77964516589219,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027104.8217947,
+      "source": "client_2",
+      "destination": "fl_server",
+      "packet_type": "model_update",
+      "payload_size": 27341,
+      "transmission_time": 0.20859527587890625,
+      "latency": 56.90191261373105,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027107.0911613,
+      "source": "fl_server",
+      "destination": "client_0",
+      "packet_type": "global_model_broadcast",
+      "payload_size": 27062,
+      "transmission_time": 0.2064666748046875,
+      "latency": 74.79292813370097,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027107.3727915,
+      "source": "fl_server",
+      "destination": "client_1",
+      "packet_type": "global_model_broadcast",
+      "payload_size": 27062,
+      "transmission_time": 0.2064666748046875,
+      "latency": 59.332886598158055,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027107.6387613,
+      "source": "fl_server",
+      "destination": "client_2",
+      "packet_type": "global_model_broadcast",
+      "payload_size": 27062,
+      "transmission_time": 0.2064666748046875,
+      "latency": 51.958286815989666,
+      "packet_lost": true,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027107.8994524,
+      "source": "fl_server",
+      "destination": "client_0",
+      "packet_type": "global_model",
+      "payload_size": 27062,
+      "transmission_time": 0.2064666748046875,
+      "latency": 77.78694804798317,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027108.7069888,
+      "source": "client_0",
+      "destination": "fl_server",
+      "packet_type": "model_update",
+      "payload_size": 27294,
+      "transmission_time": 0.2082366943359375,
+      "latency": 74.3662208918727,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027108.9918914,
+      "source": "fl_server",
+      "destination": "client_1",
+      "packet_type": "global_model",
+      "payload_size": 27021,
+      "transmission_time": 0.20615386962890625,
+      "latency": 73.96388320357622,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027109.7367377,
+      "source": "client_1",
+      "destination": "fl_server",
+      "packet_type": "model_update",
+      "payload_size": 27327,
+      "transmission_time": 0.20848846435546875,
+      "latency": 63.897885496098674,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027110.0104969,
+      "source": "fl_server",
+      "destination": "client_2",
+      "packet_type": "global_model",
+      "payload_size": 27054,
+      "transmission_time": 0.2064056396484375,
+      "latency": 79.00442124415265,
+      "packet_lost": true,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027110.659802,
+      "source": "client_2",
+      "destination": "fl_server",
+      "packet_type": "model_update",
+      "payload_size": 27318,
+      "transmission_time": 0.2084197998046875,
+      "latency": 59.61355830266675,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027112.9322956,
+      "source": "fl_server",
+      "destination": "client_0",
+      "packet_type": "global_model_broadcast",
+      "payload_size": 26999,
+      "transmission_time": 0.20598602294921875,
+      "latency": 57.1431989017432,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027113.1956134,
+      "source": "fl_server",
+      "destination": "client_1",
+      "packet_type": "global_model_broadcast",
+      "payload_size": 26999,
+      "transmission_time": 0.20598602294921875,
+      "latency": 54.381818840866494,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027113.4561012,
+      "source": "fl_server",
+      "destination": "client_2",
+      "packet_type": "global_model_broadcast",
+      "payload_size": 26999,
+      "transmission_time": 0.20598602294921875,
+      "latency": 72.00143155043537,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027113.7353334,
+      "source": "fl_server",
+      "destination": "client_0",
+      "packet_type": "global_model",
+      "payload_size": 26999,
+      "transmission_time": 0.20598602294921875,
+      "latency": 50.146692662886835,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027114.4122481,
+      "source": "client_0",
+      "destination": "fl_server",
+      "packet_type": "model_update",
+      "payload_size": 27288,
+      "transmission_time": 0.20819091796875,
+      "latency": 74.32724649147598,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027114.697535,
+      "source": "fl_server",
+      "destination": "client_1",
+      "packet_type": "global_model",
+      "payload_size": 27014,
+      "transmission_time": 0.2061004638671875,
+      "latency": 50.33206979165895,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027115.4665296,
+      "source": "client_1",
+      "destination": "fl_server",
+      "packet_type": "model_update",
+      "payload_size": 27292,
+      "transmission_time": 0.208221435546875,
+      "latency": 59.83683344558859,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027115.7358053,
+      "source": "fl_server",
+      "destination": "client_2",
+      "packet_type": "global_model",
+      "payload_size": 27018,
+      "transmission_time": 0.2061309814453125,
+      "latency": 75.60149402872779,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027116.3853242,
+      "source": "client_2",
+      "destination": "fl_server",
+      "packet_type": "model_update",
+      "payload_size": 27265,
+      "transmission_time": 0.20801544189453125,
+      "latency": 78.09759974613668,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027118.6765456,
+      "source": "fl_server",
+      "destination": "client_0",
+      "packet_type": "global_model_broadcast",
+      "payload_size": 26982,
+      "transmission_time": 0.2058563232421875,
+      "latency": 69.46441777787629,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027118.9520783,
+      "source": "fl_server",
+      "destination": "client_1",
+      "packet_type": "global_model_broadcast",
+      "payload_size": 26982,
+      "transmission_time": 0.2058563232421875,
+      "latency": 70.02141547867086,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027119.2281199,
+      "source": "fl_server",
+      "destination": "client_2",
+      "packet_type": "global_model_broadcast",
+      "payload_size": 26982,
+      "transmission_time": 0.2058563232421875,
+      "latency": 65.1350735848698,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027119.5013278,
+      "source": "fl_server",
+      "destination": "client_0",
+      "packet_type": "global_model",
+      "payload_size": 26982,
+      "transmission_time": 0.2058563232421875,
+      "latency": 65.34599558187234,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027120.1997044,
+      "source": "client_0",
+      "destination": "fl_server",
+      "packet_type": "model_update",
+      "payload_size": 27252,
+      "transmission_time": 0.207916259765625,
+      "latency": 50.03919060434351,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027120.459825,
+      "source": "fl_server",
+      "destination": "client_1",
+      "packet_type": "global_model",
+      "payload_size": 26978,
+      "transmission_time": 0.2058258056640625,
+      "latency": 50.89602744361262,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027121.114471,
+      "source": "client_1",
+      "destination": "fl_server",
+      "packet_type": "model_update",
+      "payload_size": 27254,
+      "transmission_time": 0.2079315185546875,
+      "latency": 62.29801588588511,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027121.38726,
+      "source": "fl_server",
+      "destination": "client_2",
+      "packet_type": "global_model",
+      "payload_size": 26980,
+      "transmission_time": 0.205841064453125,
+      "latency": 62.41531161732685,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027122.0307229,
+      "source": "client_2",
+      "destination": "fl_server",
+      "packet_type": "model_update",
+      "payload_size": 27282,
+      "transmission_time": 0.2081451416015625,
+      "latency": 64.39253977088072,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027124.3066278,
+      "source": "fl_server",
+      "destination": "client_0",
+      "packet_type": "global_model_broadcast",
+      "payload_size": 26966,
+      "transmission_time": 0.2057342529296875,
+      "latency": 58.96090026453035,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027124.571427,
+      "source": "fl_server",
+      "destination": "client_1",
+      "packet_type": "global_model_broadcast",
+      "payload_size": 26966,
+      "transmission_time": 0.2057342529296875,
+      "latency": 60.98629114643619,
+      "packet_lost": true,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027124.8382466,
+      "source": "fl_server",
+      "destination": "client_2",
+      "packet_type": "global_model_broadcast",
+      "payload_size": 26966,
+      "transmission_time": 0.2057342529296875,
+      "latency": 72.04920932997132,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027125.1174383,
+      "source": "fl_server",
+      "destination": "client_0",
+      "packet_type": "global_model",
+      "payload_size": 26966,
+      "transmission_time": 0.2057342529296875,
+      "latency": 78.78626165824845,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027125.8820815,
+      "source": "client_0",
+      "destination": "fl_server",
+      "packet_type": "model_update",
+      "payload_size": 27239,
+      "transmission_time": 0.20781707763671875,
+      "latency": 51.24042669413531,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027126.1438925,
+      "source": "fl_server",
+      "destination": "client_1",
+      "packet_type": "global_model",
+      "payload_size": 26966,
+      "transmission_time": 0.2057342529296875,
+      "latency": 60.74720425573202,
+      "packet_lost": true,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027126.8054192,
+      "source": "client_1",
+      "destination": "fl_server",
+      "packet_type": "model_update",
+      "payload_size": 27266,
+      "transmission_time": 0.2080230712890625,
+      "latency": 69.30802039888594,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027127.0842566,
+      "source": "fl_server",
+      "destination": "client_2",
+      "packet_type": "global_model",
+      "payload_size": 26966,
+      "transmission_time": 0.2057342529296875,
+      "latency": 51.6643388385419,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    },
+    {
+      "timestamp": 1759027127.711576,
+      "source": "client_2",
+      "destination": "fl_server",
+      "packet_type": "model_update",
+      "payload_size": 27259,
+      "transmission_time": 0.20796966552734375,
+      "latency": 78.69987163225613,
+      "packet_lost": false,
+      "bandwidth_mbps": 1.048576
+    }
+  ]
+}

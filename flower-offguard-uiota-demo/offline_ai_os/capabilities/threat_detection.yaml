@@ -1,0 +1,16 @@
+category: detection
+dependencies:
+- network_access
+- log_analysis
+description: Detect security threats and anomalies
+name: threat_detection
+resource_requirements:
+  cpu_cores: 1.0
+  disk_mb: 500
+  gpu_memory_mb: 0
+  memory_mb: 1024
+skills:
+- signature_matching
+- anomaly_detection
+- behavioral_analysis
+- network_intrusion_detection

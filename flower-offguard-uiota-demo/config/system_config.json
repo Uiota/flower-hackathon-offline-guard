@@ -1,0 +1,20 @@
+{
+  "system_info": {
+    "platform": "Linux",
+    "arch": "x86_64",
+    "python": "3.11",
+    "node": "uiotafederation"
+  },
+  "setup_timestamp": 1759027528.8073046,
+  "project_root": "/home/uiota/projects/offline-guard/flower-offguard-uiota-demo",
+  "venv_path": "/home/uiota/projects/offline-guard/flower-offguard-uiota-demo/.venv",
+  "directories_created": true,
+  "dependencies_installed": true,
+  "security_mode": "offline",
+  "fl_configuration": {
+    "server_port": 8080,
+    "dashboard_port": 8081,
+    "default_rounds": 10,
+    "default_clients": 6
+  }
+}

@@ -1,0 +1,121 @@
+# Complete Dependencies for Federated Learning with Off-Guard Security
+# This file contains all dependencies for production deployment
+
+# ==============================================================================
+# CORE FEDERATED LEARNING
+# ==============================================================================
+flwr==1.8.0                    # Flower federated learning framework
+torch==2.1.0                   # PyTorch for neural networks
+torchvision==0.16.0            # Computer vision datasets and transforms
+numpy==1.24.3                  # Numerical computing
+scipy==1.11.4                  # Scientific computing
+
+# ==============================================================================
+# DIFFERENTIAL PRIVACY
+# ==============================================================================
+opacus==1.4.0                  # Differential privacy for PyTorch
+
+# ==============================================================================
+# CRYPTOGRAPHY AND SECURITY
+# ==============================================================================
+cryptography==41.0.7           # Cryptographic operations
+pycryptodome==3.19.0           # Additional crypto algorithms
+hashlib-compat==1.0.1         # Hash compatibility
+secrets                        # Secure random generation (built-in)
+
+# ==============================================================================
+# DATA VALIDATION AND SERIALIZATION
+# ==============================================================================
+pydantic==2.4.2               # Data validation and serialization
+marshmallow==3.20.1           # Object serialization/deserialization
+jsonschema==4.19.1            # JSON schema validation
+
+# ==============================================================================
+# WEB FRAMEWORK AND API
+# ==============================================================================
+fastapi==0.104.1              # Modern web framework
+uvicorn==0.24.0               # ASGI server
+websockets==12.0              # WebSocket support
+aiohttp==3.9.0                # Async HTTP client/server
+requests==2.31.0              # HTTP library
+
+# ==============================================================================
+# DATABASE AND STORAGE
+# ==============================================================================
+sqlite3                       # Built-in database (built-in)
+sqlalchemy==2.0.23            # SQL toolkit
+redis==5.0.1                  # In-memory data store
+h5py==3.10.0                  # HDF5 file format
+
+# ==============================================================================
+# MONITORING AND METRICS
+# ==============================================================================
+prometheus-client==0.19.0     # Prometheus metrics
+psutil==5.9.6                 # System monitoring
+memory-profiler==0.61.0       # Memory usage profiling
+
+# ==============================================================================
+# LOGGING AND CONFIGURATION
+# ==============================================================================
+python-dotenv==1.0.0          # Environment variables
+pyyaml==6.0.1                 # YAML configuration
+click==8.1.7                  # Command line interface
+rich==13.7.0                  # Rich text and beautiful formatting
+loguru==0.7.2                 # Advanced logging
+
+# ==============================================================================
+# TESTING AND DEVELOPMENT
+# ==============================================================================
+pytest==7.4.3                 # Testing framework
+pytest-asyncio==0.21.1        # Async testing
+pytest-cov==4.1.0             # Coverage testing
+black==23.11.0                # Code formatting
+flake8==6.1.0                 # Code linting
+mypy==1.7.1                   # Type checking
+
+# ==============================================================================
+# SCIENTIFIC COMPUTING
+# ==============================================================================
+matplotlib==3.8.2             # Plotting library
+seaborn==0.13.0               # Statistical visualization
+pandas==2.1.4                 # Data manipulation
+scikit-learn==1.3.2           # Machine learning library
+
+# ==============================================================================
+# NETWORK AND COMMUNICATION
+# ==============================================================================
+paramiko==3.4.0               # SSH client
+paho-mqtt==1.6.1              # MQTT protocol
+pyzmq==25.1.2                 # ZeroMQ messaging
+
+# ==============================================================================
+# CONTAINERIZATION AND DEPLOYMENT
+# ==============================================================================
+docker==6.1.3                 # Docker SDK
+kubernetes==28.1.0            # Kubernetes client
+
+# ==============================================================================
+# UTILITIES AND HELPERS
+# ==============================================================================
+tqdm==4.66.1                  # Progress bars
+python-dateutil==2.8.2        # Date utilities
+packaging==23.2               # Package version utilities
+setuptools==69.0.2            # Package building
+wheel==0.42.0                 # Wheel format support
+
+# ==============================================================================
+# OPTIONAL: HARDWARE ACCELERATION
+# ==============================================================================
+# Uncomment if using CUDA (NVIDIA GPUs)
+# torch-audio==2.1.0+cu118
+# torch-text==0.16.0+cu118
+
+# Uncomment if using Intel optimizations
+# intel-extension-for-pytorch==2.1.0
+
+# ==============================================================================
+# DEVELOPMENT DEPENDENCIES (install with --dev flag)
+# ==============================================================================
+# jupyter==1.0.0              # Jupyter notebooks
+# ipython==8.18.1             # Interactive Python
+# notebook==7.0.6             # Jupyter notebook server

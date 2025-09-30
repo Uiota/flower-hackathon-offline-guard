@@ -1,0 +1,16 @@
+category: learning
+dependencies:
+- database
+- ml_framework
+description: Gather and analyze threat intelligence
+name: threat_intelligence
+resource_requirements:
+  cpu_cores: 1.5
+  disk_mb: 10000
+  gpu_memory_mb: 2048
+  memory_mb: 2048
+skills:
+- ioc_collection
+- threat_correlation
+- pattern_learning
+- predictive_analysis

@@ -1,0 +1,20 @@
+{
+  "name": "incident_responder",
+  "agent_type": "IncidentResponderAgent",
+  "description": "Responds to security incidents",
+  "capabilities": [
+    "incident_response",
+    "secure_communication"
+  ],
+  "config": {
+    "auto_mitigation": false,
+    "response_time_seconds": 10,
+    "escalation_threshold": "critical"
+  },
+  "resource_requirements": {
+    "cpu_cores": 0.5,
+    "memory_mb": 512,
+    "gpu_memory_mb": 0,
+    "disk_mb": 1000
+  }
+}

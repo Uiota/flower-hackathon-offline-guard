@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UIOTAS Framework - Theme Switcher Demo</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&family=Merriweather:wght@400;700;900&display=swap" rel="stylesheet">
+
+    <!-- Theme CSS files -->
+    <link rel="stylesheet" href="neural_fortress_theme.css" id="neural-fortress-css" disabled>
+    <link rel="stylesheet" href="garden_vault_theme.css" id="garden-vault-css">
+
+    <style>
+        /* Theme Switcher Overlay */
+        .theme-switcher-overlay {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 400px;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 10000;
+            padding: 2rem;
+            box-shadow: -10px 0 40px rgba(0, 0, 0, 0.5);
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .theme-switcher-overlay.open {
+            transform: translateX(0);
+        }
+
+        .theme-switcher-toggle {
+            position: fixed;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            background: linear-gradient(135deg, #8B5CF6, #2D5016);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            cursor: pointer;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
+            z-index: 9999;
+            transition: all 0.3s ease;
+        }
+
+        .theme-switcher-toggle:hover {
+            transform: translateY(-50%) scale(1.1);
+            box-shadow: 0 6px 30px rgba(139, 92, 246, 0.6);
+        }
+
+        .switcher-header {
+            color: white;
+            margin-bottom: 2rem;
+        }
+
+        .switcher-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .switcher-subtitle {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .theme-option {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .theme-option:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateX(-5px);
+        }
+
+        .theme-option.active {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(45, 80, 22, 0.2));
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .theme-option-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .theme-option-icon {
+            font-size: 2rem;
+        }
+
+        .theme-option-info h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin: 0 0 0.25rem 0;
+            color: white;
+        }
+
+        .theme-option-info p {
+            font-size: 0.8125rem;
+            margin: 0;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .theme-option-desc {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.875rem;
+            line-height: 1.6;
+            margin-bottom: 0.75rem;
+        }
+
+        .theme-option-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .theme-tag {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 999px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .theme-preview {
+            width: 100%;
+            height: 150px;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            margin-top: 1rem;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .theme-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .apply-theme-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: linear-gradient(135deg, #8B5CF6, #2D5016);
+            border: none;
+            border-radius: 0.5rem;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .apply-theme-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
+        }
+
+        .close-switcher {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.25rem;
+            transition: all 0.3s ease;
+        }
+
+        .close-switcher:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .current-theme-indicator {
+            background: rgba(139, 92, 246, 0.2);
+            border: 2px solid #8B5CF6;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            color: white;
+            font-size: 0.875rem;
+            margin-top: 1rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body class="theme-garden-vault">
+    <!-- Theme Switcher Toggle Button -->
+    <button class="theme-switcher-toggle" onclick="toggleSwitcher()">
+        🎨
+    </button>
+
+    <!-- Theme Switcher Overlay -->
+    <div class="theme-switcher-overlay" id="themeSwitcher">
+        <button class="close-switcher" onclick="toggleSwitcher()">✕</button>
+
+        <div class="switcher-header">
+            <h2 class="switcher-title">Choose Your Theme</h2>
+            <p class="switcher-subtitle">Select a visual style that suits your needs</p>
+        </div>
+
+        <!-- Neural Fortress Theme -->
+        <div class="theme-option" id="theme-neural-fortress" onclick="switchTheme('neural-fortress')">
+            <div class="theme-option-header">
+                <div class="theme-option-icon">🧠</div>
+                <div class="theme-option-info">
+                    <h3>Neural Fortress</h3>
+                    <p>Professional • Futuristic</p>
+                </div>
+            </div>
+            <div class="theme-option-desc">
+                Living organism + architectural strength. Dark, powerful interface with neural network visualizations and pulse indicators. Perfect for technical professionals and cybersecurity teams.
+            </div>
+            <div class="theme-option-tags">
+                <span class="theme-tag">Dark Mode</span>
+                <span class="theme-tag">Animated</span>
+                <span class="theme-tag">Technical</span>
+                <span class="theme-tag">Enterprise</span>
+            </div>
+            <button class="apply-theme-btn">Apply Neural Fortress</button>
+        </div>
+
+        <!-- Garden Vault Theme -->
+        <div class="theme-option active" id="theme-garden-vault" onclick="switchTheme('garden-vault')">
+            <div class="theme-option-header">
+                <div class="theme-option-icon">🌳</div>
+                <div class="theme-option-info">
+                    <h3>Garden Vault</h3>
+                    <p>Peaceful • Nature-Inspired</p>
+                </div>
+            </div>
+            <div class="theme-option-desc">
+                Protected garden + living ecosystem. Warm, peaceful interface with garden metaphors and natural colors. Perfect for families, estate planners, and non-technical users.
+            </div>
+            <div class="theme-option-tags">
+                <span class="theme-tag">Light Mode</span>
+                <span class="theme-tag">Gentle</span>
+                <span class="theme-tag">Family-Friendly</span>
+                <span class="theme-tag">Intuitive</span>
+            </div>
+            <button class="apply-theme-btn">Apply Garden Vault</button>
+        </div>
+
+        <!-- Corporate Professional (Coming Soon) -->
+        <div class="theme-option" style="opacity: 0.5; cursor: not-allowed;">
+            <div class="theme-option-header">
+                <div class="theme-option-icon">💼</div>
+                <div class="theme-option-info">
+                    <h3>Corporate Professional</h3>
+                    <p>Enterprise • Authoritative</p>
+                </div>
+            </div>
+            <div class="theme-option-desc">
+                Clean, professional interface for enterprises, legal firms, and healthcare institutions. Coming soon!
+            </div>
+            <div class="theme-option-tags">
+                <span class="theme-tag">Professional</span>
+                <span class="theme-tag">Enterprise</span>
+            </div>
+            <div style="margin-top: 0.75rem; padding: 0.75rem; background: rgba(255, 255, 255, 0.05); border-radius: 0.5rem; color: rgba(255, 255, 255, 0.6); text-align: center; font-size: 0.875rem;">
+                Coming in v1.1
+            </div>
+        </div>
+
+        <!-- Minimalist Zen (Coming Soon) -->
+        <div class="theme-option" style="opacity: 0.5; cursor: not-allowed;">
+            <div class="theme-option-header">
+                <div class="theme-option-icon">🧘</div>
+                <div class="theme-option-info">
+                    <h3>Minimalist Zen</h3>
+                    <p>Simple • Privacy-Focused</p>
+                </div>
+            </div>
+            <div class="theme-option-desc">
+                Distraction-free, clean interface for privacy advocates and power users. Coming soon!
+            </div>
+            <div class="theme-option-tags">
+                <span class="theme-tag">Minimal</span>
+                <span class="theme-tag">Fast</span>
+            </div>
+            <div style="margin-top: 0.75rem; padding: 0.75rem; background: rgba(255, 255, 255, 0.05); border-radius: 0.5rem; color: rgba(255, 255, 255, 0.6); text-align: center; font-size: 0.875rem;">
+                Coming in v1.1
+            </div>
+        </div>
+
+        <div class="current-theme-indicator">
+            Current Theme: <strong id="currentThemeName">Garden Vault</strong>
+        </div>
+
+        <div style="margin-top: 2rem; padding: 1rem; background: rgba(255, 255, 255, 0.05); border-radius: 0.75rem; color: rgba(255, 255, 255, 0.7); font-size: 0.875rem;">
+            <strong style="color: white;">🎨 Want to create your own theme?</strong><br>
+            Check out our <a href="#" style="color: #8B5CF6;">Theme Builder Guide</a> and contribute to the UIOTAS marketplace!
+        </div>
+    </div>
+
+    <!-- Dynamic Content Container -->
+    <div id="mainContent">
+        <!-- Garden Vault content will be loaded here by default -->
+        <iframe id="themeFrame" src="uiotas_garden_vault_1.html" style="width: 100%; height: 100vh; border: none;"></iframe>
+    </div>
+
+    <script>
+        let currentTheme = 'garden-vault';
+
+        function toggleSwitcher() {
+            const switcher = document.getElementById('themeSwitcher');
+            switcher.classList.toggle('open');
+        }
+
+        function switchTheme(themeName) {
+            // Remove active class from all options
+            document.querySelectorAll('.theme-option').forEach(option => {
+                option.classList.remove('active');
+            });
+
+            // Add active class to selected theme
+            document.getElementById(`theme-${themeName}`).classList.add('active');
+
+            // Update current theme
+            currentTheme = themeName;
+
+            // Update theme name display
+            const themeDisplayNames = {
+                'neural-fortress': 'Neural Fortress',
+                'garden-vault': 'Garden Vault'
+            };
+            document.getElementById('currentThemeName').textContent = themeDisplayNames[themeName];
+
+            // Switch CSS files
+            const neuralCSS = document.getElementById('neural-fortress-css');
+            const gardenCSS = document.getElementById('garden-vault-css');
+
+            if (themeName === 'neural-fortress') {
+                neuralCSS.disabled = false;
+                gardenCSS.disabled = true;
+                document.body.className = 'theme-neural-fortress';
+                document.getElementById('themeFrame').src = 'uiotas_neural_fortress_1.html';
+            } else if (themeName === 'garden-vault') {
+                neuralCSS.disabled = true;
+                gardenCSS.disabled = false;
+                document.body.className = 'theme-garden-vault';
+                document.getElementById('themeFrame').src = 'uiotas_garden_vault_1.html';
+            }
+
+            // Save preference to localStorage
+            localStorage.setItem('uiotas-theme', themeName);
+
+            // Show feedback
+            showThemeChangeNotification(themeDisplayNames[themeName]);
+
+            // Close switcher
+            setTimeout(() => toggleSwitcher(), 500);
+        }
+
+        function showThemeChangeNotification(themeName) {
+            // Create notification
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(0, 0, 0, 0.9);
+                color: white;
+                padding: 1rem 2rem;
+                border-radius: 0.75rem;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+                z-index: 10001;
+                animation: slideDown 0.3s ease;
+            `;
+            notification.textContent = `✓ Switched to ${themeName}`;
+            document.body.appendChild(notification);
+
+            // Remove after 2 seconds
+            setTimeout(() => {
+                notification.style.animation = 'slideUp 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 2000);
+        }
+
+        // Load saved theme preference on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('uiotas-theme');
+            if (savedTheme) {
+                switchTheme(savedTheme);
+            }
+        });
+
+        // Add animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideDown {
+                from {
+                    transform: translateX(-50%) translateY(-100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(-50%) translateY(0);
+                    opacity: 1;
+                }
+            }
+
+            @keyframes slideUp {
+                from {
+                    transform: translateX(-50%) translateY(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(-50%) translateY(-100%);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

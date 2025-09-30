@@ -1,0 +1,20 @@
+{
+  "name": "threat_detector",
+  "agent_type": "ThreatDetectorAgent",
+  "description": "Detects security threats and anomalies",
+  "capabilities": [
+    "threat_detection",
+    "secure_communication"
+  ],
+  "config": {
+    "detection_threshold": 0.85,
+    "scan_interval_seconds": 60,
+    "alert_priority": "high"
+  },
+  "resource_requirements": {
+    "cpu_cores": 1.0,
+    "memory_mb": 1024,
+    "gpu_memory_mb": 0,
+    "disk_mb": 500
+  }
+}

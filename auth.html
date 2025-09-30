@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛡️ Off-Guard Authentication</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0f0f0f;
+            --bg-secondary: #1a1a1a;
+            --bg-tertiary: #262626;
+            --bg-card: #1e1e1e;
+            --border-primary: #333;
+            --border-secondary: #444;
+            --text-primary: #ffffff;
+            --text-secondary: #b3b3b3;
+            --accent-primary: #10a37f;
+            --accent-secondary: #1a73e8;
+            --ai-purple: #8b5cf6;
+            --ai-green: #22c55e;
+            --accent-danger: #ef4444;
+            --gradient-ai: linear-gradient(135deg, #8b5cf6 0%, #10a37f 100%);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .auth-container {
+            background: var(--bg-card);
+            border: 2px solid var(--ai-purple);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 20px 40px rgba(139, 92, 246, 0.3);
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .auth-logo {
+            width: 80px;
+            height: 80px;
+            background: var(--gradient-ai);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            margin: 0 auto 20px;
+        }
+
+        .auth-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: var(--gradient-ai);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .auth-subtitle {
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 30px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 4px;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .auth-tab.active {
+            background: var(--ai-purple);
+            color: white;
+        }
+
+        .auth-tab:not(.active) {
+            color: var(--text-secondary);
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-secondary);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--ai-purple);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+        }
+
+        .form-button {
+            width: 100%;
+            padding: 14px;
+            background: var(--gradient-ai);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+        }
+
+        .form-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);
+        }
+
+        .form-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .auth-links {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .auth-link {
+            color: var(--ai-purple);
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .auth-link:hover {
+            text-decoration: underline;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .alert-error {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .alert-success {
+            background: rgba(34, 197, 94, 0.2);
+            color: #86efac;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .features-list {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .features-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--ai-purple);
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .feature-icon {
+            margin-right: 10px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-header">
+            <div class="auth-logo">🛡️</div>
+            <h1 class="auth-title">Off-Guard Portal</h1>
+            <p class="auth-subtitle">Secure Federated Learning Platform</p>
+        </div>
+
+        <div class="auth-tabs">
+            <div class="auth-tab active" onclick="switchTab('login')">Login</div>
+            <div class="auth-tab" onclick="switchTab('signup')">Sign Up</div>
+        </div>
+
+        <div id="alert-container"></div>
+
+        <!-- Login Form -->
+        <form class="auth-form active" id="login-form" onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label class="form-label" for="login-username">Username</label>
+                <input type="text" id="login-username" name="username" class="form-input" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="login-password">Password</label>
+                <input type="password" id="login-password" name="password" class="form-input" required>
+            </div>
+            <button type="submit" class="form-button" id="login-btn">
+                Login to Dashboard
+            </button>
+        </form>
+
+        <!-- Signup Form -->
+        <form class="auth-form" id="signup-form" onsubmit="handleSignup(event)">
+            <div class="form-group">
+                <label class="form-label" for="signup-username">Username</label>
+                <input type="text" id="signup-username" name="username" class="form-input" required minlength="3">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="signup-email">Email</label>
+                <input type="email" id="signup-email" name="email" class="form-input" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="signup-password">Password</label>
+                <input type="password" id="signup-password" name="password" class="form-input" required minlength="6">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="signup-confirm">Confirm Password</label>
+                <input type="password" id="signup-confirm" name="confirm" class="form-input" required>
+            </div>
+            <button type="submit" class="form-button" id="signup-btn">
+                Create Account
+            </button>
+        </form>
+
+        <div class="auth-links">
+            <a href="#" class="auth-link" onclick="demoLogin()">Try Demo Account</a>
+            <span style="margin: 0 10px; color: var(--text-tertiary);">•</span>
+            <a href="#" class="auth-link" onclick="quickStart()">Quick Start Guide</a>
+            <span style="margin: 0 10px; color: var(--text-tertiary);">•</span>
+            <a href="#" class="auth-link" onclick="showOfflineDemo()">Offline Demo</a>
+        </div>
+
+        <!-- Quick Start Panel -->
+        <div id="quick-start-panel" style="display: none; margin-top: 20px; padding: 20px; background: var(--bg-secondary); border-radius: 12px; border-left: 4px solid var(--ai-purple);">
+            <h3 style="color: var(--ai-purple); margin-bottom: 15px;">🚀 Quick Start Options</h3>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <button onclick="instantDemo()" style="background: var(--ai-green); color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer;">
+                    ⚡ Instant Demo (No Signup)
+                </button>
+                <button onclick="demoLogin()" style="background: var(--ai-purple); color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer;">
+                    🎯 Full Demo Account
+                </button>
+                <button onclick="showOfflineDemo()" style="background: var(--accent-tertiary); color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer;">
+                    🛡️ Offline Mode Demo
+                </button>
+            </div>
+            <p style="font-size: 12px; color: var(--text-tertiary); margin-top: 10px;">
+                Choose your experience level: Instant for quick preview, Full for complete features, or Offline for maximum security.
+            </p>
+        </div>
+
+        <div class="features-list">
+            <h3 class="features-title">🔐 Platform Features</h3>
+            <div class="feature-item">
+                <span class="feature-icon">🌐</span>
+                <span>Real-time federated learning</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">🛡️</span>
+                <span>End-to-end encryption</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">🤖</span>
+                <span>AI service integration</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">📊</span>
+                <span>Advanced analytics</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">🔑</span>
+                <span>MCP server protocols</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8001/api';
+
+        function switchTab(tab) {
+            // Update tab styles
+            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`[onclick="switchTab('${tab}')"]`).classList.add('active');
+
+            // Update forms
+            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+            document.getElementById(`${tab}-form`).classList.add('active');
+
+            // Clear alerts
+            clearAlert();
+        }
+
+        function showAlert(message, type = 'error') {
+            const alertContainer = document.getElementById('alert-container');
+            alertContainer.innerHTML = `
+                <div class="alert alert-${type}">
+                    ${message}
+                </div>
+            `;
+        }
+
+        function clearAlert() {
+            document.getElementById('alert-container').innerHTML = '';
+        }
+
+        function setLoading(buttonId, loading) {
+            const button = document.getElementById(buttonId);
+            if (loading) {
+                button.disabled = true;
+                button.innerHTML = '<span class="loading"></span>Processing...';
+            } else {
+                button.disabled = false;
+                const text = buttonId === 'login-btn' ? 'Login to Dashboard' : 'Create Account';
+                button.innerHTML = text;
+            }
+        }
+
+        async function handleLogin(event) {
+            event.preventDefault();
+            clearAlert();
+            setLoading('login-btn', true);
+
+            const formData = new FormData(event.target);
+            const credentials = {
+                username: formData.get('username'),
+                password: formData.get('password')
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(credentials)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Store token
+                    localStorage.setItem('auth_token', data.token);
+                    localStorage.setItem('user_data', JSON.stringify(data.user));
+
+                    showAlert('Login successful! Redirecting...', 'success');
+
+                    // Redirect to dashboard
+                    setTimeout(() => {
+                        window.location.href = '/chatgpt_welcome_section.html';
+                    }, 1500);
+                } else {
+                    showAlert(data.error || 'Login failed');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showAlert('Network error. Please try again.');
+            } finally {
+                setLoading('login-btn', false);
+            }
+        }
+
+        async function handleSignup(event) {
+            event.preventDefault();
+            clearAlert();
+            setLoading('signup-btn', true);
+
+            const formData = new FormData(event.target);
+            const password = formData.get('password');
+            const confirm = formData.get('confirm');
+
+            if (password !== confirm) {
+                showAlert('Passwords do not match');
+                setLoading('signup-btn', false);
+                return;
+            }
+
+            const userData = {
+                username: formData.get('username'),
+                email: formData.get('email'),
+                password: password
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/signup`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(userData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Store token
+                    localStorage.setItem('auth_token', data.token);
+                    localStorage.setItem('user_data', JSON.stringify(data.user));
+
+                    showAlert('Account created successfully! Redirecting...', 'success');
+
+                    // Redirect to dashboard
+                    setTimeout(() => {
+                        window.location.href = '/chatgpt_welcome_section.html';
+                    }, 1500);
+                } else {
+                    showAlert(data.error || 'Signup failed');
+                }
+            } catch (error) {
+                console.error('Signup error:', error);
+                showAlert('Network error. Please try again.');
+            } finally {
+                setLoading('signup-btn', false);
+            }
+        }
+
+        async function demoLogin() {
+            clearAlert();
+            showAlert('🎯 Preparing full demo experience...', 'success');
+
+            // Auto-fill demo credentials
+            document.getElementById('login-username').value = 'demo';
+            document.getElementById('login-password').value = 'demo123';
+
+            // Switch to login tab
+            switchTab('login');
+
+            // Show loading animation
+            const demoSteps = [
+                'Connecting to secure backend...',
+                'Authenticating demo account...',
+                'Loading federated learning environment...',
+                'Preparing AI integration services...',
+                'Demo ready! Redirecting...'
+            ];
+
+            for (let i = 0; i < demoSteps.length; i++) {
+                setTimeout(() => {
+                    showAlert(demoSteps[i], 'success');
+                    if (i === demoSteps.length - 1) {
+                        setTimeout(() => {
+                            document.getElementById('login-form').dispatchEvent(new Event('submit'));
+                        }, 500);
+                    }
+                }, i * 800);
+            }
+        }
+
+        async function instantDemo() {
+            showAlert('⚡ Launching instant demo...', 'success');
+
+            // Create temporary session
+            localStorage.setItem('instant_demo', 'true');
+            localStorage.setItem('auth_token', 'instant-demo-token');
+            localStorage.setItem('user_data', JSON.stringify({
+                id: 999,
+                username: 'instant_user',
+                email: 'instant@demo.local'
+            }));
+
+            setTimeout(() => {
+                showAlert('Instant demo ready! Opening dashboard...', 'success');
+                setTimeout(() => {
+                    window.location.href = '/chatgpt_welcome_section.html';
+                }, 1000);
+            }, 1500);
+        }
+
+        function quickStart() {
+            const panel = document.getElementById('quick-start-panel');
+            if (panel.style.display === 'none') {
+                panel.style.display = 'block';
+                panel.style.animation = 'slideDown 0.3s ease-out';
+            } else {
+                panel.style.display = 'none';
+            }
+        }
+
+        function showOfflineDemo() {
+            showAlert('🛡️ Preparing secure offline environment...', 'success');
+
+            setTimeout(() => {
+                showAlert('Offline mode initializing...', 'success');
+                setTimeout(() => {
+                    window.location.href = '/offline_mode.html';
+                }, 1000);
+            }, 1500);
+        }
+
+        // Enhanced form validation with real-time feedback
+        document.addEventListener('DOMContentLoaded', function() {
+            const usernameInput = document.getElementById('signup-username');
+            const emailInput = document.getElementById('signup-email');
+            const passwordInput = document.getElementById('signup-password');
+            const confirmInput = document.getElementById('signup-confirm');
+
+            function createValidationIndicator(input) {
+                const indicator = document.createElement('div');
+                indicator.className = 'validation-indicator';
+                indicator.style.cssText = `
+                    position: absolute;
+                    right: 10px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    font-size: 16px;
+                `;
+                input.parentNode.style.position = 'relative';
+                input.parentNode.appendChild(indicator);
+                return indicator;
+            }
+
+            if (usernameInput) {
+                const indicator = createValidationIndicator(usernameInput);
+                usernameInput.addEventListener('input', function() {
+                    if (this.value.length >= 3) {
+                        indicator.textContent = '✅';
+                        indicator.style.color = 'var(--ai-green)';
+                    } else if (this.value.length > 0) {
+                        indicator.textContent = '⚠️';
+                        indicator.style.color = 'var(--accent-tertiary)';
+                    } else {
+                        indicator.textContent = '';
+                    }
+                });
+            }
+
+            if (emailInput) {
+                const indicator = createValidationIndicator(emailInput);
+                emailInput.addEventListener('input', function() {
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (emailRegex.test(this.value)) {
+                        indicator.textContent = '✅';
+                        indicator.style.color = 'var(--ai-green)';
+                    } else if (this.value.length > 0) {
+                        indicator.textContent = '❌';
+                        indicator.style.color = 'var(--accent-danger)';
+                    } else {
+                        indicator.textContent = '';
+                    }
+                });
+            }
+
+            if (passwordInput) {
+                const indicator = createValidationIndicator(passwordInput);
+                passwordInput.addEventListener('input', function() {
+                    if (this.value.length >= 6) {
+                        indicator.textContent = '✅';
+                        indicator.style.color = 'var(--ai-green)';
+                    } else if (this.value.length > 0) {
+                        indicator.textContent = '⚠️';
+                        indicator.style.color = 'var(--accent-tertiary)';
+                    } else {
+                        indicator.textContent = '';
+                    }
+                });
+            }
+
+            if (confirmInput) {
+                const indicator = createValidationIndicator(confirmInput);
+                confirmInput.addEventListener('input', function() {
+                    if (this.value === passwordInput.value && this.value.length > 0) {
+                        indicator.textContent = '✅';
+                        indicator.style.color = 'var(--ai-green)';
+                    } else if (this.value.length > 0) {
+                        indicator.textContent = '❌';
+                        indicator.style.color = 'var(--accent-danger)';
+                    } else {
+                        indicator.textContent = '';
+                    }
+                });
+            }
+        });
+
+        // Check if user is already logged in
+        window.addEventListener('load', () => {
+            const token = localStorage.getItem('auth_token');
+            if (token) {
+                // Validate token and redirect if valid
+                fetch(`${API_BASE}/metrics`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = '/chatgpt_welcome_section.html';
+                    }
+                })
+                .catch(() => {
+                    // Token invalid, clear storage
+                    localStorage.removeItem('auth_token');
+                    localStorage.removeItem('user_data');
+                });
+            }
+        });
+    </script>
+</body>
+</html>

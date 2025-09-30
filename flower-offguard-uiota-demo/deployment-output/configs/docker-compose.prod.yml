@@ -1,0 +1,86 @@
+version: '3.8'
+
+services:
+  fl-dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    environment:
+      - OFFLINE_MODE=1
+      - PRODUCTION_READY=true
+      - FL_SERVER_HOST=0.0.0.0
+    env_file:
+      - deployment-output/configs/production.env
+    volumes:
+      - fl-data:/opt/fl-system/data
+      - fl-logs:/opt/fl-system/logs
+      - fl-models:/opt/fl-system/models
+    networks:
+      - fl-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/api/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 4G
+        reservations:
+          cpus: '1.0'
+          memory: 2G
+
+  fl-agents:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    command: python fl_agent_system.py
+    environment:
+      - OFFLINE_MODE=1
+      - FL_SERVER_HOST=fl-dashboard
+    env_file:
+      - deployment-output/configs/production.env
+    volumes:
+      - fl-data:/opt/fl-system/data
+      - fl-logs:/opt/fl-system/logs
+    networks:
+      - fl-network
+    depends_on:
+      fl-dashboard:
+        condition: service_healthy
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 6G
+        reservations:
+          cpus: '2.0'
+          memory: 3G
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./deployment-output/configs/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    networks:
+      - fl-network
+    restart: unless-stopped
+
+volumes:
+  fl-data:
+  fl-logs:
+  fl-models:
+  prometheus-data:
+
+networks:
+  fl-network:
+    driver: bridge

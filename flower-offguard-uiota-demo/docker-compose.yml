@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  fl-dashboard:
+    build: .
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    environment:
+      - OFFLINE_MODE=1
+      - FL_SERVER_HOST=0.0.0.0
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./models:/app/models
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/api/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  fl-agent-1:
+    build: .
+    command: python fl_agent_system.py
+    environment:
+      - OFFLINE_MODE=1
+      - FL_SERVER_HOST=fl-dashboard
+    depends_on:
+      - fl-dashboard
+    restart: unless-stopped
+
+networks:
+  default:
+    name: fl-network

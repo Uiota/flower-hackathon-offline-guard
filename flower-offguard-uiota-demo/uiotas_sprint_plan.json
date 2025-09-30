@@ -1,0 +1,125 @@
+{
+  "sprint_duration_days": 14,
+  "total_capacity_hours": 1120,
+  "allocated_hours": 675,
+  "utilization_percentage": 60.26785714285714,
+  "sprint_tasks": [
+    {
+      "id": "TASK-0003",
+      "title": "Create Threat Detection System",
+      "agent_role": "Security Engineer",
+      "priority": "high",
+      "estimated_hours": 50
+    },
+    {
+      "id": "TASK-0004",
+      "title": "Build Neural Fortress Theme",
+      "agent_role": "Frontend Developer",
+      "priority": "high",
+      "estimated_hours": 45
+    },
+    {
+      "id": "TASK-0006",
+      "title": "Create Adaptive Theme System",
+      "agent_role": "Frontend Developer",
+      "priority": "high",
+      "estimated_hours": 30
+    },
+    {
+      "id": "TASK-0008",
+      "title": "Build Multi-Database Integration",
+      "agent_role": "Backend Developer",
+      "priority": "high",
+      "estimated_hours": 40
+    },
+    {
+      "id": "TASK-0012",
+      "title": "Integrate Offline LLM Models",
+      "agent_role": "AI/ML Engineer",
+      "priority": "high",
+      "estimated_hours": 50
+    },
+    {
+      "id": "TASK-0013",
+      "title": "Implement RAG System",
+      "agent_role": "AI/ML Engineer",
+      "priority": "high",
+      "estimated_hours": 45
+    },
+    {
+      "id": "TASK-0014",
+      "title": "Create Docker Deployment System",
+      "agent_role": "DevOps Engineer",
+      "priority": "high",
+      "estimated_hours": 35
+    },
+    {
+      "id": "TASK-0016",
+      "title": "Create Comprehensive Test Suite",
+      "agent_role": "Quality Assurance",
+      "priority": "high",
+      "estimated_hours": 60
+    },
+    {
+      "id": "TASK-0017",
+      "title": "Perform Security Penetration Testing",
+      "agent_role": "Quality Assurance",
+      "priority": "high",
+      "estimated_hours": 40
+    },
+    {
+      "id": "TASK-0005",
+      "title": "Build Garden Vault Theme",
+      "agent_role": "Frontend Developer",
+      "priority": "medium",
+      "estimated_hours": 45
+    },
+    {
+      "id": "TASK-0010",
+      "title": "Create Smart Contract System",
+      "agent_role": "Blockchain Engineer",
+      "priority": "medium",
+      "estimated_hours": 50
+    },
+    {
+      "id": "TASK-0015",
+      "title": "Setup CI/CD Pipeline",
+      "agent_role": "DevOps Engineer",
+      "priority": "medium",
+      "estimated_hours": 40
+    },
+    {
+      "id": "TASK-0018",
+      "title": "Write User Documentation",
+      "agent_role": "Documentation Writer",
+      "priority": "medium",
+      "estimated_hours": 50
+    },
+    {
+      "id": "TASK-0019",
+      "title": "Create API Documentation",
+      "agent_role": "Documentation Writer",
+      "priority": "medium",
+      "estimated_hours": 35
+    },
+    {
+      "id": "TASK-0020",
+      "title": "Build Plugin Marketplace System",
+      "agent_role": "Integration Engineer",
+      "priority": "medium",
+      "estimated_hours": 60
+    }
+  ],
+  "tasks_by_agent": {
+    "System Architect": 0,
+    "Security Engineer": 1,
+    "Frontend Developer": 3,
+    "Backend Developer": 1,
+    "Blockchain Engineer": 1,
+    "AI/ML Engineer": 2,
+    "DevOps Engineer": 2,
+    "Quality Assurance": 2,
+    "Documentation Writer": 2,
+    "Integration Engineer": 1
+  }
+}

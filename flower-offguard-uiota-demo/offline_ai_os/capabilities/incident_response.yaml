@@ -1,0 +1,16 @@
+category: response
+dependencies:
+- system_control
+- network_control
+description: Respond to security incidents
+name: incident_response
+resource_requirements:
+  cpu_cores: 0.5
+  disk_mb: 1000
+  gpu_memory_mb: 0
+  memory_mb: 512
+skills:
+- threat_mitigation
+- system_isolation
+- evidence_collection
+- remediation

@@ -1,0 +1,410 @@
+{
+  "framework_name": "UIOTAS",
+  "full_name": "Universal Intelligent Offline Threat Analysis & Security Framework",
+  "branch": "UIOTAS Branch",
+  "former_name": "Flower OffGuard Demo",
+  "version": "1.0.0",
+  "updated": "2025-09-30",
+
+  "brand_identity": {
+    "name": "UIOTAS Framework",
+    "pronunciation": "you-OH-tas",
+    "tagline": "Sovereign AI Security for What Matters Most",
+    "alternate_taglines": [
+      "Your Digital Fortress. Your Rules.",
+      "Intelligence Without Internet",
+      "Beyond Cloud. Beyond Compromise.",
+      "Protecting Today. Preserving Tomorrow."
+    ],
+    "positioning": "The world's first offline AI operating system for protecting high-value digital assets with autonomous, intelligent security agents",
+    "brand_personality": [
+      "Trustworthy - Like a family attorney or personal guardian",
+      "Intelligent - AI-powered, not just storage",
+      "Sovereign - You own it, you control it",
+      "Accessible - Professional yet approachable",
+      "Prestigious - For protecting what matters most"
+    ]
+  },
+
+  "target_markets": {
+    "primary": [
+      {
+        "segment": "Government & Legal",
+        "use_cases": [
+          "Court case management",
+          "Legal document registry",
+          "Chain of custody verification",
+          "Evidence protection",
+          "Land deed registry"
+        ],
+        "pain_points": [
+          "Cloud storage violates security requirements",
+          "Need immutable records with proof",
+          "Chain of custody must be cryptographic",
+          "Cannot risk data breaches"
+        ],
+        "value_proposition": "Cryptographically proven chain of custody with air-gapped security"
+      },
+      {
+        "segment": "Healthcare & Biotech",
+        "use_cases": [
+          "HIPAA-compliant patient records",
+          "Clinical trial data protection",
+          "Research integrity verification",
+          "Biotech IP protection",
+          "Healthcare consent tracking"
+        ],
+        "pain_points": [
+          "Cloud breaches expose patient data",
+          "HIPAA compliance is challenging",
+          "Research data needs integrity proof",
+          "Cannot trust cloud providers"
+        ],
+        "value_proposition": "HIPAA-compliant by design with zero cloud exposure risk"
+      },
+      {
+        "segment": "Family & Estate",
+        "use_cases": [
+          "Family legacy archives",
+          "Digital inheritance planning",
+          "Photo/video preservation",
+          "Genealogy records",
+          "Estate document management"
+        ],
+        "pain_points": [
+          "Cloud services shut down or change terms",
+          "Want multi-generational preservation",
+          "Need simple but secure solution",
+          "Digital inheritance is unclear"
+        ],
+        "value_proposition": "Multi-generational digital inheritance with AI-guided simplicity"
+      },
+      {
+        "segment": "Enterprise & IP",
+        "use_cases": [
+          "Patent portfolio management",
+          "Trade secret protection",
+          "Contract automation",
+          "Compliance reporting",
+          "Corporate document vault"
+        ],
+        "pain_points": [
+          "Cloud dependency creates vulnerability",
+          "Insider threats to IP",
+          "Compliance audit complexity",
+          "No intelligent protection layer"
+        ],
+        "value_proposition": "Zero-trust architecture with autonomous threat detection"
+      }
+    ],
+    "market_size": {
+      "tam": "$50B+ (Global cybersecurity + document management)",
+      "sam": "$8B (Offline/air-gapped security + intelligent DMS)",
+      "som": "$500M (High-value asset protection)"
+    }
+  },
+
+  "competitive_advantages": {
+    "unique_value": [
+      "ONLY offline AI operating system with multi-agent security",
+      "Blockchain verification + AI intelligence in one platform",
+      "Adaptive UI with multiple themes (not one-size-fits-all)",
+      "Plugin marketplace for community extensibility",
+      "100% free and open source (no vendor lock-in)"
+    ],
+    "vs_competitors": {
+      "vs_cloud_storage": {
+        "competitor": "Dropbox, Google Drive, OneDrive",
+        "their_weakness": "Your data on their servers, vulnerable to breaches",
+        "our_strength": "Complete data sovereignty, air-gapped security"
+      },
+      "vs_selfhosted": {
+        "competitor": "Nextcloud, Synology NAS",
+        "their_weakness": "Technical setup, no AI intelligence, basic security",
+        "our_strength": "One-command install, multi-agent AI, military-grade security"
+      },
+      "vs_enterprise": {
+        "competitor": "Iron Mountain, Vaultize",
+        "their_weakness": "$5,000+/month, enterprise-only, cloud-dependent",
+        "our_strength": "100% free, personal + enterprise, offline-first"
+      }
+    }
+  },
+
+  "visual_identity": {
+    "theme_concepts": [
+      {
+        "name": "Neural Fortress",
+        "target_audience": "Technical professionals, cybersecurity teams, developers",
+        "metaphor": "Living organism + architectural strength",
+        "color_palette": {
+          "primary": "#0A1628",
+          "secondary": "#8B5CF6",
+          "accent": "#C0C0C0",
+          "background": "#000000",
+          "text": "#FFFFFF"
+        },
+        "typography": {
+          "primary": "Geist Mono",
+          "secondary": "Inter"
+        },
+        "feel": "Futuristic, powerful, biological intelligence meets fortress",
+        "animations": "Pulse, neural connections, breathing",
+        "priority": "High - Launch theme"
+      },
+      {
+        "name": "Garden Vault",
+        "target_audience": "Families, non-technical users, estate planners",
+        "metaphor": "Protected garden + living ecosystem",
+        "color_palette": {
+          "primary": "#2D5016",
+          "secondary": "#8B4513",
+          "accent": "#DAA520",
+          "background": "#F5F5DC",
+          "text": "#333333"
+        },
+        "typography": {
+          "primary": "DM Sans",
+          "secondary": "Merriweather"
+        },
+        "feel": "Peaceful, nurturing, natural protection",
+        "animations": "Gentle sway, growth, blooming",
+        "priority": "High - Launch theme"
+      },
+      {
+        "name": "Corporate Professional",
+        "target_audience": "Enterprises, legal firms, healthcare institutions",
+        "metaphor": "Executive dashboard + command center",
+        "color_palette": {
+          "primary": "#1E3A5F",
+          "secondary": "#4A5568",
+          "accent": "#2C5282",
+          "background": "#FFFFFF",
+          "text": "#2D3748"
+        },
+        "typography": {
+          "primary": "Inter",
+          "secondary": "Georgia"
+        },
+        "feel": "Professional, authoritative, trustworthy",
+        "animations": "Smooth transitions, subtle fade",
+        "priority": "Medium - Post-launch"
+      },
+      {
+        "name": "Minimalist Zen",
+        "target_audience": "Privacy advocates, power users",
+        "metaphor": "Calm simplicity + maximum function",
+        "color_palette": {
+          "primary": "#000000",
+          "secondary": "#666666",
+          "accent": "#999999",
+          "background": "#FAFAFA",
+          "text": "#333333"
+        },
+        "typography": {
+          "primary": "SF Pro",
+          "secondary": "SF Mono"
+        },
+        "feel": "Clean, distraction-free, performance-focused",
+        "animations": "Minimal, instant",
+        "priority": "Low - Community contribution"
+      }
+    ],
+    "design_principles": [
+      "Avoid generic cybersecurity aesthetics (no matrix green, circuit boards)",
+      "Create emotional connection through metaphor",
+      "Accessibility first (WCAG 2.1 AA minimum)",
+      "Responsive across all devices",
+      "Performance optimized (60fps animations)",
+      "Theme-able and extensible"
+    ]
+  },
+
+  "messaging_framework": {
+    "elevator_pitch": "UIOTAS is the world's first offline AI operating system that protects your most valuable digital assets - IP, legal documents, family legacy, healthcare data - using autonomous security agents that never touch the internet.",
+
+    "key_messages": {
+      "for_legal": [
+        "Chain of custody you can prove in court",
+        "Immutable record keeping with blockchain verification",
+        "E-discovery ready with AI-powered search"
+      ],
+      "for_healthcare": [
+        "HIPAA compliant by design, not as afterthought",
+        "Patient privacy guaranteed - data never leaves your infrastructure",
+        "Zero cloud exposure risk"
+      ],
+      "for_families": [
+        "Protect memories forever with multi-generational security",
+        "Digital inheritance planning made simple",
+        "Your legacy, your control"
+      ],
+      "for_enterprise": [
+        "IP protection at fortress level",
+        "Zero-trust architecture with autonomous agents",
+        "No vendor lock-in - 100% open source"
+      ]
+    },
+
+    "content_pillars": [
+      "Education - How offline AI works, blockchain explained simply",
+      "Trust Building - Open source transparency, security audits, testimonials",
+      "Comparison - vs Cloud, vs Self-hosted, vs Enterprise solutions",
+      "Inspiration - Legacy stories, protection examples, best practices"
+    ]
+  },
+
+  "go_to_market": {
+    "launch_strategy": {
+      "phase_1": {
+        "timeline": "Weeks 1-4",
+        "goals": "Build awareness, establish credibility",
+        "tactics": [
+          "Launch open-source repository on GitHub",
+          "Publish comprehensive documentation",
+          "Create demo videos (Neural Fortress + Garden Vault themes)",
+          "Write technical blog posts",
+          "Engage in relevant subreddits and forums"
+        ]
+      },
+      "phase_2": {
+        "timeline": "Weeks 5-8",
+        "goals": "Acquire early adopters, gather feedback",
+        "tactics": [
+          "Beta program with 100 users",
+          "Case studies from different verticals",
+          "Security audit by third party",
+          "Community building (Discord, forum)",
+          "Plugin marketplace launch"
+        ]
+      },
+      "phase_3": {
+        "timeline": "Weeks 9-12",
+        "goals": "Scale adoption, build ecosystem",
+        "tactics": [
+          "Public v1.0 release announcement",
+          "Partnership with hardware vendors (NAS manufacturers)",
+          "Developer SDK and documentation",
+          "Conference presentations",
+          "Press outreach"
+        ]
+      }
+    },
+
+    "distribution_channels": [
+      "GitHub (open source repository)",
+      "Direct download (uiotas.org)",
+      "Docker Hub (containerized deployment)",
+      "Linux package managers (apt, yum, snap)",
+      "Hardware pre-installation (partner NAS devices)"
+    ],
+
+    "pricing_strategy": {
+      "model": "Freemium + Optional Support",
+      "tiers": [
+        {
+          "name": "Free (Community)",
+          "price": "$0/month",
+          "features": [
+            "Unlimited storage",
+            "All AI agents",
+            "All themes",
+            "Community support",
+            "Open source"
+          ],
+          "target": "Individuals, small teams, developers"
+        },
+        {
+          "name": "Pro (Optional)",
+          "price": "$29/month",
+          "features": [
+            "Everything in Free",
+            "Priority support",
+            "Advanced analytics",
+            "Custom branding",
+            "SLA guarantee"
+          ],
+          "target": "Power users, small businesses"
+        },
+        {
+          "name": "Enterprise (Custom)",
+          "price": "Custom pricing",
+          "features": [
+            "Everything in Pro",
+            "White-label option",
+            "Dedicated support",
+            "Custom development",
+            "Training and onboarding"
+          ],
+          "target": "Large organizations, government"
+        }
+      ],
+      "note": "Core product always remains 100% free and open source"
+    }
+  },
+
+  "success_metrics": {
+    "north_star": "Number of protected vaults (active installations)",
+    "kpis": [
+      {
+        "metric": "GitHub Stars",
+        "target": "10,000 in first year",
+        "rationale": "Indicates developer interest and credibility"
+      },
+      {
+        "metric": "Active Installations",
+        "target": "50,000 in first year",
+        "rationale": "Actual usage and adoption"
+      },
+      {
+        "metric": "Plugin Marketplace Submissions",
+        "target": "100+ plugins in first year",
+        "rationale": "Healthy ecosystem and community engagement"
+      },
+      {
+        "metric": "Data Protected",
+        "target": "1 PB in first year",
+        "rationale": "Real-world value delivered"
+      },
+      {
+        "metric": "Community Size",
+        "target": "5,000 Discord/forum members",
+        "rationale": "Engaged community for support and growth"
+      }
+    ]
+  },
+
+  "risk_mitigation": [
+    {
+      "risk": "Too technical for non-experts",
+      "mitigation": "AI-guided onboarding, Garden Vault theme, video tutorials"
+    },
+    {
+      "risk": "Trust concerns (security, privacy)",
+      "mitigation": "Open source code, third-party audits, transparency reports"
+    },
+    {
+      "risk": "Price sensitivity",
+      "mitigation": "100% free core product, optional paid support only"
+    },
+    {
+      "risk": "Competition from established players",
+      "mitigation": "Unique AI + blockchain combination, plugin ecosystem"
+    },
+    {
+      "risk": "Adoption friction",
+      "mitigation": "One-command install, migration tools, excellent docs"
+    }
+  ],
+
+  "next_steps": [
+    "1. Finalize Neural Fortress and Garden Vault themes",
+    "2. Build interactive HTML prototypes",
+    "3. Create theme switcher component",
+    "4. Implement plugin marketplace UI",
+    "5. Write comprehensive documentation",
+    "6. Launch GitHub repository",
+    "7. Create demo videos",
+    "8. Start beta program"
+  ]
+}

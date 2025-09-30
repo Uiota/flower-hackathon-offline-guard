@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Guardian - Protect Your Mind & Property</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --background: oklch(0.98 0 0);
+            --foreground: oklch(0.15 0 0);
+            --primary: oklch(0.55 0.20 250);
+            --primary-foreground: oklch(1.0 0 0);
+            --secondary: oklch(0.40 0.15 280);
+            --accent: oklch(0.65 0.18 160);
+            --danger: oklch(0.58 0.24 27);
+            --success: oklch(0.65 0.18 145);
+            --muted: oklch(0.92 0 0);
+            --border: oklch(0.85 0 0);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif !important;
+            background: linear-gradient(135deg, oklch(0.98 0 0) 0%, oklch(0.95 0.02 250) 100%);
+            color: var(--foreground);
+        }
+
+        .font-mono {
+            font-family: 'Space Mono', monospace !important;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--primary-foreground);
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: oklch(0.50 0.22 250);
+            transform: scale(1.02);
+        }
+
+        .progress-ring {
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+
+        .pulse-ring {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: .5;
+            }
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        .status-healthy { background: var(--success); }
+        .status-warning { background: oklch(0.75 0.15 85); }
+        .status-danger { background: var(--danger); }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4">
+    <!-- Header -->
+    <header class="max-w-7xl mx-auto mb-8 fade-in">
+        <div class="glass rounded-2xl p-6 flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+                    <i data-lucide="brain" class="text-white" size="28"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold">Memory Guardian</h1>
+                    <p class="text-sm text-gray-600">Protecting your mind & property</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="text-right">
+                    <p class="text-sm text-gray-600">LL Token Wallet</p>
+                    <p class="font-mono text-sm font-semibold">LL12...ABCD</p>
+                </div>
+                <button class="btn-primary">
+                    <i data-lucide="settings" size="20"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto space-y-6">
+        <!-- Cognitive Health Status -->
+        <section class="grid md:grid-cols-3 gap-6 fade-in" style="animation-delay: 0.1s">
+            <!-- Main Status Card -->
+            <div class="card p-6 md:col-span-2">
+                <div class="flex justify-between items-start mb-6">
+                    <div>
+                        <h2 class="text-xl font-bold mb-2">Cognitive Health Status</h2>
+                        <p class="text-sm text-gray-600">Last assessment: 2 hours ago</p>
+                    </div>
+                    <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-semibold">
+                        <span class="status-indicator status-healthy"></span>Healthy
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-6">
+                    <!-- Score Visualization -->
+                    <div class="flex items-center justify-center">
+                        <div class="relative">
+                            <svg width="200" height="200" viewBox="0 0 200 200">
+                                <!-- Background Circle -->
+                                <circle cx="100" cy="100" r="80" fill="none" stroke="oklch(0.92 0 0)" stroke-width="12"/>
+                                <!-- Progress Circle -->
+                                <circle cx="100" cy="100" r="80" fill="none" stroke="var(--success)" stroke-width="12"
+                                        stroke-dasharray="502.4" stroke-dashoffset="125.6" class="progress-ring"
+                                        stroke-linecap="round"/>
+                            </svg>
+                            <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                <span class="text-5xl font-bold">85</span>
+                                <span class="text-sm text-gray-600">Overall Score</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Metric Breakdown -->
+                    <div class="space-y-4">
+                        <div class="metric-item">
+                            <div class="flex justify-between mb-2">
+                                <span class="text-sm font-medium">Memory</span>
+                                <span class="text-sm font-bold">85%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full" style="width: 85%"></div>
+                            </div>
+                        </div>
+
+                        <div class="metric-item">
+                            <div class="flex justify-between mb-2">
+                                <span class="text-sm font-medium">Pattern Recognition</span>
+                                <span class="text-sm font-bold">88%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-gradient-to-r from-purple-500 to-purple-600 h-2 rounded-full" style="width: 88%"></div>
+                            </div>
+                        </div>
+
+                        <div class="metric-item">
+                            <div class="flex justify-between mb-2">
+                                <span class="text-sm font-medium">Problem Solving</span>
+                                <span class="text-sm font-bold">82%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-gradient-to-r from-green-500 to-green-600 h-2 rounded-full" style="width: 82%"></div>
+                            </div>
+                        </div>
+
+                        <div class="metric-item">
+                            <div class="flex justify-between mb-2">
+                                <span class="text-sm font-medium">Reaction Time</span>
+                                <span class="text-sm font-bold">450ms</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-gradient-to-r from-orange-500 to-orange-600 h-2 rounded-full" style="width: 75%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6 flex gap-3">
+                    <button class="btn-primary flex items-center gap-2">
+                        <i data-lucide="play-circle" size="20"></i>
+                        Start Daily Assessment
+                    </button>
+                    <button class="px-4 py-2 border-2 border-gray-300 rounded-lg font-semibold hover:bg-gray-50 transition">
+                        View History
+                    </button>
+                </div>
+            </div>
+
+            <!-- Token Rewards -->
+            <div class="card p-6">
+                <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+                    <i data-lucide="coins" size="20" class="text-yellow-600"></i>
+                    Token Rewards
+                </h3>
+                <div class="space-y-4">
+                    <div class="p-3 bg-blue-50 rounded-lg">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm font-medium">LLT-EXP</span>
+                            <span class="font-mono font-bold">2,450</span>
+                        </div>
+                        <p class="text-xs text-gray-600 mt-1">Experience Points</p>
+                    </div>
+
+                    <div class="p-3 bg-purple-50 rounded-lg">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm font-medium">LLT-EDU</span>
+                            <span class="font-mono font-bold">580</span>
+                        </div>
+                        <p class="text-xs text-gray-600 mt-1">Education Tokens</p>
+                    </div>
+
+                    <div class="p-3 bg-green-50 rounded-lg">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm font-medium">LLT-REWARD</span>
+                            <span class="font-mono font-bold">325</span>
+                        </div>
+                        <p class="text-xs text-gray-600 mt-1">FL Contribution</p>
+                    </div>
+
+                    <div class="p-3 bg-orange-50 rounded-lg">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm font-medium">LLT-REP</span>
+                            <span class="font-mono font-bold">890</span>
+                        </div>
+                        <p class="text-xs text-gray-600 mt-1">Reputation Score</p>
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-4 border-t border-gray-200">
+                    <div class="text-center">
+                        <p class="text-sm text-gray-600">Total Value</p>
+                        <p class="text-2xl font-bold text-green-600">4,245 Tokens</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Trend Chart & Streak -->
+        <section class="grid md:grid-cols-2 gap-6 fade-in" style="animation-delay: 0.2s">
+            <!-- Cognitive Trend -->
+            <div class="card p-6">
+                <h3 class="text-lg font-bold mb-4">30-Day Cognitive Trend</h3>
+                <div class="relative h-48 flex items-end gap-2">
+                    <!-- Simple bar chart visualization -->
+                    <div class="flex-1 bg-blue-200 rounded-t transition-all hover:bg-blue-300" style="height: 65%"></div>
+                    <div class="flex-1 bg-blue-200 rounded-t transition-all hover:bg-blue-300" style="height: 70%"></div>
+                    <div class="flex-1 bg-blue-200 rounded-t transition-all hover:bg-blue-300" style="height: 68%"></div>
+                    <div class="flex-1 bg-blue-200 rounded-t transition-all hover:bg-blue-300" style="height: 72%"></div>
+                    <div class="flex-1 bg-blue-200 rounded-t transition-all hover:bg-blue-300" style="height: 75%"></div>
+                    <div class="flex-1 bg-blue-200 rounded-t transition-all hover:bg-blue-300" style="height: 78%"></div>
+                    <div class="flex-1 bg-blue-200 rounded-t transition-all hover:bg-blue-300" style="height: 80%"></div>
+                    <div class="flex-1 bg-blue-200 rounded-t transition-all hover:bg-blue-300" style="height: 83%"></div>
+                    <div class="flex-1 bg-blue-200 rounded-t transition-all hover:bg-blue-300" style="height: 85%"></div>
+                    <div class="flex-1 bg-green-400 rounded-t transition-all hover:bg-green-500" style="height: 85%"></div>
+                </div>
+                <div class="mt-4 flex items-center justify-between text-sm">
+                    <span class="text-gray-600">30 days ago</span>
+                    <div class="flex items-center gap-2 text-green-600 font-semibold">
+                        <i data-lucide="trending-up" size="16"></i>
+                        <span>+5.2% improvement</span>
+                    </div>
+                    <span class="text-gray-600">Today</span>
+                </div>
+            </div>
+
+            <!-- Daily Streak & Activity -->
+            <div class="card p-6">
+                <h3 class="text-lg font-bold mb-4">Daily Activity Streak</h3>
+                <div class="text-center mb-6">
+                    <div class="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-orange-400 to-red-500 rounded-full mb-2">
+                        <span class="text-4xl font-bold text-white">28</span>
+                    </div>
+                    <p class="text-sm text-gray-600">Days consecutive</p>
+                </div>
+
+                <div class="grid grid-cols-7 gap-2 mb-4">
+                    <!-- Activity calendar -->
+                    <div class="aspect-square bg-green-500 rounded" title="Completed"></div>
+                    <div class="aspect-square bg-green-500 rounded" title="Completed"></div>
+                    <div class="aspect-square bg-green-500 rounded" title="Completed"></div>
+                    <div class="aspect-square bg-green-500 rounded" title="Completed"></div>
+                    <div class="aspect-square bg-green-500 rounded" title="Completed"></div>
+                    <div class="aspect-square bg-green-500 rounded" title="Completed"></div>
+                    <div class="aspect-square bg-green-500 rounded" title="Completed"></div>
+                    <div class="aspect-square bg-green-500 rounded" title="Completed"></div>
+                    <div class="aspect-square bg-green-500 rounded" title="Completed"></div>
+                    <div class="aspect-square bg-green-500 rounded" title="Completed"></div>
+                    <div class="aspect-square bg-green-500 rounded" title="Completed"></div>
+                    <div class="aspect-square bg-green-500 rounded" title="Completed"></div>
+                    <div class="aspect-square bg-green-500 rounded" title="Completed"></div>
+                    <div class="aspect-square bg-green-500 rounded" title="Completed"></div>
+                    <div class="aspect-square bg-green-400 rounded" title="Completed"></div>
+                    <div class="aspect-square bg-green-400 rounded" title="Completed"></div>
+                    <div class="aspect-square bg-green-400 rounded" title="Completed"></div>
+                    <div class="aspect-square bg-yellow-400 rounded" title="Partial"></div>
+                    <div class="aspect-square bg-green-500 rounded" title="Completed"></div>
+                    <div class="aspect-square bg-green-500 rounded" title="Completed"></div>
+                    <div class="aspect-square bg-green-500 rounded" title="Completed"></div>
+                    <div class="aspect-square bg-green-500 rounded" title="Completed"></div>
+                    <div class="aspect-square bg-green-500 rounded" title="Completed"></div>
+                    <div class="aspect-square bg-green-500 rounded" title="Completed"></div>
+                    <div class="aspect-square bg-green-500 rounded" title="Completed"></div>
+                    <div class="aspect-square bg-green-500 rounded" title="Completed"></div>
+                    <div class="aspect-square bg-green-500 rounded" title="Completed"></div>
+                    <div class="aspect-square bg-green-500 rounded" title="Completed"></div>
+                </div>
+
+                <div class="flex gap-2 text-xs">
+                    <div class="flex items-center gap-1">
+                        <div class="w-3 h-3 bg-green-500 rounded"></div>
+                        <span>Complete</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <div class="w-3 h-3 bg-yellow-400 rounded"></div>
+                        <span>Partial</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <div class="w-3 h-3 bg-gray-200 rounded"></div>
+                        <span>Missed</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Property Protection & Trusted Contacts -->
+        <section class="grid md:grid-cols-2 gap-6 fade-in" style="animation-delay: 0.3s">
+            <!-- Secure Document Vault -->
+            <div class="card p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-bold flex items-center gap-2">
+                        <i data-lucide="shield-check" size="20" class="text-blue-600"></i>
+                        Secure Document Vault
+                    </h3>
+                    <button class="text-blue-600 hover:text-blue-700 font-semibold text-sm">
+                        + Add Document
+                    </button>
+                </div>
+
+                <div class="space-y-3">
+                    <div class="p-4 border-2 border-gray-200 rounded-lg hover:border-blue-300 transition cursor-pointer">
+                        <div class="flex items-start justify-between">
+                            <div class="flex gap-3">
+                                <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                                    <i data-lucide="file-text" size="20" class="text-purple-600"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">Last Will & Testament</h4>
+                                    <p class="text-xs text-gray-600">Updated 3 months ago</p>
+                                    <div class="flex gap-2 mt-2">
+                                        <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">Legal</span>
+                                        <span class="px-2 py-1 bg-green-100 text-green-700 rounded text-xs">Encrypted</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <i data-lucide="lock" size="16" class="text-green-600"></i>
+                        </div>
+                    </div>
+
+                    <div class="p-4 border-2 border-gray-200 rounded-lg hover:border-blue-300 transition cursor-pointer">
+                        <div class="flex items-start justify-between">
+                            <div class="flex gap-3">
+                                <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                                    <i data-lucide="home" size="20" class="text-green-600"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">Property Deed - Main Residence</h4>
+                                    <p class="text-xs text-gray-600">Updated 6 months ago</p>
+                                    <div class="flex gap-2 mt-2">
+                                        <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">Property</span>
+                                        <span class="px-2 py-1 bg-green-100 text-green-700 rounded text-xs">Encrypted</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <i data-lucide="lock" size="16" class="text-green-600"></i>
+                        </div>
+                    </div>
+
+                    <div class="p-4 border-2 border-gray-200 rounded-lg hover:border-blue-300 transition cursor-pointer">
+                        <div class="flex items-start justify-between">
+                            <div class="flex gap-3">
+                                <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                                    <i data-lucide="credit-card" size="20" class="text-orange-600"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">Financial Power of Attorney</h4>
+                                    <p class="text-xs text-gray-600">Updated 1 year ago</p>
+                                    <div class="flex gap-2 mt-2">
+                                        <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">Financial</span>
+                                        <span class="px-2 py-1 bg-green-100 text-green-700 rounded text-xs">Encrypted</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <i data-lucide="lock" size="16" class="text-green-600"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 p-3 bg-blue-50 rounded-lg flex items-start gap-3">
+                    <i data-lucide="info" size="20" class="text-blue-600 mt-0.5"></i>
+                    <div class="text-sm">
+                        <p class="font-semibold text-blue-900">All documents are quantum-safe encrypted</p>
+                        <p class="text-blue-700 text-xs mt-1">Only accessible with your master password and biometric verification</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trusted Contacts -->
+            <div class="card p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-bold flex items-center gap-2">
+                        <i data-lucide="users" size="20" class="text-green-600"></i>
+                        Trusted Emergency Contacts
+                    </h3>
+                    <button class="text-green-600 hover:text-green-700 font-semibold text-sm">
+                        + Add Contact
+                    </button>
+                </div>
+
+                <div class="space-y-3">
+                    <div class="p-4 border-2 border-gray-200 rounded-lg hover:border-green-300 transition">
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="flex gap-3">
+                                <div class="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white font-bold">
+                                    JS
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">Jane Smith</h4>
+                                    <p class="text-sm text-gray-600">Daughter</p>
+                                    <p class="text-xs text-gray-500 font-mono">+1-555-0123</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-semibold">
+                                    Full Access
+                                </span>
+                                <p class="text-xs text-gray-500 mt-1">Rep: 890</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-2 text-xs">
+                            <span class="flex items-center gap-1 text-gray-600">
+                                <i data-lucide="check-circle" size="12" class="text-green-600"></i>
+                                Verified
+                            </span>
+                            <span class="flex items-center gap-1 text-gray-600">
+                                <i data-lucide="shield" size="12" class="text-blue-600"></i>
+                                Can view documents
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="p-4 border-2 border-gray-200 rounded-lg hover:border-green-300 transition">
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="flex gap-3">
+                                <div class="w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+                                    MD
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">Dr. Michael Davis</h4>
+                                    <p class="text-sm text-gray-600">Primary Care Physician</p>
+                                    <p class="text-xs text-gray-500 font-mono">+1-555-0456</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-semibold">
+                                    Medical Access
+                                </span>
+                                <p class="text-xs text-gray-500 mt-1">Rep: 950</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-2 text-xs">
+                            <span class="flex items-center gap-1 text-gray-600">
+                                <i data-lucide="check-circle" size="12" class="text-green-600"></i>
+                                Verified
+                            </span>
+                            <span class="flex items-center gap-1 text-gray-600">
+                                <i data-lucide="heart-pulse" size="12" class="text-red-600"></i>
+                                Health records only
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="p-4 border-2 border-gray-200 rounded-lg hover:border-green-300 transition">
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="flex gap-3">
+                                <div class="w-12 h-12 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center text-white font-bold">
+                                    RJ
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">Robert Johnson</h4>
+                                    <p class="text-sm text-gray-600">Attorney</p>
+                                    <p class="text-xs text-gray-500 font-mono">+1-555-0789</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="px-2 py-1 bg-purple-100 text-purple-700 rounded text-xs font-semibold">
+                                    Legal Access
+                                </span>
+                                <p class="text-xs text-gray-500 mt-1">Rep: 875</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-2 text-xs">
+                            <span class="flex items-center gap-1 text-gray-600">
+                                <i data-lucide="check-circle" size="12" class="text-green-600"></i>
+                                Verified
+                            </span>
+                            <span class="flex items-center gap-1 text-gray-600">
+                                <i data-lucide="scale" size="12" class="text-purple-600"></i>
+                                Legal documents only
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Federated Learning Contribution -->
+        <section class="fade-in" style="animation-delay: 0.4s">
+            <div class="card p-6">
+                <div class="flex justify-between items-start mb-6">
+                    <div>
+                        <h3 class="text-lg font-bold flex items-center gap-2 mb-2">
+                            <i data-lucide="network" size="20" class="text-purple-600"></i>
+                            Federated Learning Contribution
+                        </h3>
+                        <p class="text-sm text-gray-600">Help research Alzheimer's detection while keeping your data private</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" value="" class="sr-only peer" checked>
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                    </label>
+                </div>
+
+                <div class="grid md:grid-cols-4 gap-4 mb-4">
+                    <div class="p-4 bg-purple-50 rounded-lg text-center">
+                        <p class="text-3xl font-bold text-purple-600">142</p>
+                        <p class="text-sm text-gray-600 mt-1">Total Contributions</p>
+                    </div>
+                    <div class="p-4 bg-blue-50 rounded-lg text-center">
+                        <p class="text-3xl font-bold text-blue-600">95.2%</p>
+                        <p class="text-sm text-gray-600 mt-1">Privacy Score</p>
+                    </div>
+                    <div class="p-4 bg-green-50 rounded-lg text-center">
+                        <p class="text-3xl font-bold text-green-600">+325</p>
+                        <p class="text-sm text-gray-600 mt-1">LLT-REWARD Earned</p>
+                    </div>
+                    <div class="p-4 bg-orange-50 rounded-lg text-center">
+                        <p class="text-3xl font-bold text-orange-600">18.5k</p>
+                        <p class="text-sm text-gray-600 mt-1">People Helped</p>
+                    </div>
+                </div>
+
+                <div class="p-4 bg-gradient-to-r from-purple-100 to-blue-100 rounded-lg">
+                    <div class="flex items-start gap-3">
+                        <i data-lucide="shield-check" size="24" class="text-purple-600 mt-1"></i>
+                        <div>
+                            <h4 class="font-semibold text-purple-900 mb-1">Your data never leaves your device</h4>
+                            <p class="text-sm text-purple-800">Only anonymous, aggregated model improvements are shared with the research network. Zero personal information is transmitted.</p>
+                            <div class="flex gap-2 mt-3">
+                                <span class="px-2 py-1 bg-white/50 rounded text-xs font-semibold">AES-256 Encrypted</span>
+                                <span class="px-2 py-1 bg-white/50 rounded text-xs font-semibold">Quantum-Safe</span>
+                                <span class="px-2 py-1 bg-white/50 rounded text-xs font-semibold">Differential Privacy</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recent Activity Log -->
+        <section class="fade-in" style="animation-delay: 0.5s">
+            <div class="card p-6">
+                <h3 class="text-lg font-bold mb-4">Recent Activity</h3>
+                <div class="space-y-3">
+                    <div class="flex items-start gap-4 p-3 hover:bg-gray-50 rounded-lg transition">
+                        <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                            <i data-lucide="check" size="20" class="text-green-600"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-semibold">Completed daily cognitive assessment</p>
+                            <p class="text-sm text-gray-600">Score: 85/100 • Earned 50 LLT-EXP</p>
+                        </div>
+                        <span class="text-sm text-gray-500">2 hours ago</span>
+                    </div>
+
+                    <div class="flex items-start gap-4 p-3 hover:bg-gray-50 rounded-lg transition">
+                        <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                            <i data-lucide="network" size="20" class="text-purple-600"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-semibold">Contributed to FL network</p>
+                            <p class="text-sm text-gray-600">Model: alzheimers_detection_v1 • Earned 50 LLT-REWARD</p>
+                        </div>
+                        <span class="text-sm text-gray-500">2 hours ago</span>
+                    </div>
+
+                    <div class="flex items-start gap-4 p-3 hover:bg-gray-50 rounded-lg transition">
+                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                            <i data-lucide="shield" size="20" class="text-blue-600"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-semibold">Document vault accessed</p>
+                            <p class="text-sm text-gray-600">Viewed: Property Deed - Main Residence</p>
+                        </div>
+                        <span class="text-sm text-gray-500">Yesterday</span>
+                    </div>
+
+                    <div class="flex items-start gap-4 p-3 hover:bg-gray-50 rounded-lg transition">
+                        <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
+                            <i data-lucide="user-plus" size="20" class="text-orange-600"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-semibold">Added trusted contact</p>
+                            <p class="text-sm text-gray-600">Dr. Michael Davis • Medical Access Level</p>
+                        </div>
+                        <span class="text-sm text-gray-500">3 days ago</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Floating Action Button -->
+    <button class="fixed bottom-8 right-8 w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full shadow-2xl flex items-center justify-center text-white hover:scale-110 transition-transform pulse-ring">
+        <i data-lucide="help-circle" size="28"></i>
+    </button>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Simulate real-time updates
+        setInterval(() => {
+            const pulse = document.querySelector('.pulse-ring');
+            if (pulse) {
+                pulse.style.animation = 'none';
+                setTimeout(() => {
+                    pulse.style.animation = '';
+                }, 10);
+            }
+        }, 3000);
+
+        // Add interaction feedback
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                if (e.target.closest('button')) return;
+                this.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 100);
+            });
+        });
+
+        console.log('Memory Guardian UI initialized');
+        console.log('Offline mode: Ready');
+        console.log('Quantum-safe encryption: Active');
+    </script>
+</body>
+</html>
